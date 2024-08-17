@@ -38,7 +38,7 @@ import ContactUs from './src/Screens/ContactUs/Index'
 
 const Stack = createNativeStackNavigator()
 
-export const base_url = "http://panditapp.mandirparikrama.com/"
+export const base_url = "https://panditapp.mandirparikrama.com/"
 // export const base_url = "https://pandit.33crores.com/"
 
 const App = () => {

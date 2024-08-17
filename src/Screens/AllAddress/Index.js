@@ -221,29 +221,20 @@ const Index = (props) => {
         }
     }
 
-    const confirmDelete = (addressId) => {
-        Alert.alert(
-            "Delete Address",
-            "Are you sure you want to delete this address?",
-            [
-                {
-                    text: "Cancel",
-                    onPress: () => console.log("Cancel Pressed"),
-                    style: "cancel"
-                },
-                {
-                    text: "OK",
-                    onPress: () => deleteAddress(addressId)
-                }
-            ],
-            { cancelable: false }
-        );
-    };
+    const [openDeleteAreaModal, setOpenDeleteAreaModal] = useState(false);
+    const closeDeleteAreaModal = () => { setOpenDeleteAreaModal(false); setDeleteAreaId(null); };
+    const [deleteAreaId, setDeleteAreaId] = useState(null);
 
-    const deleteAddress = async (addressId) => {
+    const confirmDelete = (addressId) => {
+        console.log("addressId", addressId);
+        setDeleteAreaId(addressId);
+        setOpenDeleteAreaModal(true);
+    }
+
+    const deleteAddress = async () => {
         try {
             const access_token = await AsyncStorage.getItem('storeAccesstoken');
-            const response = await fetch(`http://panditapp.mandirparikrama.com/api/user/address/${addressId}`, {
+            const response = await fetch(`${base_url}api/user/address/${deleteAreaId}`, {
                 method: 'DELETE',
                 headers: {
                     Accept: 'application/json',
@@ -254,6 +245,7 @@ const Index = (props) => {
             const responseData = await response.json();
             console.log("Delete Address Response: ", responseData);
             if (response.ok) {
+                closeDeleteAreaModal();
                 console.log("Address deleted successfully");
                 getAllAddress();
                 // Refresh the address list or update the state as needed
@@ -645,6 +637,35 @@ const Index = (props) => {
                 </View>
             </Modal>
 
+            {/* Start Delete Area Modal */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={openDeleteAreaModal}
+                onRequestClose={closeDeleteAreaModal}
+            >
+                <View style={styles.deleteModalOverlay}>
+                    <View style={styles.deleteModalContainer}>
+                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}>
+                            <View style={{ alignItems: 'center' }}>
+                                <MaterialIcons name="report-gmailerrorred" size={100} color="red" />
+                                <Text style={{ color: '#000', fontSize: 23, fontWeight: 'bold', textAlign: 'center', letterSpacing: 0.3 }}>Are You Sure To Delete This Address</Text>
+                                <Text style={{ color: 'gray', fontSize: 17, fontWeight: '500', marginTop: 4 }}>You won't be able to revert this!</Text>
+                            </View>
+                        </View>
+                        <View style={{ width: '95%', alignSelf: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', marginTop: 10 }}>
+                            <TouchableOpacity onPress={closeDeleteAreaModal} style={styles.cancelDeleteBtn}>
+                                <Text style={styles.btnText}>Cancel</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={deleteAddress} style={styles.confirmDeleteBtn}>
+                                <Text style={styles.btnText}>Yes, delete it!</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+            {/* End Delete Area Modal */}
+
         </SafeAreaView>
     )
 }
@@ -738,5 +759,39 @@ const styles = StyleSheet.create({
         color: 'red',
         fontSize: 13,
         marginTop: 5,
+    },
+    deleteModalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    deleteModalContainer: {
+        width: '85%',
+        backgroundColor: '#fff',
+        borderRadius: 15, // Slightly more rounded corners
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 10 }, // More pronounced shadow
+        shadowOpacity: 0.3,
+        shadowRadius: 20,
+        elevation: 10,
+        padding: 20,
+    },
+    cancelDeleteBtn: {
+        backgroundColor: 'red',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 7
+    },
+    btnText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600'
+    },
+    confirmDeleteBtn: {
+        backgroundColor: 'green',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 7
     },
 })

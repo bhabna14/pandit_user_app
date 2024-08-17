@@ -1,4 +1,4 @@
-package com.thirtythreecrores
+package com.thirtythreecroresapp
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

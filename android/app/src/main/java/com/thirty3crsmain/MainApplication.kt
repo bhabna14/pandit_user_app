@@ -1,4 +1,4 @@
-package com.thirtythreecrores
+package com.thirtythreecroresapp
 
 import android.app.Application
 import com.facebook.react.PackageList

@@ -283,22 +283,14 @@ const Index = (props) => {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                        {/* <View style={{ backgroundColor: '#000', width: '100%', height: 0.4, marginTop: 10 }}></View> */}
-                        <View style={{ backgroundColor: '#737373', width: '100%', marginTop: 10 }}>
+                        <View style={{ backgroundColor: '#000', width: '100%', height: 0.4, marginTop: 10 }}></View>
+                        {/* <View style={{ backgroundColor: '#737373', width: '100%', marginTop: 10 }}>
                             <View style={{ width: '92%', alignSelf: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                                 <Text style={{ color: '#fff', fontSize: 15, fontWeight: '400' }}>Accounts Credits</Text>
                                 <Text style={{ color: '#fff', fontSize: 15, fontWeight: '400' }}>₹ 150</Text>
                             </View>
-                        </View>
+                        </View> */}
                         <View style={{ width: '100%', backgroundColor: '#fff', alignItems: 'center' }}>
-                            {/* <TouchableOpacity style={styles.cell}>
-                                <View>
-                                    <Text style={styles.mainLable}>Payment Cards</Text>
-                                    <Text style={styles.subLable}>Add a credit or debit card</Text>
-                                </View>
-                                <Feather name="chevron-right" color={'#555454'} size={30} />
-                            </TouchableOpacity> */}
-                            {/* <View style={{ backgroundColor: '#000', width: '100%', height: 0.4 }}></View> */}
                             <TouchableOpacity onPress={() => props.navigation.navigate('PanditBookingHistory')} style={styles.cell}>
                                 <View>
                                     <Text style={styles.mainLable}>Bookingh History</Text>

@@ -75,13 +75,17 @@ const Index = (props) => {
         }
     };
 
+    const [errorModal, setErrorModal] = useState(false);
+    const closeErrorModal = () => { setErrorModal(false); }
+    const [errormasg, setErrormasg] = useState(null);
+
     const bookPandit = async () => {
         const access_token = await AsyncStorage.getItem('storeAccesstoken');
         // console.log("pandit_id", props.route.params.panditId,
         //     "pooja_id", props.route.params.pujaId,
         //     "pooja_fee", props.route.params.pujaFee,
         //     "advance_fee", props.route.params.addvanceFee,
-        //     "booking_date", moment(eventDate).format('YYYY-MM-DD h:m:s'),
+        //     "booking_date", moment(eventDate).format('YYYY-MM-DD H:MM'),
         //     "address_id", selectedOption)
         //     return;
         try {
@@ -101,23 +105,27 @@ const Index = (props) => {
                     pooja_id: props.route.params.pujaId,
                     pooja_fee: props.route.params.pujaFee,
                     advance_fee: props.route.params.addvanceFee,
-                    booking_date: moment(eventDate).format('YYYY-MM-DD h:m:s'),
+                    booking_date: moment(eventDate).format('YYYY-MM-DD H:MM'),
                     address_id: selectedOption
                 }),
             });
 
             const responseData = await response.json();
-            console.log("responseData", responseData.booking);
+            // console.log("responseData", responseData.booking);
             if (response.ok) {
                 console.log("Booking successfully");
                 setBookingDetails(responseData.booking);
                 setOrderModalVisible(true);
             } else {
-                console.error('Failed to confirm booking:', responseData.message);
+                // console.error('Failed to confirm booking:', responseData.message);
+                setErrorModal(true);
+                setErrormasg(responseData.message);
             }
 
         } catch (error) {
-            console.log("Error For confirm booking:", error);
+            // console.log("Error For confirm booking:", error);
+            setErrorModal(true);
+            setErrormasg(error);
         }
     }
 
@@ -644,6 +652,31 @@ const Index = (props) => {
                 </View>
             </Modal>
 
+            {/* Start Show Error Modal */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={errorModal}
+                onRequestClose={closeErrorModal}
+            >
+                <View style={styles.errorModalOverlay}>
+                    <View style={styles.errorModalContainer}>
+                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}>
+                            <View style={{ alignItems: 'center' }}>
+                                <MaterialIcons name="report-gmailerrorred" size={100} color="red" />
+                                <Text style={{ color: '#000', fontSize: 20, fontWeight: 'bold', textAlign: 'center', letterSpacing: 0.3 }}>{errormasg}</Text>
+                            </View>
+                        </View>
+                        <View style={{ width: '95%', alignSelf: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', marginTop: 10 }}>
+                            <TouchableOpacity onPress={closeErrorModal} style={styles.confirmDeleteBtn}>
+                                <Text style={styles.btnText}>OK</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+            {/* End Show Error Modal */}
+
         </SafeAreaView>
     )
 }
@@ -860,5 +893,33 @@ const styles = StyleSheet.create({
         fontWeight: '400',
         width: '50%',
         // textTransform: 'capitalize'
-    }
+    },
+    errorModalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    errorModalContainer: {
+        width: '90%',
+        backgroundColor: '#fff',
+        borderRadius: 15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.3,
+        shadowRadius: 20,
+        elevation: 10,
+        padding: 20,
+    },
+    btnText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600'
+    },
+    confirmDeleteBtn: {
+        backgroundColor: 'green',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 7
+    },
 })
