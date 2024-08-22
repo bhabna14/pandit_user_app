@@ -85,7 +85,7 @@ const Index = (props) => {
         //     "pooja_id", props.route.params.pujaId,
         //     "pooja_fee", props.route.params.pujaFee,
         //     "advance_fee", props.route.params.addvanceFee,
-        //     "booking_date", moment(eventDate).format('YYYY-MM-DD H:MM'),
+        //     "booking_date", moment(eventDate).format('YYYY-MM-DD H:mm'),
         //     "address_id", selectedOption)
         //     return;
         try {
@@ -105,7 +105,7 @@ const Index = (props) => {
                     pooja_id: props.route.params.pujaId,
                     pooja_fee: props.route.params.pujaFee,
                     advance_fee: props.route.params.addvanceFee,
-                    booking_date: moment(eventDate).format('YYYY-MM-DD H:MM'),
+                    booking_date: moment(eventDate).format('YYYY-MM-DD H:mm'),
                     address_id: selectedOption
                 }),
             });

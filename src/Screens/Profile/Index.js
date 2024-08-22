@@ -293,7 +293,7 @@ const Index = (props) => {
                         <View style={{ width: '100%', backgroundColor: '#fff', alignItems: 'center' }}>
                             <TouchableOpacity onPress={() => props.navigation.navigate('PanditBookingHistory')} style={styles.cell}>
                                 <View>
-                                    <Text style={styles.mainLable}>Bookingh History</Text>
+                                    <Text style={styles.mainLable}>Booking History</Text>
                                     <Text style={styles.subLable}>See Your All Booking</Text>
                                 </View>
                                 <Feather name="chevron-right" color={'#555454'} size={30} />
@@ -301,7 +301,7 @@ const Index = (props) => {
                             <View style={{ backgroundColor: '#000', width: '100%', height: 0.4 }}></View>
                             <TouchableOpacity onPress={() => props.navigation.navigate('BookingPending')} style={styles.cell}>
                                 <View>
-                                    <Text style={styles.mainLable}>Bookingh Pending</Text>
+                                    <Text style={styles.mainLable}>Booking Pending</Text>
                                     <Text style={styles.subLable}>See Your All Pending Booking</Text>
                                 </View>
                                 <Feather name="chevron-right" color={'#555454'} size={30} />

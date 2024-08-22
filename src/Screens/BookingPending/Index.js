@@ -31,8 +31,8 @@ const Index = (props) => {
             if (responseData.success === true) {
                 // console.log("getAllOrder-------=====", responseData);
                 setSpinner(false);
-                const pendingOrders = responseData.bookings.filter(order => order.status === 'pending');
-                const paidOrders = responseData.bookings.filter(order => order.status === 'paid');
+                const pendingOrders = responseData.bookings.filter(order => (order.status === 'pending' & order.payment_status === 'pending' & order.application_status === 'pending' & order.pooja_status === 'pending') || (order.status === 'pending' & order.payment_status === 'pending' & order.application_status === 'approved' & order.pooja_status === 'pending'));
+                const paidOrders = responseData.bookings.filter(order => (order.status === 'paid' & order.payment_status === 'paid' & order.application_status === 'approved' & order.pooja_status === 'pending') || (order.status === 'paid' & order.payment_status === 'paid' & order.application_status === 'approved' & order.pooja_status === 'started'));
                 setAllPendingOrders(pendingOrders);
                 setAllPaidOrders(paidOrders);
             }

@@ -112,7 +112,7 @@ const Index = (props) => {
             });
             const responseData = await response.json();
             if (responseData.success === true) {
-                console.log("getProfile-------", responseData);
+                // console.log("getProfile-------", responseData);
                 setProfileDetails(responseData.user);
                 // setImageSource(user.);
             }
@@ -266,7 +266,7 @@ const Index = (props) => {
     useEffect(() => {
         if (isFocused) {
             getProfile();
-            console.log("get booking details by props", bookingDetails);
+            // console.log("get booking details by props", bookingDetails);
             setSpinner(true);
             setTimeout(() => {
                 setSpinner(false);
@@ -404,12 +404,17 @@ const Index = (props) => {
                     <Text style={styles.buttonText}>₹{bookingDetails.pooja_fee - bookingDetails.advance_fee}</Text>
                 </TouchableOpacity>
             }
-            {bookingDetails.status === "paid" && bookingDetails.payment_status === "paid" && bookingDetails.application_status === "approved" && (bookingDetails.pooja_status === "pending" || bookingDetails.pooja_status === "started") &&
+            {bookingDetails.status === "paid" && bookingDetails.payment_status === "paid" && bookingDetails.application_status === "approved" && bookingDetails.pooja_status === "started" &&
+                <View style={[styles.fixedBtm, { backgroundColor: '#f04029', marginBottom: 5 }]}>
+                    <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold' }}>Pooja Started</Text>
+                </View>
+            }
+            {bookingDetails.status === "paid" && bookingDetails.payment_status === "paid" && bookingDetails.application_status === "approved" && bookingDetails.pooja_status === "pending" &&
                 <TouchableOpacity onPress={() => handleCancel()} style={[styles.fixedBtm, { backgroundColor: '#f04029', marginBottom: 5 }]}>
                     <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold' }}>Cancel Booking</Text>
                 </TouchableOpacity>
             }
-            {bookingDetails.status === "paid" && bookingDetails.payment_status === "paid" && bookingDetails.application_status === "approved" && bookingDetails.pooja_status === "completed" &&
+            {bookingDetails.status === "paid" && bookingDetails.payment_status === "paid" && bookingDetails.application_status === "approved" && bookingDetails.pooja_status === "completed" && bookingDetails.rating_details === null &&
                 <TouchableOpacity onPress={() => handleRate()} style={styles.fixedBtm}>
                     <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold' }}>Rate This Pooja</Text>
                 </TouchableOpacity>

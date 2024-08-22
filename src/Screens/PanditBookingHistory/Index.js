@@ -30,7 +30,13 @@ const Index = (props) => {
             if (responseData.success === true) {
                 // console.log("getAllOrder-------=====", responseData);
                 setSpinner(false);
-                const nonPendingOrders = responseData.bookings.filter(order => order.status !== 'pending' && order.status !== 'paid');
+                const nonPendingOrders = responseData.bookings.filter(order => (
+                    (order.status === 'paid' & order.payment_status === 'paid' & order.application_status === 'approved' & order.pooja_status === 'completed')
+                    ||
+                    (order.status === 'canceled' & order.payment_status === 'refundprocess' & order.application_status === 'approved' & order.pooja_status === 'canceled')
+                    ||
+                    (order.status === 'rejected' & order.payment_status === 'rejected' & order.application_status === 'rejected' & order.pooja_status === 'rejected')
+                ));
                 setAllOrders(nonPendingOrders);
             }
         } catch (error) {
@@ -40,8 +46,32 @@ const Index = (props) => {
     }
 
     const filteredOrders = allOrders.filter(order => {
-        if (activeTab === 'all_order') return true;
-        return order.status === activeTab;
+        switch (activeTab) {
+            case 'completed':
+                return (
+                    order.status === 'paid' &&
+                    order.payment_status === 'paid' &&
+                    order.application_status === 'approved' &&
+                    order.pooja_status === 'completed'
+                );
+            case 'canceled':
+                return (
+                    order.status === 'canceled' &&
+                    order.payment_status === 'refundprocess' &&
+                    order.application_status === 'approved' &&
+                    order.pooja_status === 'canceled'
+                );
+            case 'rejected':
+                return (
+                    order.status === 'rejected' &&
+                    order.payment_status === 'rejected' &&
+                    order.application_status === 'rejected' &&
+                    order.pooja_status === 'rejected'
+                );
+            case 'all_order':
+            default:
+                return true;
+        }
     });
 
     useEffect(() => {
@@ -72,7 +102,7 @@ const Index = (props) => {
                             <Text style={activeTab === "all_order" ? styles.activeTabBtmText : styles.tabBtmText}>All</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={activeTab === "completed" ? [styles.activeTabBtm, {width: '25%'}] : [styles.tabBtm, {width: '25%'}]}
+                            style={activeTab === "completed" ? [styles.activeTabBtm, { width: '25%' }] : [styles.tabBtm, { width: '25%' }]}
                             onPress={() => setActiveTab('completed')}
                         >
                             <Text style={activeTab === "completed" ? styles.activeTabBtmText : styles.tabBtmText}>Complete</Text>
@@ -118,51 +148,34 @@ const Index = (props) => {
                                                 <View style={{ width: '54%' }}>
                                                     <Text style={{ color: '#000', fontSize: 17, fontWeight: '500' }}>{item?.pooja?.poojalist?.pooja_name}</Text>
                                                     <Text style={{ color: '#6e6e6e', fontSize: 14, fontWeight: '400' }}>{item?.booking_date}</Text>
-                                                    {item.status === 'pending' &&
-                                                        <View style={{ backgroundColor: '#f5a04c', paddingBottom: 3, width: 75, alignItems: 'center', borderRadius: 5, marginTop: 3 }}>
-                                                            <Text style={{ color: '#fff', fontSize: 14, fontWeight: '500' }}>{item.status}</Text>
+                                                    {(item.status === 'paid' && item.payment_status === 'paid' && item.application_status === 'approved' && item.pooja_status === 'completed') &&
+                                                        <View style={{ backgroundColor: 'green', paddingBottom: 3, width: 85, alignItems: 'center', borderRadius: 5, marginTop: 3 }}>
+                                                            <Text style={{ color: '#fff', fontSize: 14, fontWeight: '500' }}>Completed</Text>
                                                         </View>
                                                     }
-                                                    {item.status === 'completed' &&
-                                                        <View style={{ backgroundColor: '#15eb2e', paddingBottom: 3, width: 75, alignItems: 'center', borderRadius: 5, marginTop: 3 }}>
-                                                            <Text style={{ color: '#fff', fontSize: 14, fontWeight: '500' }}>{item.status}</Text>
-                                                        </View>
-                                                    }
-                                                    {item.status === 'paid' &&
-                                                        <View style={{ backgroundColor: 'green', paddingBottom: 3, width: 55, alignItems: 'center', borderRadius: 5, marginTop: 3 }}>
-                                                            <Text style={{ color: '#fff', fontSize: 14, fontWeight: '500' }}>{item.status}</Text>
-                                                        </View>
-                                                    }
-                                                    {item.status === 'canceled' &&
+                                                    {(item.status === 'canceled' && item.payment_status === 'refundprocess' && item.application_status === 'approved' && item.pooja_status === 'canceled') &&
                                                         <View style={{ backgroundColor: '#de2e28', paddingBottom: 3, width: 75, alignItems: 'center', borderRadius: 5, marginTop: 3 }}>
-                                                            <Text style={{ color: '#fff', fontSize: 14, fontWeight: '500' }}>{item.status}</Text>
+                                                            <Text style={{ color: '#fff', fontSize: 14, fontWeight: '500' }}>Canceled</Text>
                                                         </View>
                                                     }
-                                                    {item.status === 'rejected' &&
+                                                    {(item.status === 'rejected' && item.payment_status === 'rejected' && item.application_status === 'rejected' && item.pooja_status === 'rejected') &&
                                                         <View style={{ backgroundColor: '#f7072b', paddingBottom: 3, width: 75, alignItems: 'center', borderRadius: 5, marginTop: 3 }}>
-                                                            <Text style={{ color: '#fff', fontSize: 14, fontWeight: '500' }}>{item.status}</Text>
+                                                            <Text style={{ color: '#fff', fontSize: 14, fontWeight: '500' }}>Rejected</Text>
                                                         </View>
                                                     }
                                                 </View>
                                                 <View style={{ width: '20%', alignItems: 'flex-end' }}>
-                                                    {item.application_status === 'approved' &&
-                                                        <TouchableOpacity onPress={() => props.navigation.navigate('BookingDetails', item)} style={{ backgroundColor: 'green', width: '100%', paddingVertical: 8, alignItems: 'center', justifyContent: 'center', borderRadius: 4 }}>
-                                                            <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700', letterSpacing: 2 }}>PAY</Text>
-                                                        </TouchableOpacity>
-                                                    }
-                                                    {item.application_status === 'paid' &&
-                                                        <Text style={{ color: '#cc2727', fontSize: 16, fontWeight: '500' }}>₹{item.paid}</Text>
-                                                    }
-                                                    {item.application_status === 'completed' &&
-                                                        <Text style={{ color: '#cc2727', fontSize: 16, fontWeight: '500' }}>₹{item.paid}</Text>
-                                                    }
-                                                    {item.application_status === 'canceled' &&
-                                                        <Text style={{ color: '#cc2727', fontSize: 16, fontWeight: '500' }}>{item.application_status}</Text>
-                                                    }
-                                                    {item.application_status === 'rejected' &&
-                                                        <Text style={{ color: '#cc2727', fontSize: 16, fontWeight: '500' }}>{item.application_status}</Text>
-                                                    }
+                                                    {(item.status === 'paid' && item.payment_status === 'paid' && item.application_status === 'approved' && item.pooja_status === 'completed') && (
+                                                        <Text style={{ color: '#06c409', fontSize: 16, fontWeight: '500' }}>Complete</Text>
+                                                    )}
+                                                    {(item.status === 'canceled' && item.payment_status === 'refundprocess' && item.application_status === 'approved' && item.pooja_status === 'canceled') && (
+                                                        <Text style={{ color: '#cc2727', fontSize: 16, fontWeight: '500' }}>Canceled</Text>
+                                                    )}
+                                                    {(item.status === 'rejected' && item.payment_status === 'rejected' && item.application_status === 'rejected' && item.pooja_status === 'rejected') && (
+                                                        <Text style={{ color: '#cc2727', fontSize: 16, fontWeight: '500' }}>Rejected</Text>
+                                                    )}
                                                 </View>
+
                                             </TouchableOpacity>
                                         )
                                     }}
