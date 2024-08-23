@@ -266,7 +266,7 @@ const Index = (props) => {
                       />
                     </View>
                   }
-                  <View style={{ width: '97%', alignSelf: 'center', marginTop: 15 }}>
+                  {/* <View style={{ width: '97%', alignSelf: 'center', marginTop: 15 }}>
                     <View style={{ width: '100%' }}>
                       <FlatList
                         horizontal
@@ -292,7 +292,7 @@ const Index = (props) => {
                       style={{ height: 220, width: '100%', borderRadius: 10 }}
                       source={{ uri: 'https://img.freepik.com/free-psd/spiritual-retreat-event-banner-template-design_23-2149236975.jpg' }}
                     />
-                  </View>
+                  </View> */}
                   {allContent.section_04.data.length > 0 &&
                     <View style={{ width: '100%', marginTop: 15 }}>
                       <View style={{ width: '93%', alignSelf: 'center', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>

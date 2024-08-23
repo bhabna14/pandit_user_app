@@ -61,7 +61,7 @@ const Index = (props) => {
         var access_token = await AsyncStorage.getItem('storeAccesstoken');
         // Create form data
         const formData = new FormData();
-        formData.append('booking_id', bookingDetails?.id);
+        formData.append('booking_id', bookingDetails?.booking_id);
         formData.append('rating', rating);
         formData.append('feedback_message', textReview);
         formData.append('image', {
