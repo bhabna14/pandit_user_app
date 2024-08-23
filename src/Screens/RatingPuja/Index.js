@@ -19,6 +19,8 @@ const Index = (props) => {
     const [rating, setRating] = useState(0);
     const [textReview, setTextReview] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [showError, setShowError] = useState(false);
 
     const selectImage = async () => {
         const options = {
@@ -57,6 +59,25 @@ const Index = (props) => {
     };
 
     const submitReview = async () => {
+
+        if (rating === 0) {
+            setShowError(true);
+            setTimeout(() => {
+                setShowError(false);
+            }, 5000);
+            setErrorMessage('Please provide a rating.');
+            return;
+        }
+
+        if (textReview.trim() === '') {
+            setShowError(true);
+            setTimeout(() => {
+                setShowError(false);
+            }, 5000);
+            setErrorMessage('Please provide a text review.');
+            return;
+        }
+
         setIsLoading(true); // Start loading
         var access_token = await AsyncStorage.getItem('storeAccesstoken');
         // Create form data
@@ -64,17 +85,23 @@ const Index = (props) => {
         formData.append('booking_id', bookingDetails?.booking_id);
         formData.append('rating', rating);
         formData.append('feedback_message', textReview);
-        formData.append('image', {
-            uri: imageRes?.assets[0]?.uri,
-            name: imageRes?.assets[0]?.fileName,
-            filename: imageRes?.assets[0]?.fileName,
-            type: imageRes?.assets[0]?.type
-        });
-        formData.append('audioFile', {
-            uri: audioRes?.uri,
-            type: audioRes?.type,
-            name: audioRes?.name,
-        });
+        if (imageRes) {
+            formData.append('image', {
+                uri: imageRes?.assets[0]?.uri,
+                name: imageRes?.assets[0]?.fileName,
+                filename: imageRes?.assets[0]?.fileName,
+                type: imageRes?.assets[0]?.type
+            });
+        }
+
+        // Conditionally append audio if selected
+        if (audioRes) {
+            formData.append('audioFile', {
+                uri: audioRes?.uri,
+                type: audioRes?.type,
+                name: audioRes?.name,
+            });
+        }
 
         fetch(base_url + 'api/submit-rating',
             {
@@ -117,7 +144,9 @@ const Index = (props) => {
                     <View style={styles.detailTextContainer}>
                         <Text style={styles.mainText}>{bookingDetails?.pooja?.pooja_name}</Text>
                         <Text style={styles.subText}>{bookingDetails?.pandit?.title + " " + bookingDetails?.pandit?.name}</Text>
+                        {showError && <Text style={styles.errorText}>{errorMessage}</Text>}
                     </View>
+
                     <View style={styles.ratingContainer}>
                         <Text style={styles.label}>Rate the Pooja:</Text>
                         <Rating
@@ -301,5 +330,10 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginTop: 5,
         textAlign: 'center',
+    },
+    errorText: {
+        color: 'red',
+        marginTop: 10,
+        fontSize: 14,
     },
 });
