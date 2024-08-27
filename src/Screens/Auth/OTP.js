@@ -4,6 +4,9 @@ import { FloatingLabelInput } from 'react-native-floating-label-input';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { base_url } from '../../../App';
+import messaging from '@react-native-firebase/messaging';
+import DeviceInfo from 'react-native-device-info';
+import Notification from '../../Component/Notification';
 
 const OTP = (props) => {
 
@@ -19,7 +22,50 @@ const OTP = (props) => {
         }
     }, [otp]);
 
+    const [access_token, setAccess_token] = useState('');
+
+    const getAccessToken = async () => {
+        try {
+            const token = await AsyncStorage.getItem('storeAccesstoken');
+            setAccess_token(token);
+        } catch (error) {
+            console.error('Failed to retrieve access token:', error);
+        }
+    };
+
+    // Request user permission for notifications
+    async function requestUserPermission() {
+        const authStatus = await messaging().requestPermission();
+        const enabled =
+            authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+            authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+        if (enabled) {
+            console.log('Authorization status:', authStatus);
+            getFCMToken();
+        }
+    }
+
+    const [fcmToken, setFcmToken] = useState(null);
+
+    // Get the FCM token for the device
+    async function getFCMToken() {
+        try {
+            const token = await messaging().getToken();
+            console.log('FCM Token:', token);
+            setFcmToken(token);
+        } catch (error) {
+            console.log('Error getting FCM token:', error);
+        }
+    }
+
+    useEffect(() => {
+        getAccessToken();
+        requestUserPermission();
+    }, [])
+
     const pressHandler = async () => {
+        let platformName = DeviceInfo.getSystemName();
         setIsLoading(true);
         try {
             if (otp === "" || otp.length != 6) {
@@ -36,8 +82,10 @@ const OTP = (props) => {
             formData.append('orderId', props.route.params.order_id);
             formData.append('otp', otp);
             formData.append('phoneNumber', props.route.params.phone);
+            formData.append('device_id', fcmToken);
+            formData.append('platform', platformName);
 
-            const response = await fetch( base_url + "api/verify-otpless", {
+            const response = await fetch(base_url + "api/verify-otpless", {
                 method: 'POST',
                 body: formData,
             });
@@ -68,6 +116,7 @@ const OTP = (props) => {
 
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }}>
+            {access_token && <Notification />}
             <ImageBackground source={require('../../assets/images/Login_BG.png')} style={{ flex: 1, resizeMode: 'cover', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%' }}>
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'transparent' }}>
                     <Image

@@ -2,7 +2,8 @@ import { StyleSheet, Text, View, StatusBar } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { LogLevel, OneSignal } from 'react-native-onesignal';
+import messaging from '@react-native-firebase/messaging';
+import Notification from './src/Component/Notification';
 
 // SplashScreen
 import SplashScreen from './src/Screens/SplashScreen/Index'
@@ -51,25 +52,14 @@ const App = () => {
     }, 5000)
   }, []);
 
-  useEffect(() => {
-    // Remove this method to stop OneSignal Debugging
-    OneSignal.Debug.setLogLevel(LogLevel.Verbose);
-
-    // OneSignal Initialization
-    OneSignal.initialize("fe6694a0-d469-4138-abe2-9e45ca4eeb4e");
-
-    // requestPermission will show the native iOS or Android notification permission prompt.
-    // We recommend removing the following code and instead using an In-App Message to prompt for notification permission
-    OneSignal.Notifications.requestPermission(true);
-
-    // Method for listening for notification clicks
-    OneSignal.Notifications.addEventListener('click', (event) => {
-      console.log('OneSignal: notification clicked:', event);
-    });
-  }, [])
+  messaging().setBackgroundMessageHandler(async remoteMessage => {
+    console.log('Message handled in the background!', remoteMessage);
+    // Handle background message here
+  });
 
   return (
     <NavigationContainer>
+      <Notification />
       <StatusBar backgroundColor="#c9170a" barStyle="light-content" />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {showSplash ? (<Stack.Screen name="SplashScreen" component={SplashScreen} options={{ presentation: 'modal', animationTypeForReplace: 'push', animation: 'slide_from_right' }} />) : null}

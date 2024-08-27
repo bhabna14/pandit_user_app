@@ -13,6 +13,7 @@ import { WebView } from 'react-native-webview';
 import DrawerModal from '../../Component/DrawerModal';
 import Podcast from '../Podcast/Index'
 import { base_url } from '../../../App';
+import Notification from '../../Component/Notification';
 
 LogBox.ignoreLogs(['The player has already been initialized via setupPlayer.']);
 
@@ -99,9 +100,12 @@ const Index = (props) => {
     }
   }
 
+  const [accessToken, setAccessToken] = useState(null);
+
   const getAccesstoken = async () => {
     var access_token = await AsyncStorage.getItem('storeAccesstoken');
     console.log("access_token", access_token);
+    setAccessToken(access_token);
   }
 
   useEffect(() => {
@@ -111,9 +115,17 @@ const Index = (props) => {
     }
   }, [isFocused])
 
+  const goToPendingBooking = () => {
+    if (accessToken) {
+      navigation.navigate('BookingPending');
+    } else {
+      navigation.navigate('Login');
+    }
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, flexDirection: 'column', backgroundColor: '#fff' }}>
+      {accessToken && <Notification />}
       <DrawerModal visible={isModalVisible} navigation={navigation} onClose={closeModal} />
       <View style={{ width: '100%', alignItems: 'center', paddingVertical: 10, backgroundColor: '#fff' }}>
         <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-around', marginTop: 0 }}>
@@ -357,7 +369,7 @@ const Index = (props) => {
       <View style={{ padding: 0, height: 58, borderRadius: 0, backgroundColor: '#fff', alignItems: 'center' }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', margin: 0 }}>
           <View style={{ padding: 0, width: '20%' }}>
-            <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" onPress={() => props.navigation.navigate('BookingPending')} style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
+            <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" onPress={goToPendingBooking} style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
               <View style={{ alignItems: 'center' }}>
                 <MaterialIcons name="work-history" color={'#000'} size={21} />
                 <Text style={{ color: '#000', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>BOOKING</Text>

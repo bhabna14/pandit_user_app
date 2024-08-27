@@ -152,55 +152,56 @@ const Index = () => {
           <Text style={{ color: 'red', fontSize: 17 }}>Loading...</Text>
         </View>
         :
-        <ScrollView style={{ flex: 1 }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-          <View style={{ width: '100%', height: 370, borderBottomEndRadius: 20, borderBottomLeftRadius: 20 }}>
-            <ImageBackground source={require('../../assets/images/bg6.jpg')} style={{ width: '100%', height: '100%' }}>
-              <View>
+        <View style={{ flex: 1, marginTop: 6 }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+          <View style={{ width: '100%', borderBottomEndRadius: 20, borderBottomLeftRadius: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 5, elevation: 2 }}>
+            <View style={{ width: '98%', alignSelf: 'center', flexDirection: 'row', alignItems: 'center', paddingBottom: 5 }}>
+              <View style={{ width: '25%' }}>
                 {latestPodcast?.image_url ?
                   <Image style={styles.mainImg} source={{ uri: latestPodcast?.image_url }} />
                   :
                   <Image style={styles.mainImg} source={require('../../assets/images/LordJagannath.jpg')} />
                 }
               </View>
-              <View style={{ marginTop: 10 }}>
-                <Text style={styles.title}>{latestPodcast?.name}</Text>
-                <Text style={{ color: '#000', fontSize: 15, textAlign: 'center' }}>{latestPodcast?.description}</Text>
-              </View>
-              <View style={{ width: '90%', alignSelf: 'center', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', marginTop: 5 }}>
-                <Text style={{ color: '#000', fontSize: 13 }}>{formatTime(progress.position)}</Text>
-                <Slider
-                  style={styles.progessContainer}
-                  value={progress.position}
-                  minimumValue={0}
-                  maximumValue={progress.duration}
-                  thumbTintColor="red"
-                  minimumTrackTintColor="#e8979c"
-                  maximumTrackTintColor="#000"
-                  onSlidingComplete={async (value) => {
-                    await TrackPlayer.seekTo(value);
-                  }}
-                />
-                <Text style={{ color: '#000', fontSize: 13 }}>{formatTime(progress.duration)}</Text>
-              </View>
-              <View style={{ borderBottomEndRadius: 20, borderBottomLeftRadius: 20, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                <View style={styles.musicControls}>
-                  <TouchableOpacity onPress={handleBackward}>
-                    <AntDesign name="banckward" size={25} color="#c80100" />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => togglePlayback(latestPodcast)}>
-                    <Ionicons name={playbackState.state === State.Playing ? 'pause-circle' : 'play-circle'} size={70} color="#c80100" />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={handleForward}>
-                    <AntDesign name="forward" size={25} color="#c80100" />
-                  </TouchableOpacity>
+              <View style={{ width: '75%' }}>
+                <View style={{ marginTop: 10 }}>
+                  <Text style={styles.title}>{latestPodcast?.name}</Text>
+                </View>
+                <View style={{ width: '90%', alignSelf: 'center', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', marginTop: 5 }}>
+                  <Text style={{ color: '#000', fontSize: 13 }}>{formatTime(progress.position)}</Text>
+                  <Slider
+                    style={styles.progessContainer}
+                    value={progress.position}
+                    minimumValue={0}
+                    maximumValue={progress.duration}
+                    thumbTintColor="red"
+                    minimumTrackTintColor="#e8979c"
+                    maximumTrackTintColor="#000"
+                    onSlidingComplete={async (value) => {
+                      await TrackPlayer.seekTo(value);
+                    }}
+                  />
+                  <Text style={{ color: '#000', fontSize: 13 }}>{formatTime(progress.duration)}</Text>
+                </View>
+                <View style={{ borderBottomEndRadius: 20, borderBottomLeftRadius: 20, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                  <View style={styles.musicControls}>
+                    <TouchableOpacity onPress={handleBackward}>
+                      <AntDesign name="banckward" size={20} color="#c80100" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => togglePlayback(latestPodcast)}>
+                      <Ionicons name={playbackState.state === State.Playing ? 'pause-circle' : 'play-circle'} size={50} color="#c80100" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleForward}>
+                      <AntDesign name="forward" size={20} color="#c80100" />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
-            </ImageBackground>
+            </View>
           </View>
-          <View style={{ flex: 1, paddingTop: 6 }}>
+          <View style={{ flex: 1, marginTop: 6 }}>
             <FlatList
               showsVerticalScrollIndicator={false}
-              scrollEnabled={false}
+              // scrollEnabled={false}
               data={allPodcast}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => {
@@ -242,7 +243,7 @@ const Index = () => {
               }}
             />
           </View>
-        </ScrollView>
+        </View>
       }
       {currentMusic &&
         <View style={styles.musicSection}>
@@ -351,11 +352,11 @@ const styles = StyleSheet.create({
     borderRadius: 100
   },
   mainImg: {
-    width: '80%',
-    height: 180,
+    width: 90,
+    height: 90,
     alignSelf: 'center',
-    marginTop: 15,
-    borderRadius: 10
+    // marginTop: 15,
+    borderRadius: 50
   },
   progessContainer: {
     width: '90%',
@@ -369,7 +370,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   title: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: '600',
     textAlign: 'center',
     color: '#000'

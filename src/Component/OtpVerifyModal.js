@@ -1,16 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { base_url } from '../../App';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging from '@react-native-firebase/messaging';
+import DeviceInfo from 'react-native-device-info';
+import Notification from './Notification';
+
 
 const OTPVerifyModal = ({ visible, onClose, phone, orderId }) => {
     const [otp, setOtp] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [showError, setShowError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [access_token, setAccess_token] = useState('');
+
+    const getAccessToken = async () => {
+        try {
+            const token = await AsyncStorage.getItem('storeAccesstoken');
+            setAccess_token(token);
+        } catch (error) {
+            console.error('Failed to retrieve access token:', error);
+        }
+    };
+
+    // Request user permission for notifications
+    async function requestUserPermission() {
+        const authStatus = await messaging().requestPermission();
+        const enabled =
+            authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+            authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+        if (enabled) {
+            console.log('Authorization status:', authStatus);
+            getFCMToken();
+        }
+    }
+
+    const [fcmToken, setFcmToken] = useState(null);
+
+    // Get the FCM token for the device
+    async function getFCMToken() {
+        try {
+            const token = await messaging().getToken();
+            console.log('FCM Token:', token);
+            setFcmToken(token);
+        } catch (error) {
+            console.log('Error getting FCM token:', error);
+        }
+    }
+
+    useEffect(() => {
+        getAccessToken();
+        requestUserPermission();
+    }, [])
 
     const handleVerifyOTP = async () => {
+        let platformName = DeviceInfo.getSystemName();
         setIsLoading(true);
         try {
             if (otp === "" || otp.length != 6) {
@@ -27,6 +73,8 @@ const OTPVerifyModal = ({ visible, onClose, phone, orderId }) => {
             formData.append('orderId', orderId);
             formData.append('otp', otp);
             formData.append('phoneNumber', phone);
+            formData.append('device_id', fcmToken);
+            formData.append('platform', platformName);
 
             const response = await fetch(base_url + 'api/verify-otpless', {
                 method: 'POST',
@@ -64,40 +112,43 @@ const OTPVerifyModal = ({ visible, onClose, phone, orderId }) => {
     }
 
     return (
-        <Modal
-            transparent={true}
-            visible={visible}
-            animationType="slide"
-            onRequestClose={onClose}
-        >
-            <View style={styles.modalOverlay}>
-                <View style={styles.modalContainer}>
-                    <View style={styles.header}>
-                        <Text style={styles.headerText}>Verify OTP</Text>
-                        <TouchableOpacity onPress={modalclose}>
-                            <AntDesign name="close" color="#000" size={28} />
-                        </TouchableOpacity>
+        <View>
+            {access_token && <Notification />}
+            <Modal
+                transparent={true}
+                visible={visible}
+                animationType="slide"
+                onRequestClose={onClose}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <View style={styles.header}>
+                            <Text style={styles.headerText}>Verify OTP</Text>
+                            <TouchableOpacity onPress={modalclose}>
+                                <AntDesign name="close" color="#000" size={28} />
+                            </TouchableOpacity>
+                        </View>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Enter OTP"
+                            value={otp}
+                            onChangeText={setOtp}
+                            keyboardType="number-pad"
+                            maxLength={6}
+                            placeholderTextColor="#ccc"
+                        />
+                        {showError && <Text style={styles.errorText}>{errorMessage}</Text>}
+                        {isLoading ? (
+                            <ActivityIndicator size="large" color="#c80100" />
+                        ) : (
+                            <TouchableOpacity style={styles.verifyButton} onPress={handleVerifyOTP}>
+                                <Text style={styles.verifyButtonText}>Verify OTP</Text>
+                            </TouchableOpacity>
+                        )}
                     </View>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Enter OTP"
-                        value={otp}
-                        onChangeText={setOtp}
-                        keyboardType="number-pad"
-                        maxLength={6}
-                        placeholderTextColor="#ccc"
-                    />
-                    {showError && <Text style={styles.errorText}>{errorMessage}</Text>}
-                    {isLoading ? (
-                        <ActivityIndicator size="large" color="#c80100" />
-                    ) : (
-                        <TouchableOpacity style={styles.verifyButton} onPress={handleVerifyOTP}>
-                            <Text style={styles.verifyButtonText}>Verify OTP</Text>
-                        </TouchableOpacity>
-                    )}
                 </View>
-            </View>
-        </Modal>
+            </Modal>
+        </View>
     );
 };
 
