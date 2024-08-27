@@ -7,22 +7,6 @@ import { base_url } from '../../../App';
 
 const Index = (props) => {
 
-    const liveVideo = [
-        {
-            id: 1,
-            youtube_url: '6fKphXvCUDg',
-            name: 'Sample Video 1',
-            desc: 'Description for video 1'
-        },
-        {
-            id: 2,
-            youtube_url: 'Sample URL 2',
-            name: 'Sample Video 2',
-            desc: 'Description for video 2'
-        },
-        // Add more items as needed
-    ];
-
     const navigation = useNavigation();
     const isFocused = useIsFocused();
     const [spinner, setSpinner] = useState(false);

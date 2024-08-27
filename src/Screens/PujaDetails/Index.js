@@ -138,10 +138,10 @@ const PujaDetails = (props) => {
                                             <View style={styles.panditCard}>
                                                 <TouchableOpacity onPress={() => props.navigation.navigate('PanditDetails', content?.item?.profile?.slug)} style={{ width: '47%', height: '100%', borderRadius: 10 }}>
                                                     <Image source={{ uri: content?.item?.profile?.profile_photo }} style={styles.panditImg} />
-                                                    <View style={styles.ratedBtm}>
+                                                    {/* <View style={styles.ratedBtm}>
                                                         <Feather name="star" color={'#fff'} size={13} />
                                                         <Text style={{ color: '#fff', fontSize: 14, fontWeight: 'bold', marginLeft: 3 }}>3.4</Text>
-                                                    </View>
+                                                    </View> */}
                                                 </TouchableOpacity>
                                                 <View style={{ width: '51%' }}>
                                                     <View style={{ margin: 10, width: '90%', alignItems: 'flex-start', justifyContent: 'center' }}>

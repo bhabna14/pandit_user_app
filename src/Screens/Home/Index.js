@@ -265,14 +265,14 @@ const Index = (props) => {
                                 {item.short_description.length > 55 ? `${item.short_description.slice(0, 55)}...` : item.short_description}
                               </Text>
                             </View>
-                            <View style={{ marginTop: 4, marginBottom: 10, marginHorizontal: 10, alignItems: 'flex-start', flexDirection: 'row' }}>
+                            {/* <View style={{ marginTop: 4, marginBottom: 10, marginHorizontal: 10, alignItems: 'flex-start', flexDirection: 'row' }}>
                               <View style={{ backgroundColor: '#f00062', paddingHorizontal: 3, paddingVertical: 2, borderRadius: 6, alignItems: 'center', justifyContent: 'center', marginRight: 8 }}>
                                 <Text style={{ color: '#fff', fontSize: 12, fontWeight: 'bold' }}>OFFER</Text>
                               </View>
                               <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                                 <Text style={{ color: '#000', fontSize: 13, fontWeight: '400' }}>FLAT 20% OFF</Text>
                               </View>
-                            </View>
+                            </View> */}
                           </TouchableOpacity>
                         )}
                       />
@@ -330,9 +330,9 @@ const Index = (props) => {
                           <TouchableOpacity onPress={() => props.navigation.navigate('PanditDetails', content.item.slug)} style={styles.mostPPlrItem}>
                             <View style={{ width: '100%', height: 120, borderRadius: 10 }}>
                               <Image source={{ uri: content.item.profile_photo }} style={styles.mostPPImage} />
-                              <TouchableOpacity style={styles.saveBtm}>
+                              {/* <TouchableOpacity style={styles.saveBtm}>
                                 <FontAwesome name="bookmark-o" color={'#000'} size={16} />
-                              </TouchableOpacity>
+                              </TouchableOpacity> */}
                             </View>
                             <View style={{ margin: 10, width: '90%', alignItems: 'flex-start', justifyContent: 'center' }}>
                               <TouchableOpacity onPress={() => props.navigation.navigate('PanditDetails', content.item.slug)} style={{ width: '100%' }}>
@@ -342,14 +342,14 @@ const Index = (props) => {
                                 <Text style={{ color: '#000', fontSize: 13, fontWeight: '300', textTransform: 'capitalize' }}>{content.item.about_pandit.length > 40 ? `${content.item.about_pandit.substring(0, 40)}...` : content.item.about_pandit}</Text>
                               }
                             </View>
-                            <View style={{ marginBottom: 10, marginHorizontal: 10, alignItems: 'flex-start', flexDirection: 'row' }}>
+                            {/* <View style={{ marginBottom: 10, marginHorizontal: 10, alignItems: 'flex-start', flexDirection: 'row' }}>
                               <View style={{ backgroundColor: '#f00062', paddingHorizontal: 3, paddingVertical: 2, borderRadius: 6, alignItems: 'center', justifyContent: 'center', marginRight: 8 }}>
                                 <Text style={{ color: '#fff', fontSize: 12, fontWeight: 'bold' }}>OFFER</Text>
                               </View>
                               <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                                 <Text style={{ color: '#000', fontSize: 13, fontWeight: '400' }}>70% off</Text>
                               </View>
-                            </View>
+                            </View> */}
                           </TouchableOpacity>
                         )
                       }}

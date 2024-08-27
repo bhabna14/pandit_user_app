@@ -75,9 +75,9 @@ const Index = (props) => {
                                     <TouchableOpacity onPress={() => props.navigation.navigate('PanditDetails', pandit.item.slug)} style={{ width: '48%', marginHorizontal: 3, backgroundColor: '#fff', borderRadius: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 13, elevation: 5, marginBottom: 20 }}>
                                         <View style={{ width: '100%', height: 120 }}>
                                             <Image source={{ uri: pandit.item.pandit_img_url }} style={styles.image1} />
-                                            <TouchableOpacity style={{ position: 'absolute', top: 10, right: 12, backgroundColor: '#fff', width: 26, height: 26, borderRadius: 15, alignItems: 'center', justifyContent: 'center' }}>
+                                            {/* <TouchableOpacity style={{ position: 'absolute', top: 10, right: 12, backgroundColor: '#fff', width: 26, height: 26, borderRadius: 15, alignItems: 'center', justifyContent: 'center' }}>
                                                 <FontAwesome name="bookmark" color={'red'} size={16} />
-                                            </TouchableOpacity>
+                                            </TouchableOpacity> */}
                                             {typeof pandit.item.rating === 'number' ?
                                                 <View style={{ position: 'absolute', bottom: 10, right: 12, backgroundColor: '#28a745', width: 45, height: 23, borderRadius: 6, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                                                     <Feather name="star" color={'#fff'} size={13} />
