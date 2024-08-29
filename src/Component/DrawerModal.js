@@ -5,17 +5,54 @@ import { useNavigation, useIsFocused } from '@react-navigation/native'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { base_url } from '../../App';
+import messaging from '@react-native-firebase/messaging';
 
 const DrawerModal = ({ visible, onClose }) => {
 
     const navigation = useNavigation();
     const isFocused = useIsFocused();
     const [accessToken, setAccessToken] = useState(null);
+    const [fcmToken, setFcmToken] = useState(null);
+
+    async function getFCMToken() {
+        try {
+            const token = await messaging().getToken();
+            // console.log('FCM Token:', token)
+            setFcmToken(token);
+        } catch (error) {
+            console.log('Error getting FCM token:', error);
+        }
+    }
 
     const confirmLogout = () => {
         onClose();
-        AsyncStorage.removeItem('storeAccesstoken');
-        navigation.replace('Home');
+        try {
+            fetch(base_url + 'api/userLogout', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                body: JSON.stringify({
+                    device_id: fcmToken,
+                }),
+            })
+                .then((response) => response.json())
+                .then(async (responseData) => {
+                    if (responseData.status === 200) {
+                        // console.log(responseData)
+                        AsyncStorage.removeItem('storeAccesstoken');
+                        navigation.replace('Home');
+                    } else {
+                        // console.log("Error-----", responseData.message);
+                        alert(responseData.message);
+                    }
+                })
+        } catch (error) {
+            console.log("error", error)
+        }
     };
 
     const isLogout = () => {
@@ -34,6 +71,7 @@ const DrawerModal = ({ visible, onClose }) => {
 
     useEffect(() => {
         if (isFocused) {
+            getFCMToken();
             getAccesstoken();
         }
     }, [isFocused])
