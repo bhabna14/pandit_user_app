@@ -40,6 +40,7 @@ import TermsOfUse from './src/Screens/TermsOfUse/Index'
 import PrivacyPolicy from './src/Screens/PrivacyPolicy/Index'
 import AboutUs from './src/Screens/AboutUs/Index'
 import ContactUs from './src/Screens/ContactUs/Index'
+import Help from './src/Screens/Help/Index'
 
 const Stack = createNativeStackNavigator()
 
@@ -109,6 +110,7 @@ const App = () => {
             <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
             <Stack.Screen name="AboutUs" component={AboutUs} />
             <Stack.Screen name="ContactUs" component={ContactUs} />
+            <Stack.Screen name="Help" component={Help} />
           </>
         )}
       </Stack.Navigator>

@@ -173,6 +173,11 @@ const Index = (props) => {
               </View>
               :
               <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+                <View style={styles.helpContainer}>
+                  <TouchableOpacity onPress={() => navigation.navigate('Help')} style={{ width: '100%', height: '100%', }}>
+                    <Image source={require('../../assets/logo/Help.jpeg')} style={{ resizeMode: 'cover', width: '100%', height: '100%', borderRadius: 50 }} />
+                  </TouchableOpacity>
+                </View>
                 <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} showsVerticalScrollIndicator={false} style={{ flex: 1, zIndex: 1, }}>
                   {allContent.section_01.data.length > 0 &&
                     <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center' }}>
@@ -603,5 +608,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#343a40',
     padding: 3,
     borderRadius: 6
+  },
+  helpContainer: {
+    backgroundColor: '#e6e0da',
+    height: 75,
+    width: 75,
+    position: 'absolute',
+    bottom: '2%',
+    right: '4%',
+    borderRadius: 50,
+    zIndex: 1000,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 10,
   }
 })
