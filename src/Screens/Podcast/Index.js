@@ -12,7 +12,6 @@ const Index = () => {
 
   const [spinner, setSpinner] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
-  const [allPodcast, setAllPodcast] = useState([]);
   const [latestPodcast, setLatestPodcast] = useState(null);
   const [currentTrack, setCurrentTrack] = useState(null);
   const [currentMusic, setCurrentMusic] = useState(null);
@@ -64,6 +63,16 @@ const Index = () => {
 
     setup();
   }, []);
+
+  const [allPodcast, setAllPodcast] = useState([]);
+  // const [selectedLanguage, setSelectedLanguage] = useState('odia');
+
+  // const filterPodcastsByLanguage = (language) => {
+  //   setSelectedLanguage(language);
+  // };
+
+  // // Filter podcasts by selected language
+  // const filteredPodcasts = allPodcast.filter((podcast) => podcast.language === selectedLanguage);
 
   const getAllPodcast = async () => {
     try {
@@ -198,50 +207,76 @@ const Index = () => {
               </View>
             </View>
           </View>
+          {/* <View style={{ width: '90%', alignSelf: 'center', marginVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <TouchableOpacity
+              style={selectedLanguage === 'odia' ? styles.activeLangBox : styles.langBox}
+              onPress={() => filterPodcastsByLanguage('odia')}
+            >
+              <Text style={selectedLanguage === 'odia' ? styles.activeLangLable : styles.langLable}>Odia</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={selectedLanguage === 'hindi' ? styles.activeLangBox : styles.langBox}
+              onPress={() => filterPodcastsByLanguage('hindi')}
+            >
+              <Text style={selectedLanguage === 'hindi' ? styles.activeLangLable : styles.langLable}>Hindi</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={selectedLanguage === 'english' ? styles.activeLangBox : styles.langBox}
+              onPress={() => filterPodcastsByLanguage('english')}
+            >
+              <Text style={selectedLanguage === 'english' ? styles.activeLangLable : styles.langLable}>English</Text>
+            </TouchableOpacity>
+          </View> */}
           <View style={{ flex: 1, marginTop: 6 }}>
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              // scrollEnabled={false}
-              data={allPodcast}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => {
-                const isPlaying = playbackState.state === State.Playing && currentTrack === item.id;
-                return (
-                  <View style={{ width: '100%', height: 390 }}>
-                    <View style={styles.mainBox}>
-                      {item?.image_url &&
-                        <Image style={{ height: '100%', width: '100%', borderRadius: 14, resizeMode: 'cover' }} source={{ uri: item?.image_url }} />
-                      }
-                      <View style={styles.overlay} />
-                      <View style={styles.spiritual}>
-                        <Text style={{ color: '#fff', fontSize: 14, letterSpacing: 0.5 }}>Spiritual</Text>
-                      </View>
-                      <View style={styles.trackContainer}>
-                        {isPlaying ?
-                          <FastImage
-                            style={{ width: '60%', height: 50 }}
-                            source={require('../../assets/GIF/giphy.gif')}
-                            resizeMode={FastImage.resizeMode.cover}
-                          />
-                          :
-                          <Image source={require('../../assets/images/track.png')} />
+            {allPodcast.length > 0 ?
+              <FlatList
+                showsVerticalScrollIndicator={false}
+                // scrollEnabled={false}
+                data={allPodcast}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => {
+                  const isPlaying = playbackState.state === State.Playing && currentTrack === item.id;
+                  return (
+                    <View style={{ width: '100%', height: 390 }}>
+                      <View style={styles.mainBox}>
+                        {item?.image_url &&
+                          <Image style={{ height: '100%', width: '100%', borderRadius: 14, resizeMode: 'cover' }} source={{ uri: item?.image_url }} />
                         }
-                        <TouchableOpacity
-                          style={styles.playBtn}
-                          onPress={(() => togglePlayback(item))}
-                        >
-                          <AntDesign name={isPlaying ? "pausecircle" : "play"} color={'#f24949'} size={40} />
-                        </TouchableOpacity>
-                      </View>
-                      <View style={styles.descBox}>
-                        <Text style={styles.podcastName}>{item.name}</Text>
-                        <Text style={styles.podcastDesc}>{item.description}</Text>
+                        <View style={styles.overlay} />
+                        <View style={styles.spiritual}>
+                          <Text style={{ color: '#fff', fontSize: 14, letterSpacing: 0.5 }}>Spiritual</Text>
+                        </View>
+                        <View style={styles.trackContainer}>
+                          {isPlaying ?
+                            <FastImage
+                              style={{ width: '60%', height: 50 }}
+                              source={require('../../assets/GIF/giphy.gif')}
+                              resizeMode={FastImage.resizeMode.cover}
+                            />
+                            :
+                            <Image source={require('../../assets/images/track.png')} />
+                          }
+                          <TouchableOpacity
+                            style={styles.playBtn}
+                            onPress={(() => togglePlayback(item))}
+                          >
+                            <AntDesign name={isPlaying ? "pausecircle" : "play"} color={'#f24949'} size={40} />
+                          </TouchableOpacity>
+                        </View>
+                        <View style={styles.descBox}>
+                          <Text style={styles.podcastName}>{item.name}</Text>
+                          <Text style={styles.podcastDesc}>{item.description}</Text>
+                        </View>
                       </View>
                     </View>
-                  </View>
-                );
-              }}
-            />
+                  );
+                }}
+              />
+              :
+              <View style={{ flex: 1, alignItems: 'center', top: '35%' }}>
+                <Text style={{ color: '#000', fontSize: 20, fontWeight: '600' }}>No Podcast Found</Text>
+              </View>
+            }
           </View>
         </View>
       }
@@ -375,4 +410,28 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#000'
   },
+  // langLable: {
+  //   color: '#000',
+  //   fontSize: 15,
+  //   fontWeight: '500'
+  // },
+  // activeLangLable: {
+  //   color: '#fff',
+  //   fontSize: 15,
+  //   fontWeight: '500'
+  // },
+  // langBox: {
+  //   backgroundColor: '#bab7b6',
+  //   paddingHorizontal: 10,
+  //   paddingVertical: 5,
+  //   borderRadius: 6,
+  //   marginLeft: 10
+  // },
+  // activeLangBox: {
+  //   backgroundColor: 'red',
+  //   paddingHorizontal: 10,
+  //   paddingVertical: 5,
+  //   borderRadius: 6,
+  //   marginLeft: 10
+  // }
 });

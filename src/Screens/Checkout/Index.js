@@ -78,9 +78,9 @@ const Index = (props) => {
     const [errorModal, setErrorModal] = useState(false);
     const closeErrorModal = () => { setErrorModal(false); }
     const [errormasg, setErrormasg] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const bookPandit = async () => {
-        const access_token = await AsyncStorage.getItem('storeAccesstoken');
         // console.log("pandit_id", props.route.params.panditId,
         //     "pooja_id", props.route.params.pujaId,
         //     "pooja_fee", props.route.params.pujaFee,
@@ -88,9 +88,12 @@ const Index = (props) => {
         //     "booking_date", moment(eventDate).format('YYYY-MM-DD H:mm'),
         //     "address_id", selectedOption)
         //     return;
+        const access_token = await AsyncStorage.getItem('storeAccesstoken');
+        setIsLoading(true);
         try {
             if (selectedOption === "") {
                 displayErrorMessage("Please Select Your Address");
+                setIsLoading(false);
                 return false;
             }
             const response = await fetch(base_url + 'api/booking/confirm', {
@@ -126,6 +129,8 @@ const Index = (props) => {
             // console.log("Error For confirm booking:", error);
             setErrorModal(true);
             setErrormasg(error);
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -424,10 +429,14 @@ const Index = (props) => {
                     </View>
                 </ScrollView>
             }
-            <TouchableOpacity onPress={bookPandit} style={styles.fixedBtm}>
-                <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold' }}>BOOK NOW</Text>
-                <Feather name="arrow-right" color={'#fff'} size={24} marginLeft={10} marginTop={3} />
-            </TouchableOpacity>
+            {isLoading ? (
+                <ActivityIndicator size="large" color="#c80100" />
+            ) : (
+                <TouchableOpacity onPress={bookPandit} style={styles.fixedBtm}>
+                    <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold' }}>BOOK NOW</Text>
+                    <Feather name="arrow-right" color={'#fff'} size={24} marginLeft={10} marginTop={3} />
+                </TouchableOpacity>
+            )}
 
             <Modal
                 animationType="slide"
