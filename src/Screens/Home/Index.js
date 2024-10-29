@@ -12,6 +12,7 @@ import { FlatListSlider } from 'react-native-flatlist-slider';
 import { WebView } from 'react-native-webview';
 import DrawerModal from '../../Component/DrawerModal';
 import Podcast from '../Podcast/Index'
+import New_podcast from '../New_podcast/Index'
 import { base_url } from '../../../App';
 import Notification from '../../Component/Notification';
 
@@ -129,21 +130,21 @@ const Index = (props) => {
       <DrawerModal visible={isModalVisible} navigation={navigation} onClose={closeModal} />
       <View style={{ width: '100%', alignItems: 'center', paddingVertical: 10, backgroundColor: '#fff' }}>
         <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-around', marginTop: 0 }}>
-          <TouchableOpacity onPress={() => setActiveTab('podcast')} style={{ backgroundColor: activeTab === 'podcast' ? '#dc3545' : '#e3e3e1', width: '30%', paddingVertical: 10, borderRadius: 6, alignItems: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+          <TouchableOpacity onPress={() => setActiveTab('podcast')} style={{ backgroundColor: activeTab === 'podcast' ? '#c9170a' : '#e3e3e1', width: '30%', paddingVertical: 10, borderRadius: 6, alignItems: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
             <Image
               source={require('../../assets/logo/microphone.png')}
               style={{ width: 22, height: 22 }}
             />
             <Text style={{ color: activeTab === 'podcast' ? '#fff' : '#000', fontSize: 16, fontWeight: '600', marginLeft: 6 }}>Podcast</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setActiveTab('pandit')} style={{ backgroundColor: activeTab === 'pandit' ? '#dc3545' : '#e3e3e1', width: '30%', paddingVertical: 10, borderRadius: 6, alignItems: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+          <TouchableOpacity onPress={() => setActiveTab('pandit')} style={{ backgroundColor: activeTab === 'pandit' ? '#c9170a' : '#e3e3e1', width: '30%', paddingVertical: 10, borderRadius: 6, alignItems: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
             <Image
               source={require('../../assets/logo/priest.png')}
               style={{ width: 22, height: 25 }}
             />
             <Text style={{ color: activeTab === 'pandit' ? '#fff' : '#000', fontSize: 16, fontWeight: '600', marginLeft: 6 }}>Pandit</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setActiveTab('shop')} style={{ backgroundColor: activeTab === 'shop' ? '#dc3545' : '#e3e3e1', width: '30%', paddingVertical: 10, borderRadius: 6, alignItems: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+          <TouchableOpacity onPress={() => setActiveTab('shop')} style={{ backgroundColor: activeTab === 'shop' ? '#c9170a' : '#e3e3e1', width: '30%', paddingVertical: 10, borderRadius: 6, alignItems: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
             <Image
               source={require('../../assets/logo/online-shopping.png')}
               style={{ width: 25, height: 25 }}
@@ -155,7 +156,7 @@ const Index = (props) => {
       <View style={{ flex: 1 }}>
         {activeTab === 'podcast' &&
           <View style={{ flex: 1 }}>
-            <Podcast />
+            <New_podcast />
           </View>
         }
         {activeTab === 'pandit' &&
@@ -391,7 +392,7 @@ const Index = (props) => {
           </View>
           <View style={{ padding: 0, width: '23%' }}>
             <View style={{ backgroundColor: '#fff', padding: 8, height: 90, flexDirection: 'column', alignItems: 'center', bottom: 25, borderRadius: 100 }}>
-              <TouchableHighlight onPress={() => setActiveTab('podcast')} activeOpacity={0.6} underlayColor="#DDDDDD" style={{ backgroundColor: '#dc3545', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', borderRadius: 60 }}>
+              <TouchableHighlight onPress={() => setActiveTab('podcast')} activeOpacity={0.6} underlayColor="#DDDDDD" style={{ backgroundColor: '#c9170a', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', borderRadius: 60 }}>
                 <MaterialCommunityIcons style={{}} name="podcast" color={'#fff'} size={40} />
               </TouchableHighlight>
             </View>
