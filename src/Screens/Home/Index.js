@@ -1,32 +1,25 @@
-import { SafeAreaView, StyleSheet, Text, View, TextInput, TouchableOpacity, TouchableHighlight, RefreshControl, Image, Alert, ScrollView, FlatList, Dimensions, KeyboardAvoidingView, Platform, LogBox, BackHandler, ToastAndroid } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, View, TouchableOpacity, TouchableHighlight, RefreshControl, Image, Alert, ScrollView, FlatList, Dimensions, KeyboardAvoidingView, Platform, LogBox, BackHandler, ToastAndroid } from 'react-native'
 import React, { useEffect, useState, useRef } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import Octicons from 'react-native-vector-icons/Octicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { FlatListSlider } from 'react-native-flatlist-slider';
-import { WebView } from 'react-native-webview';
+// import { WebView } from 'react-native-webview';
 import DrawerModal from '../../Component/DrawerModal';
-import Podcast from '../Podcast/Index'
+// import Podcast from '../Podcast/Index'
 import New_podcast from '../New_podcast/Index'
+import Flower from '../Flower/Index'
 import { base_url } from '../../../App';
 import Notification from '../../Component/Notification';
 
 LogBox.ignoreLogs(['The player has already been initialized via setupPlayer.']);
 
 const Index = (props) => {
-
-  const [section_2, setSection_2] = useState([
-    { id: 1, image: 'https://avatars.mds.yandex.net/i?id=b507a2b8d9382967a186c654f1eeaa74-5262078-images-taas-consumers&n=27&h=480&w=480' },
-    { id: 2, image: 'https://images.nightcafe.studio/jobs/xm4AsqDHyU5lSuUMCQIv/xm4AsqDHyU5lSuUMCQIv--1--r293g.jpg?tr=w-1600,c-at_max' },
-    { id: 3, image: 'https://img.freepik.com/premium-photo/night-sky-with-moon-stars-abstract-nature-backgroundnight-sky-with-moon-stars-abstra_912214-42673.jpg?size=338&ext=jpg&ga=GA1.1.867424154.1712880000&semt=ais' },
-    { id: 4, image: 'https://www.eso.org/public/archives/images/thumb300y/eso2008a.jpg' },
-    { id: 5, image: 'https://i.pinimg.com/736x/ed/78/11/ed78116c19573356cd2519cf1f4e73d7.jpg' },
-  ]);
 
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -146,10 +139,10 @@ const Index = (props) => {
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setActiveTab('shop')} style={{ backgroundColor: activeTab === 'shop' ? '#c9170a' : '#e3e3e1', width: '30%', paddingVertical: 10, borderRadius: 6, alignItems: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
             <Image
-              source={require('../../assets/logo/online-shopping.png')}
+              source={require('../../assets/logo/flower.png')}
               style={{ width: 25, height: 25 }}
             />
-            <Text style={{ color: activeTab === 'shop' ? '#fff' : '#000', fontSize: 16, fontWeight: '600', marginLeft: 6 }}>Shop</Text>
+            <Text style={{ color: activeTab === 'shop' ? '#fff' : '#000', fontSize: 16, fontWeight: '600', marginLeft: 6 }}>Flower</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -368,7 +361,7 @@ const Index = (props) => {
         }
         {activeTab === 'shop' &&
           <View style={{ flex: 1 }}>
-            <WebView source={{ uri: 'https://poojastore.33crores.com/' }} style={{ flex: 1 }} />
+            <Flower />
           </View>
         }
       </View>
@@ -383,10 +376,10 @@ const Index = (props) => {
             </TouchableHighlight>
           </View>
           <View style={{ padding: 0, width: '19%' }}>
-            <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" onPress={() => props.navigation.navigate('Flower')} style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
+            <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" onPress={() => props.navigation.navigate('Shop')} style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
               <View style={{ alignItems: 'center' }}>
-                <MaterialCommunityIcons name="flower-tulip-outline" color={'#000'} size={22} />
-                <Text style={{ color: '#000', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>FLOWER</Text>
+                <Fontisto name="shopping-bag-1" color={'#000'} size={22} />
+                <Text style={{ color: '#000', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>SHOP</Text>
               </View>
             </TouchableHighlight>
           </View>

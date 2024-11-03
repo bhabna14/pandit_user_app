@@ -1,17 +1,170 @@
-import { SafeAreaView, StyleSheet, Text, View, TextInput, TouchableOpacity, TouchableHighlight, Dimensions, Image, Modal, Alert, ScrollView, FlatList, RefreshControl } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, View, TouchableOpacity, Image, ScrollView, FlatList, RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { WebView } from 'react-native-webview';
+import { useNavigation, useIsFocused } from '@react-navigation/native'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FlatListSlider } from 'react-native-flatlist-slider';
+import LoginModal from '../../Component/LoginModal';
+import { base_url } from '../../../App';
 
 const Index = (props) => {
+
+    const sliderImages = [
+        {
+            id: '1',
+            banner_img_url: 'https://pandit.33crores.com/images/banner.png',
+        },
+        {
+            id: '2',
+            banner_img_url: 'https://poojastore.33crores.com/cdn/shop/files/3_6426324a-0668-4d7a-b907-cc51d2f0d0b1.png',
+        },
+    ];
+
+    const navigation = useNavigation();
+    const isFocused = useIsFocused();
+    const [refreshing, setRefreshing] = useState(false);
+    const [spinner, setSpinner] = useState(false);
+    const [allPackages, setAllPackages] = useState([]);
+    const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+            getAllPackages();
+            console.log("Refreshing Successful");
+        }, 2000);
+    }, []);
+
+    const getAllPackages = async () => {
+        setSpinner(true);
+        await fetch(base_url + 'api/products', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+        }).then(response => response.json()).then(response => {
+            if (response.status === 200) {
+                // console.log("object", response.data);
+                setAllPackages(response.data);
+                setSpinner(false);
+            } else {
+                console.error('Failed to fetch packages:', response.message);
+                setSpinner(false);
+            }
+            setSpinner(false);
+        }).catch((error) => {
+            console.error('Error:', error);
+            setSpinner(false);
+        });
+    };
+
+    const goToCheckoutPage = async (flower) => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
+        if (access_token) {
+            console.log("flower Details", flower);
+            navigation.navigate('FlowerCheckoutPage', flower);
+        }
+        else {
+            // navigation.navigate('Login');
+            setIsLoginModalVisible(true);
+        }
+    }
+
+    useEffect(() => {
+        if (isFocused) {
+            getAllPackages();
+        }
+    }, [isFocused]);
+
+    const renderItem = ({ item }) => (
+        <View style={styles.mostPPlrItem}>
+            <View style={{ width: '100%', height: 140, borderRadius: 10 }}>
+                <Image source={{ uri: item.product_image }} style={styles.mostPPImage} />
+            </View>
+            <View style={{ margin: 10, width: '90%', alignItems: 'flex-start', justifyContent: 'center' }}>
+                <View style={{ width: '100%' }}>
+                    <Text style={{ color: '#000', fontSize: 15, fontWeight: '500', textTransform: 'capitalize' }}>{item.name}</Text>
+                </View>
+                {item.category === 'Immediateproduct' ?
+                    <Text style={{ color: '#000', fontSize: 13, fontWeight: '400', textTransform: 'capitalize' }}>{item.immediate_price}</Text>
+                    :
+                    <Text style={{ color: '#000', fontSize: 13, fontWeight: '400', textTransform: 'capitalize' }}>₹{item.price}</Text>
+                }
+            </View>
+            <View style={{ width: '80%', alignSelf: 'center', marginBottom: 8 }}>
+                <TouchableOpacity onPress={() => goToCheckoutPage(item)} style={{ width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#c9170a', borderRadius: 6, padding: 8 }}>
+                    <Text style={{ color: '#fff', fontSize: 16, fontWeight: '500', textTransform: 'capitalize' }}>BUY</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
+
     return (
         <SafeAreaView style={{ flex: 1, flexDirection: 'column' }}>
-            <View style={{ flex: 1 }}>
-                <WebView source={{ uri: 'https://poojastore.33crores.com/collections/flower-packages-home-page' }} style={{ flex: 1 }} />
-            </View>
+            <LoginModal visible={isLoginModalVisible} onClose={() => setIsLoginModalVisible(false)} />
+            {spinner === true ?
+                <View style={{ flex: 1, alignSelf: 'center', top: '30%' }}>
+                    {/* <Image style={{ width: 50, height: 50 }} source={require('../../assets/img/loading.gif')} /> */}
+                    <Text style={{ color: '#ffcb44', fontSize: 17 }}>Loading...</Text>
+                </View>
+                :
+                <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
+                    <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center' }}>
+                        <View style={{ width: '100%', marginBottom: 5, marginTop: 0, borderRadius: 10, overflow: 'hidden' }}>
+                            <FlatListSlider
+                                onPress={item => ""}
+                                indicator={false}
+                                data={sliderImages}
+                                imageKey={'banner_img_url'}
+                                height={195}
+                                timer={8000}
+                                animation
+                                autoscroll={false}
+                            />
+                        </View>
+                    </View>
+                    <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center' }}>
+                        <View style={{ width: '100%', marginVertical: 10, borderRadius: 10, overflow: 'hidden' }}>
+                            <Text style={{ fontSize: 18, color: '#000', fontFamily: 'Montserrat-SemiBold' }}>FLOWER SUBSCRIPTION :-</Text>
+                        </View>
+                        <View style={{ width: '100%', borderRadius: 10, overflow: 'hidden' }}>
+                            <FlatList
+                                data={allPackages}
+                                renderItem={renderItem}
+                                scrollEnabled={false}
+                                keyExtractor={item => item.id}
+                                numColumns={2}
+                            // contentContainerStyle={styles.listContent}
+                            />
+                        </View>
+                    </View>
+                </ScrollView>
+            }
         </SafeAreaView>
     )
 }
 
 export default Index
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    mostPPlrItem: {
+        backgroundColor: '#fff',
+        width: '48%',
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.8,
+        shadowRadius: 13,
+        elevation: 5,
+        marginBottom: 10,
+        marginHorizontal: '1.3%'
+    },
+    mostPPImage: {
+        height: '100%',
+        width: '100%',
+        borderTopRightRadius: 10,
+        borderTopLeftRadius: 10,
+        resizeMode: 'cover',
+    },
+})

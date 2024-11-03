@@ -69,7 +69,7 @@ const PujaDetails = (props) => {
 
     useEffect(() => {
         if (isFocused) {
-            console.log("Get Puja Slug by Props-=-=", props.route.params);
+            // console.log("Get Puja Slug by Props-=-=", props.route.params);
             getPujaDetails();
         }
     }, [isFocused])

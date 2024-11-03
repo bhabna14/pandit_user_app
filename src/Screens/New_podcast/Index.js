@@ -1,11 +1,11 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, RefreshControl, Image, Dimensions } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, RefreshControl, Image, Dimensions, Modal } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { FlatListSlider } from 'react-native-flatlist-slider';
 import TrackPlayer, { State, usePlaybackState, useProgress, Capability, Event } from 'react-native-track-player';
 import Slider from '@react-native-community/slider';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import Entypo from 'react-native-vector-icons/Entypo';
+import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FastImage from 'react-native-fast-image';
@@ -16,7 +16,7 @@ const Index = (props) => {
     const sliderImages = [
         {
             id: '1',
-            banner_img_url: 'https://poojastore.33crores.com/cdn/shop/files/3_6426324a-0668-4d7a-b907-cc51d2f0d0b1.png',
+            banner_img_url: 'https://pandit.33crores.com/images/banner.png',
         },
         {
             id: '2',
@@ -38,6 +38,21 @@ const Index = (props) => {
     const playbackState = usePlaybackState();
     const progress = useProgress();
     const [selectedCategory, setSelectedCategory] = useState(null);
+    const [isPlayerModalVisible, setIsPlayerModalVisible] = useState(false);
+    const openPlayerModal = () => setIsPlayerModalVisible(true);
+    const closePlayerModal = () => setIsPlayerModalVisible(false);
+    const [selectPodcast, setSelectPodcast] = useState(null);
+
+    const clickMusic = (podcast) => {
+        openPlayerModal();
+        setSelectPodcast(podcast);
+    };
+
+    const formatTime = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    };
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
@@ -117,6 +132,22 @@ const Index = (props) => {
             console.error('Error during playback toggle:', error);
         }
     };
+
+    const handleForward = async () => {
+        const newPosition = progress.position + 10;
+        if (newPosition < progress.duration) {
+            await TrackPlayer.seekTo(newPosition);
+        }
+    }
+
+    const handleBackward = async () => {
+        const newPosition = progress.position - 10;
+        if (newPosition > 0) {
+            await TrackPlayer.seekTo(newPosition);
+        } else {
+            await TrackPlayer.seekTo(0);
+        }
+    }
 
     const closeMusic = async () => {
         setCurrentTrack(null);
@@ -318,15 +349,15 @@ const Index = (props) => {
                                 showsHorizontalScrollIndicator={false}
                                 renderItem={({ item }) => (
                                     <View style={[styles.podcastList, currentTrack === item.id && { backgroundColor: '#f5dfdf' }]}>
-                                        <View style={{ width: '15%', flexDirection: 'row', alignItems: 'center' }}>
+                                        <TouchableOpacity onPress={() => clickMusic(item)} style={{ width: '15%', flexDirection: 'row', alignItems: 'center' }}>
                                             <Image source={{ uri: item.image_url }} style={{ width: 50, height: 50, borderRadius: 50 }} />
-                                        </View>
-                                        <View style={{ width: '68%' }}>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => clickMusic(item)} style={{ width: '68%' }}>
                                             <Text style={{ color: '#000', fontSize: 15, fontWeight: '500', textTransform: 'capitalize' }}>{item.name}</Text>
                                             <Text style={{ color: '#000', fontSize: 13, fontWeight: '300', textTransform: 'capitalize' }}>
                                                 {item.description.length > 55 ? `${item.description.slice(0, 55)}...` : item.description}
                                             </Text>
-                                        </View>
+                                        </TouchableOpacity>
                                         <TouchableOpacity onPress={() => togglePlayback(item)} style={{ width: '15%', alignItems: 'flex-end' }}>
                                             <AntDesign name={currentTrack === item.id && playbackState.state === "playing" ? "pausecircle" : "play"} color={'#c9170a'} size={40} />
                                         </TouchableOpacity>
@@ -342,7 +373,7 @@ const Index = (props) => {
                 </ScrollView>
             }
             {currentTrack !== null &&
-                <View style={{ width: '100%' }}>
+                <TouchableOpacity onPress={() => clickMusic(currentMusic)} style={{ width: '100%' }}>
                     <View style={{ width: '105%', alignSelf: 'center', height: 4, position: 'absolute', top: -1, zIndex: 999 }}>
                         <Slider
                             style={{ width: '100%', height: 2, zIndex: 999 }}
@@ -374,8 +405,61 @@ const Index = (props) => {
                             </TouchableOpacity>
                         </View>
                     </View>
-                </View>
+                </TouchableOpacity>
             }
+
+            {/* Player Modal Start */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isPlayerModalVisible}
+                onRequestClose={closePlayerModal}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.headerPart}>
+                        <TouchableOpacity onPress={() => closePlayerModal()} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Feather name="chevron-left" color={'#555454'} size={30} />
+                            <Text style={styles.topHeaderText}>Back</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={{ flex: 1, width: '90%', alignSelf: 'center', padding: 20, alignItems: 'center' }}>
+                        <Image
+                            source={{ uri: selectPodcast?.image_url }}
+                            style={styles.coverImage}
+                        />
+                        <View style={styles.infoContainer}>
+                            <Text style={styles.songTitle}>{selectPodcast?.name}</Text>
+                            <Text style={styles.source}>{selectPodcast?.description}</Text>
+                        </View>
+                        <Slider
+                            style={styles.progessContainer}
+                            value={progress.position}
+                            minimumValue={0}
+                            maximumValue={progress.duration}
+                            thumbTintColor="red"
+                            minimumTrackTintColor="#e8979c"
+                            maximumTrackTintColor="#000"
+                            onSlidingComplete={async (value) => {
+                                await TrackPlayer.seekTo(value);
+                            }}
+                        />
+                        <View style={styles.controls}>
+                            <Text style={styles.timeText}>{formatTime(progress.position)}</Text>
+                            <TouchableOpacity onPress={handleBackward}>
+                                <Ionicons name="play-back" size={30} color="#c9170a" />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => togglePlayback(selectPodcast)}>
+                                <Ionicons name={currentTrack === selectPodcast?.id && playbackState.state === "playing" ? 'pause' : 'play'} size={50} color="#c9170a" />
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={handleForward}>
+                                <Ionicons name="play-forward" size={30} color="#c9170a" />
+                            </TouchableOpacity>
+                            <Text style={styles.timeText}>{formatTime(progress.duration)}</Text>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+            {/* Player Modal End */}
         </View>
     )
 }
@@ -540,8 +624,65 @@ const styles = StyleSheet.create({
         borderRadius: 50
     },
     progessContainer: {
-        width: '90%',
+        width: '100%',
         height: 10,
         alignSelf: 'center'
     },
+    modalContainer: {
+        flex: 1,
+        backgroundColor: '#e8e7e6',
+    },
+    headerPart: {
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#fff',
+        paddingVertical: 13,
+        paddingHorizontal: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.8,
+        shadowRadius: 13,
+        elevation: 5,
+    },
+    topHeaderText: {
+        color: '#000',
+        fontSize: 18,
+        fontWeight: '500',
+        marginBottom: 3,
+        marginLeft: 5,
+    },
+    coverImage: {
+        width: '100%',
+        height: 290,
+        borderRadius: 10,
+        marginVertical: 15,
+    },
+    infoContainer: {
+        alignItems: 'center',
+        marginVertical: 5,
+    },
+    songTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        color: '#000'
+    },
+    source: {
+        marginVertical: 5,
+        fontSize: 14,
+        color: 'gray',
+    },
+    controls: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        width: '100%',
+    },
+    timeText: {
+        fontSize: 12,
+        color: 'gray',
+    },
+
 })

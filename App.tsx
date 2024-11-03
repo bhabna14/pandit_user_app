@@ -34,6 +34,9 @@ import BookingPending from './src/Screens/BookingPending/Index'
 import CancelBooking from './src/Screens/CancelBooking/Index'
 import RatingPuja from './src/Screens/RatingPuja/Index'
 import Flower from './src/Screens/Flower/Index'
+import FlowerCheckoutPage from './src/Screens/FlowerCheckoutPage/Index'
+import PackageHistory from './src/Screens/PackageHistory/Index'
+import Shop from './src/Screens/Shop/Index'
 import YoutubeLive from './src/Screens/YoutubeLive/Index'
 import Panji from './src/Screens/Panji/Index'
 import TermsOfUse from './src/Screens/TermsOfUse/Index'
@@ -104,6 +107,9 @@ const App = () => {
             <Stack.Screen name="CancelBooking" component={CancelBooking} />
             <Stack.Screen name="RatingPuja" component={RatingPuja} />
             <Stack.Screen name="Flower" component={Flower} />
+            <Stack.Screen name='FlowerCheckoutPage' component={FlowerCheckoutPage} />
+            <Stack.Screen name="PackageHistory" component={PackageHistory} />
+            <Stack.Screen name="Shop" component={Shop} />
             <Stack.Screen name="YoutubeLive" component={YoutubeLive} />
             <Stack.Screen name="Panji" component={Panji} />
             <Stack.Screen name="TermsOfUse" component={TermsOfUse} />
