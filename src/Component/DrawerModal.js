@@ -5,6 +5,7 @@ import { useNavigation, useIsFocused } from '@react-navigation/native'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { base_url } from '../../App';
 import messaging from '@react-native-firebase/messaging';
 
@@ -85,6 +86,7 @@ const DrawerModal = ({ visible, onClose }) => {
             navigation.navigate('Login');
         }
     }
+
     const goToPanditBookingHistory = () => {
         if (accessToken) {
             onClose();
@@ -94,6 +96,7 @@ const DrawerModal = ({ visible, onClose }) => {
             navigation.navigate('Login');
         }
     }
+
     const goToPendingBooking = () => {
         if (accessToken) {
             onClose();
@@ -103,6 +106,17 @@ const DrawerModal = ({ visible, onClose }) => {
             navigation.navigate('Login');
         }
     }
+
+    const gotoFlowerHistoryPage = () => {
+        if (accessToken) {
+            onClose();
+            navigation.navigate('PackageHistory');
+        } else {
+            onClose();
+            navigation.navigate('Login');
+        }
+    };
+
     const goToAddressPage = () => {
         if (accessToken) {
             onClose();
@@ -145,6 +159,11 @@ const DrawerModal = ({ visible, onClose }) => {
                             <TouchableOpacity onPress={() => goToPendingBooking()} style={styles.drawerCell}>
                                 <Image style={{ height: 27, width: 27 }} source={require("../assets/logo/orderHistory.png")} />
                                 <Text style={styles.drawerLable}>Booking Pending</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => gotoFlowerHistoryPage()} style={styles.drawerCell}>
+                                {/* <Image style={{ height: 27, width: 27 }} source={require("../assets/logo/orderHistory.png")} /> */}
+                                <Ionicons name="flower-outline" color={'#fff'} size={22} />
+                                <Text style={styles.drawerLable}>Flower Subscription</Text>
                             </TouchableOpacity>
                             {/* <TouchableOpacity onPress={() => { onClose(); navigation.navigate('OrderHistory') }} style={styles.drawerCell}>
                                 <Image style={{ height: 27, width: 27 }} source={require("../assets/logo/orderHistory.png")} />

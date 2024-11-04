@@ -443,8 +443,12 @@ const Index = (props) => {
                                 await TrackPlayer.seekTo(value);
                             }}
                         />
-                        <View style={styles.controls}>
+                        <View style={{ width: '92%', alignSelf: 'center', flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 }}>
                             <Text style={styles.timeText}>{formatTime(progress.position)}</Text>
+                            <Text style={styles.timeText}>{formatTime(progress.duration)}</Text>
+                        </View>
+                        <View style={styles.controls}>
+                            {/* <Text style={styles.timeText}>{formatTime(progress.position)}</Text> */}
                             <TouchableOpacity onPress={handleBackward}>
                                 <Ionicons name="play-back" size={30} color="#c9170a" />
                             </TouchableOpacity>
@@ -454,7 +458,7 @@ const Index = (props) => {
                             <TouchableOpacity onPress={handleForward}>
                                 <Ionicons name="play-forward" size={30} color="#c9170a" />
                             </TouchableOpacity>
-                            <Text style={styles.timeText}>{formatTime(progress.duration)}</Text>
+                            {/* <Text style={styles.timeText}>{formatTime(progress.duration)}</Text> */}
                         </View>
                     </View>
                 </View>
@@ -626,7 +630,8 @@ const styles = StyleSheet.create({
     progessContainer: {
         width: '100%',
         height: 10,
-        alignSelf: 'center'
+        alignSelf: 'center',
+        marginTop: 20
     },
     modalContainer: {
         flex: 1,
@@ -657,11 +662,11 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 290,
         borderRadius: 10,
-        marginVertical: 15,
+        marginTop: 40
     },
     infoContainer: {
         alignItems: 'center',
-        marginVertical: 5,
+        marginTop: 20,
     },
     songTitle: {
         fontSize: 18,
@@ -679,6 +684,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-around',
         width: '100%',
+        marginTop: 20
     },
     timeText: {
         fontSize: 12,

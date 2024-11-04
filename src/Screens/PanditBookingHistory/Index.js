@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, View, TextInput, TouchableOpacity, Dimensions, Image, Modal, Alert, ScrollView, FlatList, RefreshControl } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, View, TouchableOpacity, Image, ScrollView, FlatList } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useIsFocused } from '@react-navigation/native'

@@ -31,7 +31,6 @@ const Index = (props) => {
     const [orderModalVisible, setOrderModalVisible] = useState(false);
     const closeOrderModal = () => { setOrderModalVisible(false) };
     const scaleAnim = useRef(new Animated.Value(1)).current;
-    const [bookingDetails, setBookingDetails] = useState(null);
 
     useEffect(() => {
         Animated.loop(
@@ -371,7 +370,7 @@ const Index = (props) => {
                         <View style={styles.panditDetails}>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginVertical: 10 }}>
                                 <View style={{ width: '15%', height: 80, borderWidth: 0.8, borderRightWidth: 0, backgroundColor: '#fbfdff', alignItems: 'center', justifyContent: 'center', borderColor: '#edeff1', borderTopLeftRadius: 5, borderBottomLeftRadius: 5 }}>
-                                    <Ionicons name="flower-outline" color={'#495057'} size={20} />
+                                    <MaterialCommunityIcons name="flower-outline" color={'#495057'} size={30} />
                                 </View>
                                 <View style={{ width: '85%', height: 80, borderWidth: 0.8, borderColor: '#edeff1', borderTopRightRadius: 5, borderBottomRightRadius: 5 }}>
                                     <TextInput
