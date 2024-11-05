@@ -24,6 +24,7 @@ const Index = (props) => {
     const [refreshing, setRefreshing] = useState(false);
     const [spinner, setSpinner] = useState(false);
     const [allPackages, setAllPackages] = useState([]);
+    const [flowerRequest, setFlowerRequest] = useState([]);
     const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
 
     const onRefresh = React.useCallback(() => {
@@ -45,7 +46,8 @@ const Index = (props) => {
             },
         }).then(response => response.json()).then(response => {
             if (response.status === 200) {
-                // console.log("object", response.data);
+                // console.log("object", response.data.find(item => item.category === "Immediateproduct"));
+                setFlowerRequest(response.data.find(item => item.category === "Immediateproduct"));
                 setAllPackages(response.data);
                 setSpinner(false);
             } else {
@@ -79,22 +81,26 @@ const Index = (props) => {
 
     const renderItem = ({ item }) => (
         <View style={styles.mostPPlrItem}>
-            <View style={{ width: '100%', height: 140, borderRadius: 10 }}>
+            <View style={{ width: '100%', height: 170, borderRadius: 10 }}>
                 <Image source={{ uri: item.product_image }} style={styles.mostPPImage} />
             </View>
             <View style={{ margin: 10, width: '90%', alignItems: 'flex-start', justifyContent: 'center' }}>
                 <View style={{ width: '100%' }}>
-                    <Text style={{ color: '#000', fontSize: 15, fontWeight: '500', textTransform: 'capitalize' }}>{item.name}</Text>
+                    <Text style={{ color: '#000', fontSize: 15, fontFamily: 'Montserrat-Bold', textTransform: 'capitalize' }}>{item.name}</Text>
                 </View>
                 {item.category === 'Immediateproduct' ?
-                    <Text style={{ color: '#000', fontSize: 13, fontWeight: '400', textTransform: 'capitalize' }}>{item.immediate_price}</Text>
+                    <Text style={{ color: '#000', fontSize: 14, fontWeight: '400', textTransform: 'capitalize' }}>{item.immediate_price}</Text>
                     :
-                    <Text style={{ color: '#000', fontSize: 13, fontWeight: '400', textTransform: 'capitalize' }}>₹{item.price}</Text>
+                    <View style={{ flexDirection: 'row', marginVertical: 5 }}>
+                        {/* <Text style={{ color: '#000', fontSize: 14, fontWeight: '400', textTransform: 'capitalize', textDecorationLine: 'line-through', marginRight: 20 }}>Rs. {item.price}</Text> */}
+                        <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold', textTransform: 'capitalize' }}>Rs. {item.price}</Text>
+                    </View>
                 }
+                <Text numberOfLines={4} ellipsizeMode='tail' style={{ color: '#000', fontSize: 13, fontFamily: 'Montserrat-Regular', textTransform: 'capitalize', lineHeight: 20 }}>{item.description}</Text>
             </View>
-            <View style={{ width: '80%', alignSelf: 'center', marginBottom: 8 }}>
+            <View style={{ width: '96%', alignSelf: 'center', marginBottom: 18 }}>
                 <TouchableOpacity onPress={() => goToCheckoutPage(item)} style={{ width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#c9170a', borderRadius: 6, padding: 8 }}>
-                    <Text style={{ color: '#fff', fontSize: 16, fontWeight: '500', textTransform: 'capitalize' }}>BUY</Text>
+                    <Text style={{ color: '#fff', fontSize: 16, fontWeight: '500', textTransform: 'capitalize' }}>Order Now</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -125,16 +131,32 @@ const Index = (props) => {
                         </View>
                     </View>
                     <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center' }}>
+                        <View style={styles.flowerRequest}>
+                            <TouchableOpacity style={{ width: '47%', height: '100%', borderRadius: 10, borderColor: '#000', borderWidth: 0.5 }}>
+                                <Image source={{ uri: flowerRequest?.product_image }} style={{ flex: 1, borderRadius: 10, resizeMode: 'cover' }} />
+                            </TouchableOpacity>
+                            <View style={{ width: '51%' }}>
+                                <View style={{ margin: 10, width: '90%', alignItems: 'flex-start', justifyContent: 'center' }}>
+                                    <Text style={{ color: '#000', fontSize: 16, fontWeight: '500', marginBottom: 5, textTransform: 'capitalize' }}>{flowerRequest?.name}</Text>
+                                    <Text style={{ color: '#000', fontSize: 13, fontWeight: '400', marginBottom: 2 }}>{flowerRequest?.immediate_price}</Text>
+                                    <TouchableOpacity onPress={() => goToCheckoutPage(flowerRequest)} style={{ backgroundColor: '#c3272e', padding: 10, alignSelf: 'center', alignItems: 'center', width: '100%', borderRadius: 8, marginTop: 10 }}>
+                                        <Text style={{ color: '#fff' }}>Flower Request</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+                    <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center' }}>
                         <View style={{ width: '100%', marginVertical: 10, borderRadius: 10, overflow: 'hidden' }}>
                             <Text style={{ fontSize: 18, color: '#000', fontFamily: 'Montserrat-SemiBold' }}>FLOWER SUBSCRIPTION :-</Text>
                         </View>
                         <View style={{ width: '100%', borderRadius: 10, overflow: 'hidden' }}>
                             <FlatList
-                                data={allPackages}
+                                data={allPackages.filter(item => item.category === "Subscription")}
                                 renderItem={renderItem}
                                 scrollEnabled={false}
                                 keyExtractor={item => item.id}
-                                numColumns={2}
+                            // numColumns={2}
                             // contentContainerStyle={styles.listContent}
                             />
                         </View>
@@ -150,7 +172,7 @@ export default Index
 const styles = StyleSheet.create({
     mostPPlrItem: {
         backgroundColor: '#fff',
-        width: '48%',
+        width: '96%',
         borderRadius: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
@@ -165,6 +187,23 @@ const styles = StyleSheet.create({
         width: '100%',
         borderTopRightRadius: 10,
         borderTopLeftRadius: 10,
-        resizeMode: 'cover',
+        resizeMode: 'contain',
     },
+    flowerRequest: {
+        backgroundColor: '#fff',
+        width: '100%',
+        height: 160,
+        alignSelf: 'center',
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.8,
+        shadowRadius: 13,
+        elevation: 4,
+        marginBottom: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 6,
+        marginTop: 10
+    }
 })

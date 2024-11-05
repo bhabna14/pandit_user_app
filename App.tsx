@@ -36,6 +36,7 @@ import RatingPuja from './src/Screens/RatingPuja/Index'
 import Flower from './src/Screens/Flower/Index'
 import FlowerCheckoutPage from './src/Screens/FlowerCheckoutPage/Index'
 import PackageHistory from './src/Screens/PackageHistory/Index'
+import PackageDetails from './src/Screens/PackageDetails/Index'
 import Shop from './src/Screens/Shop/Index'
 import YoutubeLive from './src/Screens/YoutubeLive/Index'
 import Panji from './src/Screens/Panji/Index'
@@ -109,6 +110,7 @@ const App = () => {
             <Stack.Screen name="Flower" component={Flower} />
             <Stack.Screen name='FlowerCheckoutPage' component={FlowerCheckoutPage} />
             <Stack.Screen name="PackageHistory" component={PackageHistory} />
+            <Stack.Screen name="PackageDetails" component={PackageDetails} />
             <Stack.Screen name="Shop" component={Shop} />
             <Stack.Screen name="YoutubeLive" component={YoutubeLive} />
             <Stack.Screen name="Panji" component={Panji} />

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, RefreshControl, Image, Dimensions, Modal } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, RefreshControl, Image, Dimensions, Modal, ImageBackground } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { FlatListSlider } from 'react-native-flatlist-slider';
@@ -213,12 +213,12 @@ const Index = (props) => {
 
     return (
         <View style={{ flex: 1, backgroundColor: '#fff' }}>
-            <TouchableOpacity style={styles.searchBox}>
+            {/* <TouchableOpacity style={styles.searchBox}>
                 <View style={{ width: '10%' }}>
                     <AntDesign name="search1" color={'#ffcb44'} size={28} />
                 </View>
                 <Text style={{ color: '#888888', fontSize: 17 }}>Search for Podcasts</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             {spinner === true ?
                 <View style={{ flex: 1, alignSelf: 'center', top: '30%' }}>
                     {/* <Image style={{ width: 50, height: 50 }} source={require('../../assets/img/loading.gif')} /> */}
@@ -415,13 +415,13 @@ const Index = (props) => {
                 visible={isPlayerModalVisible}
                 onRequestClose={closePlayerModal}
             >
-                <View style={styles.modalContainer}>
-                    <View style={styles.headerPart}>
+                <ImageBackground source={require('../../assets/images/bg1.jpg')} style={styles.modalContainer}>
+                    {/* <View style={styles.headerPart}>
                         <TouchableOpacity onPress={() => closePlayerModal()} style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Feather name="chevron-left" color={'#555454'} size={30} />
                             <Text style={styles.topHeaderText}>Back</Text>
                         </TouchableOpacity>
-                    </View>
+                    </View> */}
                     <View style={{ flex: 1, width: '90%', alignSelf: 'center', padding: 20, alignItems: 'center' }}>
                         <Image
                             source={{ uri: selectPodcast?.image_url }}
@@ -437,7 +437,7 @@ const Index = (props) => {
                             minimumValue={0}
                             maximumValue={progress.duration}
                             thumbTintColor="red"
-                            minimumTrackTintColor="#e8979c"
+                            minimumTrackTintColor="#fff"
                             maximumTrackTintColor="#000"
                             onSlidingComplete={async (value) => {
                                 await TrackPlayer.seekTo(value);
@@ -450,18 +450,18 @@ const Index = (props) => {
                         <View style={styles.controls}>
                             {/* <Text style={styles.timeText}>{formatTime(progress.position)}</Text> */}
                             <TouchableOpacity onPress={handleBackward}>
-                                <Ionicons name="play-back" size={30} color="#c9170a" />
+                                <Ionicons name="play-back" size={30} color="#fff" />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => togglePlayback(selectPodcast)}>
-                                <Ionicons name={currentTrack === selectPodcast?.id && playbackState.state === "playing" ? 'pause' : 'play'} size={50} color="#c9170a" />
+                                <Ionicons name={currentTrack === selectPodcast?.id && playbackState.state === "playing" ? 'pause' : 'play'} size={50} color="#fff" />
                             </TouchableOpacity>
                             <TouchableOpacity onPress={handleForward}>
-                                <Ionicons name="play-forward" size={30} color="#c9170a" />
+                                <Ionicons name="play-forward" size={30} color="#fff" />
                             </TouchableOpacity>
                             {/* <Text style={styles.timeText}>{formatTime(progress.duration)}</Text> */}
                         </View>
                     </View>
-                </View>
+                </ImageBackground>
             </Modal>
             {/* Player Modal End */}
         </View>
@@ -635,7 +635,8 @@ const styles = StyleSheet.create({
     },
     modalContainer: {
         flex: 1,
-        backgroundColor: '#e8e7e6',
+        // backgroundColor: '#e8e7e6',
+        resizeMode: 'contain',
     },
     headerPart: {
         width: '100%',
@@ -670,14 +671,16 @@ const styles = StyleSheet.create({
     },
     songTitle: {
         fontSize: 18,
-        fontWeight: 'bold',
+        // fontWeight: 'bold',
+        fontFamily: 'Montserrat-SemiBold',
         textAlign: 'center',
-        color: '#000'
+        color: '#fff'
     },
     source: {
         marginVertical: 5,
         fontSize: 14,
-        color: 'gray',
+        // color: 'gray',
+        color: '#c9c7c7',
     },
     controls: {
         flexDirection: 'row',

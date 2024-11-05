@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, View, TextInput, TouchableOpacity, Image, Alert, Modal, ScrollView, FlatList, RefreshControl, ActivityIndicator, Animated, Easing } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, View, TextInput, TouchableOpacity, Image, Alert, Modal, ScrollView, FlatList, KeyboardAvoidingView, ActivityIndicator, Animated, Easing } from 'react-native'
 import React, { useEffect, useState, useRef } from 'react'
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -7,10 +7,13 @@ import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 import moment from 'moment';
+import DatePicker from 'react-native-date-picker'
 import RazorpayCheckout from 'react-native-razorpay';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { base_url } from '../../../App';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const Index = (props) => {
 
@@ -27,10 +30,29 @@ const Index = (props) => {
     const [anyFlower, setAnyFlower] = useState("");
     const [addAddressModal, setAddAddressModal] = useState(false);
     const [profileDetails, setProfileDetails] = useState({});
+    const [dob, setDob] = useState(new Date(new Date().setDate(new Date().getDate() + 1)));
+    const [dateOpen, setDateOpen] = useState(false);
 
     const [orderModalVisible, setOrderModalVisible] = useState(false);
     const closeOrderModal = () => { setOrderModalVisible(false) };
     const scaleAnim = useRef(new Animated.Value(1)).current;
+
+    const [flowerName, setFlowerName] = useState(null);
+    const [flowerUnit, setFlowerUnit] = useState(null);
+    const [flowerNameOpen, setFlowerNameOpen] = useState(false);
+    const [flowerUnitOpen, setFlowerUnitOpen] = useState(false);
+    const [flowerNames, setFlowerNames] = useState([
+        { label: 'Rose', value: 'rose' },
+        { label: 'Lily', value: 'lily' },
+        { label: 'Tulip', value: 'tulip' },
+        { label: 'Marigold', value: 'marigold' },
+        { label: 'Jasmine', value: 'jasmine' },
+    ]);
+    const [flowerUnits, setFlowerUnits] = useState([
+        { label: 'Dozen', value: 'dozen' },
+        { label: 'Bunch', value: 'bunch' },
+        { label: 'Single', value: 'single' },
+    ]);
 
     useEffect(() => {
         Animated.loop(
@@ -127,8 +149,10 @@ const Index = (props) => {
                     product_id: props.route.params.product_id,
                     address_id: selectedOption,
                     payment_id: data.razorpay_payment_id || "", // capture Razorpay payment ID if available
+                    // payment_id: "pay_29QQoUBi66xm2f",
                     paid_amount: props.route.params.price,
-                    suggestion: suggestions
+                    suggestion: suggestions,
+                    start_date: moment(dob).format('YYYY-MM-DD')
                 }),
             });
 
@@ -178,7 +202,8 @@ const Index = (props) => {
                     product_id: props.route.params.product_id,
                     address_id: selectedOption,
                     description: anyFlower,
-                    suggestion: suggestions
+                    suggestion: suggestions,
+                    date: moment(dob).format('YYYY-MM-DD')
                 }),
             });
 
@@ -368,6 +393,43 @@ const Index = (props) => {
                     </View>
                     {props.route.params.category === "Immediateproduct" &&
                         <View style={styles.panditDetails}>
+                            {/* <View style={{ width: '100%', paddingVertical: 10 }}>
+                                <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+                                    <View style={{ marginBottom: 15, zIndex: 2000 }}>
+                                        <Text style={styles.label}>Select Flower Name</Text>
+                                        <DropDownPicker
+                                            open={flowerNameOpen}
+                                            value={flowerName}
+                                            items={flowerNames}
+                                            setOpen={setFlowerNameOpen}
+                                            setValue={setFlowerName}
+                                            setItems={setFlowerNames}
+                                            placeholder="Select Flower"
+                                            style={{ borderColor: '#edeff1', borderRadius: 5, marginTop: 5 }}
+                                            dropDownContainerStyle={{ borderColor: '#edeff1' }}
+                                            zIndex={2000}
+                                            zIndexInverse={1000} // Use a higher value for the first dropdown
+                                        />
+                                    </View>
+                                    <View style={{ marginBottom: 15, zIndex: 1000 }}>
+                                        <Text style={styles.label}>Select Unit</Text>
+                                        <DropDownPicker
+                                            open={flowerUnitOpen}
+                                            value={flowerUnit}
+                                            items={flowerUnits}
+                                            setOpen={setFlowerUnitOpen}
+                                            setValue={setFlowerUnit}
+                                            // dropDownDirection='TOP'
+                                            setItems={setFlowerUnits}
+                                            placeholder="Select Unit"
+                                            style={{ borderColor: '#edeff1', borderRadius: 5, marginTop: 5 }}
+                                            dropDownContainerStyle={{ borderColor: '#edeff1' }}
+                                            zIndex={1000}
+                                            zIndexInverse={2000} // Lower value for the second dropdown to prevent overlap
+                                        />
+                                    </View>
+                                </KeyboardAvoidingView>
+                            </View> */}
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginVertical: 10 }}>
                                 <View style={{ width: '15%', height: 80, borderWidth: 0.8, borderRightWidth: 0, backgroundColor: '#fbfdff', alignItems: 'center', justifyContent: 'center', borderColor: '#edeff1', borderTopLeftRadius: 5, borderBottomLeftRadius: 5 }}>
                                     <MaterialCommunityIcons name="flower-outline" color={'#495057'} size={30} />
@@ -388,6 +450,37 @@ const Index = (props) => {
                         </View>
                     }
                     <View style={styles.address}>
+                        <View style={{ width: '100%', marginBottom: 15 }}>
+                            {props.route.params.category === "Immediateproduct" ?
+                                <Text style={styles.label}>Customized Flower Date</Text>
+                                :
+                                <Text style={styles.label}>Subscription Start Date</Text>
+                            }
+                            <TouchableOpacity onPress={() => setDateOpen(true)}>
+                                <TextInput
+                                    style={styles.input}
+                                    value={dob ? moment(dob).format('DD-MM-YYYY') : ""}
+                                    editable={false}
+                                />
+                                <Fontisto name="date" color={'#555454'} size={20} style={{ position: 'absolute', right: 10, top: 10 }} />
+                            </TouchableOpacity>
+                            <View>
+                                <DatePicker
+                                    modal
+                                    mode="date"
+                                    minimumDate={new Date(new Date().setDate(new Date().getDate() + 1))}
+                                    open={dateOpen}
+                                    date={dob || new Date()}
+                                    onConfirm={(data) => {
+                                        setDateOpen(false)
+                                        setDob(data)
+                                    }}
+                                    onCancel={() => {
+                                        setDateOpen(false);
+                                    }}
+                                />
+                            </View>
+                        </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                             <View style={{ width: '15%', height: 80, borderWidth: 0.8, borderRightWidth: 0, backgroundColor: '#fbfdff', alignItems: 'center', justifyContent: 'center', borderColor: '#edeff1', borderTopLeftRadius: 5, borderBottomLeftRadius: 5 }}>
                                 <Feather name="message-square" color={'#495057'} size={20} />
@@ -829,5 +922,16 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 7
+    },
+    label: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#333',
+    },
+    input: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#757473',
+        marginBottom: 10,
+        color: '#333',
     },
 })
