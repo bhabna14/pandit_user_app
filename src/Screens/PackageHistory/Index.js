@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import Feather from 'react-native-vector-icons/Feather';
-import DatePicker from 'react-native-date-picker';
+import { Calendar } from 'react-native-calendars';
 import { base_url } from '../../../App';
 import moment from 'moment';
 
@@ -19,8 +19,30 @@ const Index = (props) => {
 
     const [startDate, setStartDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1)));
     const [endDate, setEndDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1)));
-    const [openStartDatePicker, setOpenStartDatePicker] = useState(false);
-    const [openEndDatePicker, setOpenEndDatePicker] = useState(false);
+
+    useEffect(() => {
+        if (endDate < startDate) {
+            setEndDate(startDate);
+        }
+    }, [startDate]);
+
+    const handleStartDatePress = (day) => {
+        setStartDate(new Date(day.dateString));
+        closeStartDatePicker();
+    };
+
+    const handleEndDatePress = (day) => {
+        setEndDate(new Date(day.dateString));
+        closeEndDatePicker();
+    };
+
+    const [isStartDateModalOpen, setIsStartDateModalOpen] = useState(false);
+    const openStartDatePicker = () => { setIsStartDateModalOpen(true) };
+    const closeStartDatePicker = () => { setIsStartDateModalOpen(false) };
+    const [isEndDateModalOpen, setIsEndDateModalOpen] = useState(false);
+    const openEndDatePicker = () => { setIsEndDateModalOpen(true) };
+    const closeEndDatePicker = () => { setIsEndDateModalOpen(false) };
+
     const [isPauseModalVisible, setPauseModalVisible] = useState(false);
     const openPauseModal = () => setPauseModalVisible(true);
     const closePauseModal = () => setPauseModalVisible(false);
@@ -30,6 +52,7 @@ const Index = (props) => {
         setRefreshing(true);
         setTimeout(() => {
             setRefreshing(false);
+            getSubscriptionList();
             console.log("Refreshing Successful");
         }, 2000);
     }, []);
@@ -141,7 +164,7 @@ const Index = (props) => {
                                     keyExtractor={(item, index) => index.toString()}
                                     renderItem={({ item }) => (
                                         <TouchableOpacity
-                                            onPress={() => navigation.navigate("PackageDetails", item)}
+                                            onPress={() => navigation.navigate("SubscriptionDetails", item)}
                                             style={{ flexDirection: 'row', backgroundColor: '#fff', padding: 15, marginBottom: 15, borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.5, shadowRadius: 10, elevation: 6, overflow: 'hidden' }}
                                         >
                                             <Image source={{ uri: item.flower_product.product_image_url }} style={{ width: 90, height: 90, borderRadius: 12, borderWidth: 1, borderColor: '#eee' }} />
@@ -154,7 +177,12 @@ const Index = (props) => {
                                                 {/* <Text style={{ color: '#666', fontSize: 14, marginTop: 4, lineHeight: 20 }}>{item.flower_product.category}</Text> */}
                                                 <Text style={{ color: '#666', fontSize: 14 }}>Order Id: <Text style={{ color: '#000' }}>{item.order_id}</Text></Text>
                                                 {item.subscription.status === "paused" ?
-                                                    <Text style={{ color: '#c9170a', fontSize: 14, fontWeight: '600' }}>Your subscription is paused from {item.subscription.pause_start_date} to {item.subscription.pause_end_date}</Text>
+                                                    <View>
+                                                        <Text style={{ color: '#c9170a', fontSize: 14, fontWeight: '600' }}>Your subscription is paused from {item.subscription.pause_start_date} to {item.subscription.pause_end_date}</Text>
+                                                        <TouchableOpacity style={{ backgroundColor: 'green', width: 70, height: 30, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginTop: 8 }}>
+                                                            <Text style={{ color: '#fff' }}>Resume</Text>
+                                                        </TouchableOpacity>
+                                                    </View>
                                                     :
                                                     <TouchableOpacity onPress={() => handlePauseButton(item.order_id)} style={{ backgroundColor: 'red', width: 70, height: 30, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginTop: 8 }}>
                                                         <Text style={{ color: '#fff' }}>Pause</Text>
@@ -178,19 +206,24 @@ const Index = (props) => {
                                     keyExtractor={(item, index) => index.toString()}
                                     renderItem={({ item }) => (
                                         <TouchableOpacity
-                                            onPress={() => navigation.navigate("PackageDetails", item)}
+                                            onPress={() => navigation.navigate("FlowerRequestDetails", item)}
                                             style={{ flexDirection: 'row', backgroundColor: '#fff', padding: 15, marginBottom: 15, borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.5, shadowRadius: 10, elevation: 6, overflow: 'hidden' }}
                                         >
                                             <Image source={{ uri: item.flower_product.product_image_url }} style={{ width: 90, height: 90, borderRadius: 12, borderWidth: 1, borderColor: '#eee' }} />
                                             <View style={{ flex: 1, marginLeft: 15 }}>
                                                 <Text style={{ color: '#333', fontSize: 18, fontWeight: 'bold' }}>{item.flower_product.name}</Text>
-                                                {item.order === null ?
+                                                <Text style={{ color: '#666', fontSize: 14, marginTop: 4, lineHeight: 20 }}>{item.description}</Text>
+                                                <Text style={{ color: '#666', fontSize: 14 }}>Request Id: {item.request_id}</Text>
+                                                {item.status === 'pending' ?
                                                     <Text style={{ color: '#ff6347', fontSize: 16, fontWeight: '600' }}>{item.flower_product.immediate_price}</Text>
                                                     :
                                                     <Text style={{ color: '#ff6347', fontSize: 16, fontWeight: '600' }}>₹{item.order.total_price}</Text>
                                                 }
-                                                <Text style={{ color: '#666', fontSize: 14, marginTop: 4, lineHeight: 20 }}>{item.description}</Text>
-                                                <Text style={{ color: '#666', fontSize: 14 }}>Request Id: {item.request_id}</Text>
+                                                {item.status === 'approved' &&
+                                                    <TouchableOpacity onPress={() => navigation.navigate("FlowerRequestDetails", item)} style={{ backgroundColor: 'green', width: 70, height: 30, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginTop: 8 }}>
+                                                        <Text style={{ color: '#fff' }}>Pay</Text>
+                                                    </TouchableOpacity>
+                                                }
                                             </View>
                                         </TouchableOpacity>
                                     )}
@@ -215,7 +248,7 @@ const Index = (props) => {
                             <Feather name="x" color={'#000'} size={30} />
                         </TouchableOpacity>
                         <Text style={styles.label}>Pause Start Time</Text>
-                        <TouchableOpacity onPress={() => setOpenStartDatePicker(true)}>
+                        <TouchableOpacity onPress={openStartDatePicker}>
                             <TextInput
                                 style={styles.input}
                                 value={startDate.toLocaleDateString()}
@@ -224,38 +257,13 @@ const Index = (props) => {
                         </TouchableOpacity>
 
                         <Text style={styles.label}>Pause End Time</Text>
-                        <TouchableOpacity onPress={() => setOpenEndDatePicker(true)}>
+                        <TouchableOpacity onPress={openEndDatePicker}>
                             <TextInput
                                 style={styles.input}
                                 value={endDate.toLocaleDateString()}
                                 editable={false}
                             />
                         </TouchableOpacity>
-                        <DatePicker
-                            modal
-                            open={openStartDatePicker}
-                            date={startDate}
-                            mode="date"
-                            minimumDate={new Date(new Date().setDate(new Date().getDate() + 1))}
-                            onConfirm={(date) => {
-                                setOpenStartDatePicker(false);
-                                setStartDate(date);
-                            }}
-                            onCancel={() => setOpenStartDatePicker(false)}
-                        />
-
-                        <DatePicker
-                            modal
-                            open={openEndDatePicker}
-                            date={endDate}
-                            mode="date"
-                            minimumDate={new Date(new Date().setDate(new Date().getDate() + 1))}
-                            onConfirm={(date) => {
-                                setOpenEndDatePicker(false);
-                                setEndDate(date);
-                            }}
-                            onCancel={() => setOpenEndDatePicker(false)}
-                        />
 
                         <TouchableOpacity style={styles.dateButton} onPress={submitPauseDates}>
                             <Text style={styles.dateText}>Submit</Text>
@@ -263,6 +271,53 @@ const Index = (props) => {
                     </View>
                 </View>
             </Modal>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isStartDateModalOpen}
+                onRequestClose={closeStartDatePicker}
+            >
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+                    <View style={{ width: '90%', padding: 20, backgroundColor: 'white', borderRadius: 10, elevation: 5 }}>
+                        <Calendar
+                            onDayPress={handleStartDatePress}
+                            markedDates={{
+                                [moment(startDate).format('YYYY-MM-DD')]: {
+                                    selected: true,
+                                    marked: true,
+                                    selectedColor: 'blue'
+                                }
+                            }}
+                            minDate={moment().add(1, 'days').format('YYYY-MM-DD')}
+                        />
+                    </View>
+                </View>
+            </Modal>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isEndDateModalOpen}
+                onRequestClose={closeEndDatePicker}
+            >
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+                    <View style={{ width: '90%', padding: 20, backgroundColor: 'white', borderRadius: 10, elevation: 5 }}>
+                        <Calendar
+                            onDayPress={handleEndDatePress}
+                            markedDates={{
+                                [moment(endDate).format('YYYY-MM-DD')]: {
+                                    selected: true,
+                                    marked: true,
+                                    selectedColor: 'blue'
+                                }
+                            }}
+                            minDate={moment().add(1, 'days').format('YYYY-MM-DD')}
+                        />
+                    </View>
+                </View>
+            </Modal>
+
         </SafeAreaView>
     )
 }

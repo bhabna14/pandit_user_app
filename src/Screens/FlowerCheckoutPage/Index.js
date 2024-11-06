@@ -14,6 +14,7 @@ import RazorpayCheckout from 'react-native-razorpay';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { base_url } from '../../../App';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { Calendar } from 'react-native-calendars';
 
 const Index = (props) => {
 
@@ -30,8 +31,11 @@ const Index = (props) => {
     const [anyFlower, setAnyFlower] = useState("");
     const [addAddressModal, setAddAddressModal] = useState(false);
     const [profileDetails, setProfileDetails] = useState({});
+    
     const [dob, setDob] = useState(new Date(new Date().setDate(new Date().getDate() + 1)));
-    const [dateOpen, setDateOpen] = useState(false);
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const openDatePicker = () => { setDatePickerVisibility(true) };
+    const closeDatePicker = () => { setDatePickerVisibility(false) };
 
     const [orderModalVisible, setOrderModalVisible] = useState(false);
     const closeOrderModal = () => { setOrderModalVisible(false) };
@@ -272,8 +276,6 @@ const Index = (props) => {
         }
     }
 
-    // const [name, setName] = useState("");
-    // const [phoneNumber, setPhoneNumber] = useState("");
     const [state, setState] = useState("");
     const [city, setCity] = useState("");
     const [pincode, setPincode] = useState("");
@@ -351,6 +353,11 @@ const Index = (props) => {
 
         setErrors(errors);
         return valid;
+    };
+
+    const handleDayPress = (day) => {
+        setDob(new Date(day.dateString));
+        closeDatePicker();
     };
 
     useEffect(() => {
@@ -456,7 +463,7 @@ const Index = (props) => {
                                 :
                                 <Text style={styles.label}>Subscription Start Date</Text>
                             }
-                            <TouchableOpacity onPress={() => setDateOpen(true)}>
+                            <TouchableOpacity onPress={openDatePicker}>
                                 <TextInput
                                     style={styles.input}
                                     value={dob ? moment(dob).format('DD-MM-YYYY') : ""}
@@ -464,22 +471,6 @@ const Index = (props) => {
                                 />
                                 <Fontisto name="date" color={'#555454'} size={20} style={{ position: 'absolute', right: 10, top: 10 }} />
                             </TouchableOpacity>
-                            <View>
-                                <DatePicker
-                                    modal
-                                    mode="date"
-                                    minimumDate={new Date(new Date().setDate(new Date().getDate() + 1))}
-                                    open={dateOpen}
-                                    date={dob || new Date()}
-                                    onConfirm={(data) => {
-                                        setDateOpen(false)
-                                        setDob(data)
-                                    }}
-                                    onCancel={() => {
-                                        setDateOpen(false);
-                                    }}
-                                />
-                            </View>
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                             <View style={{ width: '15%', height: 80, borderWidth: 0.8, borderRightWidth: 0, backgroundColor: '#fbfdff', alignItems: 'center', justifyContent: 'center', borderColor: '#edeff1', borderTopLeftRadius: 5, borderBottomLeftRadius: 5 }}>
@@ -546,13 +537,13 @@ const Index = (props) => {
                             {allAddresses.length > 1 && (
                                 !showAllAddresses ? (
                                     <TouchableOpacity onPress={toggleAddresses} style={{ backgroundColor: 'transparent', flexDirection: 'row', alignSelf: 'center', alignItems: 'center', marginTop: 5 }}>
-                                        <Text style={{ color: '#555454', fontSize: 14, marginRight: 4, marginBottom: 3 }}>Show All Addresses</Text>
-                                        <FontAwesome name="angle-double-down" color={'#555454'} size={17} />
+                                        <Text style={{ color: '#000', fontSize: 15, fontWeight: '600', marginBottom: 3, marginRight: 3 }}>Show All Addresses</Text>
+                                        <FontAwesome name="angle-double-down" color={'#000'} size={17} />
                                     </TouchableOpacity>
                                 ) : (
                                     <TouchableOpacity onPress={toggleAddresses} style={{ backgroundColor: 'transparent', flexDirection: 'row', alignSelf: 'center', alignItems: 'center', marginTop: 5 }}>
-                                        <Text style={{ color: '#555454', fontSize: 14, marginRight: 4, marginBottom: 2 }}>Hide</Text>
-                                        <FontAwesome name="angle-double-up" color={'#555454'} size={17} />
+                                        <Text style={{ color: '#000', fontSize: 15, fontWeight: '600', marginBottom: 2, marginRight: 3 }}>Hide</Text>
+                                        <FontAwesome name="angle-double-up" color={'#000'} size={17} />
                                     </TouchableOpacity>
                                 )
                             )}
@@ -572,6 +563,29 @@ const Index = (props) => {
             <Modal
                 animationType="slide"
                 transparent={true}
+                visible={isDatePickerVisible}
+                onRequestClose={closeDatePicker}
+            >
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+                    <View style={{ width: '90%', padding: 20, backgroundColor: 'white', borderRadius: 10, elevation: 5 }}>
+                        <Calendar
+                            onDayPress={handleDayPress}
+                            markedDates={{
+                                [moment(dob).format('YYYY-MM-DD')]: {
+                                    selected: true,
+                                    marked: true,
+                                    selectedColor: 'blue'
+                                }
+                            }}
+                            minDate={moment().add(1, 'days').format('YYYY-MM-DD')}
+                        />
+                    </View>
+                </View>
+            </Modal>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
                 visible={addAddressModal}
                 onRequestClose={() => { setAddAddressModal(false) }}
             >
@@ -585,62 +599,19 @@ const Index = (props) => {
                         </TouchableOpacity>
                     </View>
                     <ScrollView style={{ width: '100%', marginTop: 20 }}>
-                        {/* <View style={{ width: '90%', alignSelf: 'center', marginBottom: 25 }}>
-                            <Text style={styles.inputLable}>Full name (First and Last name)</Text>
-                            <View style={styles.card}>
-                                <TextInput
-                                    style={styles.inputs}
-                                    onChangeText={setName}
-                                    value={name}
-                                    placeholder="Enter Your Name"
-                                    placeholderTextColor="#424242"
-                                    underlineColorAndroid='transparent'
-                                />
-                            </View>
-                            {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
-                        </View>
                         <View style={{ width: '90%', alignSelf: 'center', marginBottom: 25 }}>
-                            <Text style={styles.inputLable}>Mobile number</Text>
+                            <Text style={styles.inputLable}>Area, Street, Sector, Village</Text>
                             <View style={styles.card}>
                                 <TextInput
                                     style={styles.inputs}
-                                    onChangeText={setPhoneNumber}
-                                    value={phoneNumber}
-                                    keyboardType='number-pad'
-                                    placeholder="Enter Your Mobile Number"
+                                    onChangeText={setArea}
+                                    value={area}
+                                    placeholder="Enter Your Area, Street, Sector, Village"
                                     placeholderTextColor="#424242"
                                     underlineColorAndroid='transparent'
                                 />
                             </View>
-                            {errors.phoneNumber && <Text style={styles.errorText}>{errors.phoneNumber}</Text>}
-                        </View> */}
-                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 25 }}>
-                            <Text style={styles.inputLable}>State</Text>
-                            <View style={styles.card}>
-                                <TextInput
-                                    style={styles.inputs}
-                                    onChangeText={setState}
-                                    value={state}
-                                    placeholder="Enter Your State"
-                                    placeholderTextColor="#424242"
-                                    underlineColorAndroid='transparent'
-                                />
-                            </View>
-                            {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
-                        </View>
-                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 25 }}>
-                            <Text style={styles.inputLable}>Town/City</Text>
-                            <View style={styles.card}>
-                                <TextInput
-                                    style={styles.inputs}
-                                    onChangeText={setCity}
-                                    value={city}
-                                    placeholder="Enter Your Town/City"
-                                    placeholderTextColor="#424242"
-                                    underlineColorAndroid='transparent'
-                                />
-                            </View>
-                            {errors.city && <Text style={styles.errorText}>{errors.city}</Text>}
+                            {errors.area && <Text style={styles.errorText}>{errors.area}</Text>}
                         </View>
                         <View style={{ width: '90%', alignSelf: 'center', marginBottom: 25 }}>
                             <Text style={styles.inputLable}>Pincode</Text>
@@ -659,18 +630,32 @@ const Index = (props) => {
                             {errors.pincode && <Text style={styles.errorText}>{errors.pincode}</Text>}
                         </View>
                         <View style={{ width: '90%', alignSelf: 'center', marginBottom: 25 }}>
-                            <Text style={styles.inputLable}>Area, Street, Sector, Village</Text>
+                            <Text style={styles.inputLable}>Town/City</Text>
                             <View style={styles.card}>
                                 <TextInput
                                     style={styles.inputs}
-                                    onChangeText={setArea}
-                                    value={area}
-                                    placeholder="Enter Your Area, Street, Sector, Village"
+                                    onChangeText={setCity}
+                                    value={city}
+                                    placeholder="Enter Your Town/City"
                                     placeholderTextColor="#424242"
                                     underlineColorAndroid='transparent'
                                 />
                             </View>
-                            {errors.area && <Text style={styles.errorText}>{errors.area}</Text>}
+                            {errors.city && <Text style={styles.errorText}>{errors.city}</Text>}
+                        </View>
+                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 25 }}>
+                            <Text style={styles.inputLable}>State</Text>
+                            <View style={styles.card}>
+                                <TextInput
+                                    style={styles.inputs}
+                                    onChangeText={setState}
+                                    value={state}
+                                    placeholder="Enter Your State"
+                                    placeholderTextColor="#424242"
+                                    underlineColorAndroid='transparent'
+                                />
+                            </View>
+                            {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
                         </View>
                         <View style={{ width: '90%', alignSelf: 'center', marginBottom: 25 }}>
                             <Text style={styles.inputLable}>Type of address</Text>

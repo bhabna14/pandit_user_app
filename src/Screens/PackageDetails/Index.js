@@ -63,7 +63,11 @@ const Index = (props) => {
           <Image source={{ uri: packageDetails?.flower_product?.product_image_url }} style={styles.image} />
         )}
         <Text style={{ color: '#000', fontFamily: 'Montserrat-Bold', fontSize: 17 }}>Name: {packageDetails?.flower_product?.name}</Text>
-        <Text style={styles.text}>Description: {packageDetails?.flower_product?.description}</Text>
+        {packageDetails?.flower_product?.category === "Subscription" ?
+        <Text style={styles.text}>Description : {packageDetails?.flower_product?.description}</Text>
+        :
+        <Text style={styles.text}>Flower Name : {packageDetails?.description}</Text>
+        }
         {packageDetails?.flower_product?.category === "Subscription" ?
           <Text style={styles.price}>Price: <Text style={{ fontSize: 16 }}>₹{packageDetails?.total_price}</Text></Text>
           :

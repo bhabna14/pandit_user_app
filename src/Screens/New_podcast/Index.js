@@ -296,7 +296,7 @@ const Index = (props) => {
                             </View>
                         </View>
                     }
-                    {selectedCategory === null &&
+                    {selectedCategory === null && allContent?.last_week_podcasts?.length > 0 &&
                         <View style={{ width: '100%', marginTop: 15 }}>
                             <View style={{ width: '93%', alignSelf: 'center', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
                                 <Text style={{ color: '#000', fontSize: 17, letterSpacing: 0.3, fontWeight: '600' }}>Recent Podcast</Text>
@@ -415,13 +415,13 @@ const Index = (props) => {
                 visible={isPlayerModalVisible}
                 onRequestClose={closePlayerModal}
             >
-                <ImageBackground source={require('../../assets/images/bg1.jpg')} style={styles.modalContainer}>
-                    {/* <View style={styles.headerPart}>
+                <ImageBackground source={require('../../assets/images/podcastBG3.jpeg')} style={styles.modalContainer}>
+                    <View style={styles.headerPart}>
                         <TouchableOpacity onPress={() => closePlayerModal()} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Feather name="chevron-left" color={'#555454'} size={30} />
+                            <Feather name="chevron-left" color={'#fff'} size={30} />
                             <Text style={styles.topHeaderText}>Back</Text>
                         </TouchableOpacity>
-                    </View> */}
+                    </View>
                     <View style={{ flex: 1, width: '90%', alignSelf: 'center', padding: 20, alignItems: 'center' }}>
                         <Image
                             source={{ uri: selectPodcast?.image_url }}
@@ -643,7 +643,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: '#fff',
+        // backgroundColor: '#fff',
         paddingVertical: 13,
         paddingHorizontal: 5,
         shadowColor: '#000',
@@ -653,7 +653,7 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     topHeaderText: {
-        color: '#000',
+        color: '#fff',
         fontSize: 18,
         fontWeight: '500',
         marginBottom: 3,
@@ -680,7 +680,7 @@ const styles = StyleSheet.create({
         marginVertical: 5,
         fontSize: 14,
         // color: 'gray',
-        color: '#c9c7c7',
+        color: '#fff',
     },
     controls: {
         flexDirection: 'row',
@@ -691,7 +691,7 @@ const styles = StyleSheet.create({
     },
     timeText: {
         fontSize: 12,
-        color: 'gray',
+        color: '#fff',
     },
 
 })
