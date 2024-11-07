@@ -9,7 +9,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import moment from 'moment';
-import DatePicker from 'react-native-date-picker'
 import RazorpayCheckout from 'react-native-razorpay';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { base_url } from '../../../App';
@@ -28,10 +27,9 @@ const Index = (props) => {
     const [selectedOption, setSelectedOption] = useState('');
     const [showAllAddresses, setShowAllAddresses] = useState(false);
     const [suggestions, setSuggestions] = useState("");
-    const [anyFlower, setAnyFlower] = useState("");
     const [addAddressModal, setAddAddressModal] = useState(false);
     const [profileDetails, setProfileDetails] = useState({});
-    
+
     const [dob, setDob] = useState(new Date(new Date().setDate(new Date().getDate() + 1)));
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const openDatePicker = () => { setDatePickerVisibility(true) };
@@ -41,22 +39,88 @@ const Index = (props) => {
     const closeOrderModal = () => { setOrderModalVisible(false) };
     const scaleAnim = useRef(new Animated.Value(1)).current;
 
-    const [flowerName, setFlowerName] = useState(null);
-    const [flowerUnit, setFlowerUnit] = useState(null);
-    const [flowerNameOpen, setFlowerNameOpen] = useState(false);
-    const [flowerUnitOpen, setFlowerUnitOpen] = useState(false);
-    const [flowerNames, setFlowerNames] = useState([
-        { label: 'Rose', value: 'rose' },
-        { label: 'Lily', value: 'lily' },
-        { label: 'Tulip', value: 'tulip' },
-        { label: 'Marigold', value: 'marigold' },
-        { label: 'Jasmine', value: 'jasmine' },
+    const [flowerDetails, setFlowerDetails] = useState([
+        {
+            flowerName: null,
+            flowerQuantity: '',
+            flowerUnit: null,
+            flowerNameOpen: false,
+            flowerUnitOpen: false,
+        },
     ]);
-    const [flowerUnits, setFlowerUnits] = useState([
-        { label: 'Dozen', value: 'dozen' },
-        { label: 'Bunch', value: 'bunch' },
-        { label: 'Single', value: 'single' },
-    ]);
+
+    const handleAddMore = () => {
+        setFlowerDetails([...flowerDetails, {
+            flowerName: null,
+            flowerQuantity: '',
+            flowerUnit: null,
+            flowerNameOpen: false,
+            flowerUnitOpen: false,
+        }]);
+    };
+
+    const handleRemove = (index) => {
+        if (index > 0) {
+            const newFlowerDetails = [...flowerDetails];
+            newFlowerDetails.splice(index, 1);
+            setFlowerDetails(newFlowerDetails);
+        }
+    };
+
+    const [flowerNames, setFlowerNames] = useState([]);
+
+    const [flowerUnits, setFlowerUnits] = useState([]);
+
+    const getUnitList = async () => {
+        const access_token = await AsyncStorage.getItem('storeAccesstoken');
+        try {
+            const response = await fetch(base_url + 'api/manageunit', {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${access_token}`
+                },
+            });
+            const responseData = await response.json();
+            if (response.ok) {
+                // console.log("Units fetched successfully", responseData);
+                const units = responseData.data.map(unit => ({
+                    label: unit.unit_name,
+                    value: unit.unit_name
+                }));
+                setFlowerUnits(units);
+            } else {
+                console.error('Failed to fetch units:', responseData.message);
+            }
+        } catch (error) {
+            console.error('Error fetching units:', error);
+        }
+    };
+
+    const getFlowerList = async () => {
+        await fetch(base_url + 'api/products', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+        }).then(response => response.json()).then(response => {
+            if (response.status === 200) {
+                // console.log("Flower List", response.data);
+                const flowers = response.data.filter(product => product.category === "Flower");
+                const flowerNames = flowers.map(flower => ({
+                    label: flower.name,
+                    value: flower.name
+                }));
+                setFlowerNames(flowerNames);
+            } else {
+                console.error('Failed to fetch packages:', response.message);
+            }
+        }).catch((error) => {
+            console.error('Error:', error);
+        });
+    };
 
     useEffect(() => {
         Animated.loop(
@@ -155,6 +219,7 @@ const Index = (props) => {
                     payment_id: data.razorpay_payment_id || "", // capture Razorpay payment ID if available
                     // payment_id: "pay_29QQoUBi66xm2f",
                     paid_amount: props.route.params.price,
+                    duration: props.route.params.duration,
                     suggestion: suggestions,
                     start_date: moment(dob).format('YYYY-MM-DD')
                 }),
@@ -184,13 +249,13 @@ const Index = (props) => {
         setIsLoading(true);
 
         try {
-            if (anyFlower === "") {
-                displayErrorMessage("Please Enter any flower you want to add.");
+            if (flowerDetails.some(detail => !detail.flowerName || !detail.flowerQuantity || !detail.flowerUnit)) {
+                displayErrorMessage("Please fill in all flower details");
                 setIsLoading(false);
                 return;
             }
             if (selectedOption === "") {
-                displayErrorMessage("Please Select Your Address.");
+                displayErrorMessage("Please Select Your Address");
                 setIsLoading(false);
                 return;
             }
@@ -205,9 +270,11 @@ const Index = (props) => {
                 body: JSON.stringify({
                     product_id: props.route.params.product_id,
                     address_id: selectedOption,
-                    description: anyFlower,
                     suggestion: suggestions,
-                    date: moment(dob).format('YYYY-MM-DD')
+                    date: moment(dob).format('YYYY-MM-DD'),
+                    flower_name: flowerDetails.map(detail => detail.flowerName),
+                    flower_unit: flowerDetails.map(detail => detail.flowerUnit),
+                    flower_quantity: flowerDetails.map(detail => detail.flowerQuantity)
                 }),
             });
 
@@ -365,6 +432,8 @@ const Index = (props) => {
             // console.log("get Package details by props", props.route.params);
             getAllAddress();
             getProfile();
+            getUnitList();
+            getFlowerList();
         }
     }, [isFocused])
 
@@ -399,61 +468,103 @@ const Index = (props) => {
                         </View>
                     </View>
                     {props.route.params.category === "Immediateproduct" &&
-                        <View style={styles.panditDetails}>
-                            {/* <View style={{ width: '100%', paddingVertical: 10 }}>
-                                <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-                                    <View style={{ marginBottom: 15, zIndex: 2000 }}>
-                                        <Text style={styles.label}>Select Flower Name</Text>
-                                        <DropDownPicker
-                                            open={flowerNameOpen}
-                                            value={flowerName}
-                                            items={flowerNames}
-                                            setOpen={setFlowerNameOpen}
-                                            setValue={setFlowerName}
-                                            setItems={setFlowerNames}
-                                            placeholder="Select Flower"
-                                            style={{ borderColor: '#edeff1', borderRadius: 5, marginTop: 5 }}
-                                            dropDownContainerStyle={{ borderColor: '#edeff1' }}
-                                            zIndex={2000}
-                                            zIndexInverse={1000} // Use a higher value for the first dropdown
-                                        />
+                        <View style={{ marginTop: 15, backgroundColor: '#fff', width: '100%', paddingHorizontal: 15, zIndex: 2000 }}>
+                            {flowerDetails.map((flowerDetail, index) => (
+                                <View key={index} style={{ width: '100%', padding: 10, marginVertical: 10, borderColor: '#7e7f80', borderWidth: 0.7, borderRadius: 7 }}>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        <View style={{ width: '30%', marginBottom: 15, zIndex: 2000, elevation: 2000 }}>
+                                            <Text style={styles.label}>Flower</Text>
+                                            <View style={{ zIndex: 2000, elevation: 2000 }}>
+                                                <DropDownPicker
+                                                    open={flowerDetail.flowerNameOpen}
+                                                    value={flowerDetail.flowerName}
+                                                    items={flowerNames}
+                                                    setOpen={(open) => {
+                                                        setFlowerDetails(prevDetails => {
+                                                            const newDetails = [...prevDetails];
+                                                            newDetails[index].flowerNameOpen = open;
+                                                            return newDetails;
+                                                        });
+                                                    }}
+                                                    setValue={(callback) => {
+                                                        setFlowerDetails(prevDetails => {
+                                                            const newDetails = [...prevDetails];
+                                                            newDetails[index].flowerName = callback(newDetails[index].flowerName);
+                                                            return newDetails;
+                                                        });
+                                                    }}
+                                                    placeholder="Flower"
+                                                    style={{ borderColor: '#edeff1', borderRadius: 5, marginTop: 5 }}
+                                                    dropDownContainerStyle={{ borderColor: '#edeff1' }}
+                                                    zIndex={2000}
+                                                    zIndexInverse={1000}
+                                                />
+                                            </View>
+                                        </View>
+                                        <View style={{ width: '30%', marginBottom: 15, zIndex: 1500, elevation: 1500 }}>
+                                            <Text style={styles.label}>Quantity</Text>
+                                            <TextInput
+                                                style={{ borderColor: '#edeff1', borderRadius: 5, borderWidth: 1, padding: 10, fontSize: 15, color: '#000', marginTop: 3 }}
+                                                onChangeText={(text) => {
+                                                    setFlowerDetails(prevDetails => {
+                                                        const newDetails = [...prevDetails];
+                                                        newDetails[index].flowerQuantity = text;
+                                                        return newDetails;
+                                                    });
+                                                }}
+                                                value={flowerDetail.flowerQuantity}
+                                                keyboardType="numeric"
+                                                placeholder="Quantity"
+                                                placeholderTextColor="#888888"
+                                                underlineColorAndroid='transparent'
+                                            />
+                                        </View>
+                                        <View style={{ width: '30%', zIndex: 1000, elevation: 1000 }}>
+                                            <Text style={styles.label}>Select Unit</Text>
+                                            <View style={{ zIndex: 1000, elevation: 1000 }}>
+                                                <DropDownPicker
+                                                    open={flowerDetail.flowerUnitOpen}
+                                                    value={flowerDetail.flowerUnit}
+                                                    items={flowerUnits}
+                                                    setOpen={(open) => {
+                                                        setFlowerDetails(prevDetails => {
+                                                            const newDetails = [...prevDetails];
+                                                            newDetails[index].flowerUnitOpen = open;
+                                                            return newDetails;
+                                                        });
+                                                    }}
+                                                    setValue={(callback) => {
+                                                        setFlowerDetails(prevDetails => {
+                                                            const newDetails = [...prevDetails];
+                                                            newDetails[index].flowerUnit = callback(newDetails[index].flowerUnit);
+                                                            return newDetails;
+                                                        });
+                                                    }}
+                                                    placeholder="Unit"
+                                                    style={{ borderColor: '#edeff1', borderRadius: 5, marginTop: 5 }}
+                                                    dropDownContainerStyle={{ borderColor: '#edeff1' }}
+                                                    zIndex={1000}
+                                                    zIndexInverse={2000}
+                                                />
+                                            </View>
+                                        </View>
                                     </View>
-                                    <View style={{ marginBottom: 15, zIndex: 1000 }}>
-                                        <Text style={styles.label}>Select Unit</Text>
-                                        <DropDownPicker
-                                            open={flowerUnitOpen}
-                                            value={flowerUnit}
-                                            items={flowerUnits}
-                                            setOpen={setFlowerUnitOpen}
-                                            setValue={setFlowerUnit}
-                                            // dropDownDirection='TOP'
-                                            setItems={setFlowerUnits}
-                                            placeholder="Select Unit"
-                                            style={{ borderColor: '#edeff1', borderRadius: 5, marginTop: 5 }}
-                                            dropDownContainerStyle={{ borderColor: '#edeff1' }}
-                                            zIndex={1000}
-                                            zIndexInverse={2000} // Lower value for the second dropdown to prevent overlap
-                                        />
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                        <View style={{ width: '49%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 1 }}>
+                                            {index === flowerDetails.length - 1 && (
+                                                <TouchableOpacity onPress={handleAddMore} style={{ backgroundColor: '#28a745', borderRadius: 5, alignItems: 'center', width: '45%', height: 46, alignItems: 'center', justifyContent: 'center' }}>
+                                                    <FontAwesome name="plus" color={'#fff'} size={20} />
+                                                </TouchableOpacity>
+                                            )}
+                                            {index > 0 && (
+                                                <TouchableOpacity onPress={() => handleRemove(index)} style={{ backgroundColor: '#dc3545', borderRadius: 5, alignItems: 'center', width: '45%', height: 46, alignItems: 'center', justifyContent: 'center' }}>
+                                                    <FontAwesome name="minus" color={'#fff'} size={20} />
+                                                </TouchableOpacity>
+                                            )}
+                                        </View>
                                     </View>
-                                </KeyboardAvoidingView>
-                            </View> */}
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginVertical: 10 }}>
-                                <View style={{ width: '15%', height: 80, borderWidth: 0.8, borderRightWidth: 0, backgroundColor: '#fbfdff', alignItems: 'center', justifyContent: 'center', borderColor: '#edeff1', borderTopLeftRadius: 5, borderBottomLeftRadius: 5 }}>
-                                    <MaterialCommunityIcons name="flower-outline" color={'#495057'} size={30} />
                                 </View>
-                                <View style={{ width: '85%', height: 80, borderWidth: 0.8, borderColor: '#edeff1', borderTopRightRadius: 5, borderBottomRightRadius: 5 }}>
-                                    <TextInput
-                                        style={{ flex: 1, paddingLeft: 15, fontSize: 15, textAlignVertical: 'top', color: '#000' }}
-                                        onChangeText={setAnyFlower}
-                                        value={anyFlower}
-                                        multiline={true}
-                                        type='text'
-                                        placeholder="Enter any flower you want to add..."
-                                        placeholderTextColor="#888888"
-                                        underlineColorAndroid='transparent'
-                                    />
-                                </View>
-                            </View>
+                            ))}
                         </View>
                     }
                     <View style={styles.address}>
@@ -760,7 +871,7 @@ const styles = StyleSheet.create({
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingHorizontal: 22
+        paddingHorizontal: 15
     },
     profilePic: {
         height: 120,
@@ -773,7 +884,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         width: '100%',
         paddingHorizontal: 20,
-        paddingVertical: 15
+        paddingVertical: 15,
+        zIndex: 1000
     },
     addressAddBtm: {
         backgroundColor: '#ffcb44',

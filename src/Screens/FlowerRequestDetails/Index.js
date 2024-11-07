@@ -128,6 +128,8 @@ const Index = (props) => {
         </TouchableOpacity>
       }
 
+      {/* Your Order is Pending For Price Calculation. */}
+
       {/* Start Show Error Modal */}
       <Modal
         animationType="slide"

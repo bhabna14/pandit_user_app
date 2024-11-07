@@ -48,6 +48,67 @@ const Index = (props) => {
     const closePauseModal = () => setPauseModalVisible(false);
     const [selectedPackageId, setSelectedPackageId] = useState(null);
 
+    const [isResumeModalVisible, setResumeModalVisible] = useState(false);
+    const openResumeModal = () => setResumeModalVisible(true);
+    const closeResumeModal = () => setResumeModalVisible(false);
+    const [selectedResumePackageId, setSelectedResumePackageId] = useState(null);
+
+    const [isResumeDateModalOpen, setIsResumeDateModalOpen] = useState(false);
+    const openResumeDatePicker = () => { setIsResumeDateModalOpen(true) };
+    const closeResumeDatePicker = () => { setIsResumeDateModalOpen(false) };
+    const [resumeDate, setResumeDate] = useState(null);
+
+    useEffect(() => {
+        if (pause_start_date) {
+            const today = new Date();
+            const pauseStartDate = new Date(pause_start_date);
+            setResumeDate(today > pauseStartDate ? new Date(today.setDate(today.getDate() + 1)) : pauseStartDate);
+        }
+    }, [pause_start_date]);
+
+    const [pause_start_date, setPause_start_date] = useState(null);
+    const [pause_end_date, setPause_end_date] = useState(null);
+
+    const handleResumeButton = (item) => {
+        setSelectedResumePackageId(item.order_id);
+        setPause_start_date(item.subscription.pause_start_date);
+        setPause_end_date(item.subscription.pause_end_date);
+        openResumeModal();
+    };
+
+    const handleResumDatePress = (day) => {
+        setResumeDate(new Date(day.dateString));
+        closeResumeDatePicker();
+    };
+
+    const submitResumeDates = async () => {
+        // console.log("object", selectedResumePackageId);
+        // return;
+        const access_token = await AsyncStorage.getItem('storeAccesstoken');
+        try {
+            const response = await fetch(`${base_url}api/subscription/resume/${selectedResumePackageId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${access_token}`,
+                },
+                body: JSON.stringify({
+                    resume_date: moment(resumeDate).format('YYYY-MM-DD'),
+                }),
+            });
+
+            const data = await response.json();
+            if (response.status === 200) {
+                closeResumeModal();
+                getSubscriptionList();
+            } else {
+                Alert.alert('Error', data.message);
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Something went wrong');
+        }
+    };
+
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         setTimeout(() => {
@@ -176,10 +237,10 @@ const Index = (props) => {
                                                 </View>
                                                 {/* <Text style={{ color: '#666', fontSize: 14, marginTop: 4, lineHeight: 20 }}>{item.flower_product.category}</Text> */}
                                                 <Text style={{ color: '#666', fontSize: 14 }}>Order Id: <Text style={{ color: '#000' }}>{item.order_id}</Text></Text>
-                                                {item.subscription.status === "paused" ?
+                                                {item?.subscription?.status === "paused" ?
                                                     <View>
                                                         <Text style={{ color: '#c9170a', fontSize: 14, fontWeight: '600' }}>Your subscription is paused from {item.subscription.pause_start_date} to {item.subscription.pause_end_date}</Text>
-                                                        <TouchableOpacity style={{ backgroundColor: 'green', width: 70, height: 30, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginTop: 8 }}>
+                                                        <TouchableOpacity onPress={() => handleResumeButton(item)} style={{ backgroundColor: 'green', width: 70, height: 30, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginTop: 8 }}>
                                                             <Text style={{ color: '#fff' }}>Resume</Text>
                                                         </TouchableOpacity>
                                                     </View>
@@ -210,16 +271,16 @@ const Index = (props) => {
                                             style={{ flexDirection: 'row', backgroundColor: '#fff', padding: 15, marginBottom: 15, borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.5, shadowRadius: 10, elevation: 6, overflow: 'hidden' }}
                                         >
                                             <Image source={{ uri: item.flower_product.product_image_url }} style={{ width: 90, height: 90, borderRadius: 12, borderWidth: 1, borderColor: '#eee' }} />
-                                            <View style={{ flex: 1, marginLeft: 15 }}>
+                                            <View style={{ flex: 1, marginLeft: 15, justifyContent: 'center' }}>
                                                 <Text style={{ color: '#333', fontSize: 18, fontWeight: 'bold' }}>{item.flower_product.name}</Text>
-                                                <Text style={{ color: '#666', fontSize: 14, marginTop: 4, lineHeight: 20 }}>{item.description}</Text>
+                                                {/* <Text style={{ color: '#666', fontSize: 14, marginTop: 4, lineHeight: 20 }}>{item.description}</Text> */}
                                                 <Text style={{ color: '#666', fontSize: 14 }}>Request Id: {item.request_id}</Text>
-                                                {item.status === 'pending' ?
+                                                {item?.status === 'pending' ?
                                                     <Text style={{ color: '#ff6347', fontSize: 16, fontWeight: '600' }}>{item.flower_product.immediate_price}</Text>
                                                     :
                                                     <Text style={{ color: '#ff6347', fontSize: 16, fontWeight: '600' }}>₹{item.order.total_price}</Text>
                                                 }
-                                                {item.status === 'approved' &&
+                                                {item?.status === 'approved' &&
                                                     <TouchableOpacity onPress={() => navigation.navigate("FlowerRequestDetails", item)} style={{ backgroundColor: 'green', width: 70, height: 30, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginTop: 8 }}>
                                                         <Text style={{ color: '#fff' }}>Pay</Text>
                                                     </TouchableOpacity>
@@ -313,6 +374,57 @@ const Index = (props) => {
                                 }
                             }}
                             minDate={moment().add(1, 'days').format('YYYY-MM-DD')}
+                        />
+                    </View>
+                </View>
+            </Modal>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isResumeModalVisible}
+                onRequestClose={closeResumeModal}
+            >
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+                    <View style={{ width: '90%', backgroundColor: '#fff', padding: 20, borderRadius: 10 }}>
+                        <TouchableOpacity style={{ alignSelf: 'flex-end' }} onPress={closeResumeModal}>
+                            <Feather name="x" color={'#000'} size={30} />
+                        </TouchableOpacity>
+                        <Text style={styles.label}>Resume Date</Text>
+                        <TouchableOpacity onPress={openResumeDatePicker}>
+                            <TextInput
+                                style={styles.input}
+                                value={resumeDate ? resumeDate.toLocaleDateString() : 'Select a date'}
+                                editable={false}
+                            />
+                        </TouchableOpacity>
+                        {resumeDate === null && <Text style={{ color: 'red' }}>Please select a resume date</Text>}
+                        <TouchableOpacity style={styles.dateButton} onPress={submitResumeDates}>
+                            <Text style={styles.dateText}>Submit</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isResumeDateModalOpen}
+                onRequestClose={closeResumeDatePicker}
+            >
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+                    <View style={{ width: '90%', padding: 20, backgroundColor: 'white', borderRadius: 10, elevation: 5 }}>
+                        <Calendar
+                            onDayPress={handleResumDatePress}
+                            markedDates={{
+                                [moment(resumeDate).format('YYYY-MM-DD')]: {
+                                    selected: true,
+                                    marked: true,
+                                    selectedColor: 'blue'
+                                }
+                            }}
+                            minDate={moment(pause_start_date).format('YYYY-MM-DD')}
+                            maxDate={moment(pause_end_date).format('YYYY-MM-DD')}
                         />
                     </View>
                 </View>
