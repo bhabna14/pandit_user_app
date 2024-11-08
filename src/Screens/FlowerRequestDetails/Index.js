@@ -87,15 +87,54 @@ const Index = (props) => {
       </View>
       <View style={styles.card}>
         {packageDetails?.flower_product?.product_image_url && <Image source={{ uri: packageDetails?.flower_product?.product_image_url }} style={styles.image} />}
-        <Text style={{ color: '#000', fontFamily: 'Montserrat-Bold', fontSize: 17, marginBottom: 3 }}>Name: {packageDetails?.flower_product?.name}</Text>
-        {/* <Text style={styles.text}>Flower Name : <Text style={{ color: '#000' }}>{packageDetails?.description}</Text></Text> */}
-        <Text style={styles.text}>Date: <Text style={{ color: '#000' }}>{moment(packageDetails?.date).format('DD-MM-YYYY')}</Text></Text>
-        <Text style={styles.text}>Status: <Text style={{ color: '#000' }}>{packageDetails?.status}</Text></Text>
-        {packageDetails?.status === 'pending' ?
-          <Text style={styles.price}>Price: <Text style={{ fontSize: 16 }}>{packageDetails?.flower_product?.immediate_price}</Text></Text>
-          :
-          <Text style={styles.price}>Price: <Text style={{ fontSize: 16 }}>₹{packageDetails?.order?.total_price}</Text></Text>
-        }
+        <Text style={{ color: '#000', fontFamily: 'Montserrat-Bold', fontSize: 17, marginBottom: 3 }}>{packageDetails?.flower_product?.name}</Text>
+        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
+          <View style={{ width: '35%' }}>
+            <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold' }}>Request Id:</Text>
+          </View>
+          <View style={{ width: '65%' }}>
+            <Text style={{ color: '#000', fontSize: 14 }}>{packageDetails?.request_id}</Text>
+          </View>
+        </View>
+        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
+          <View style={{ width: '35%' }}>
+            <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold' }}>Date:</Text>
+          </View>
+          <View style={{ width: '65%' }}>
+            <Text style={{ color: '#000', fontSize: 14 }}>{moment(packageDetails?.date).format('DD-MM-YYYY')}</Text>
+          </View>
+        </View>
+        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
+          <View style={{ width: '35%' }}>
+            <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold' }}>Time:</Text>
+          </View>
+          <View style={{ width: '65%' }}>
+            <Text style={{ color: '#000', fontSize: 14 }}>{packageDetails?.time}</Text>
+          </View>
+        </View>
+        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
+          <View style={{ width: '35%' }}>
+            <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold' }}>Status:</Text>
+          </View>
+          <View style={{ width: '65%' }}>
+            <Text style={{ color: '#000', fontSize: 14 }}>{packageDetails?.status}</Text>
+          </View>
+        </View>
+        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
+          <View style={{ width: '35%' }}>
+            <Text style={styles.price}>Price:</Text>
+          </View>
+          <View style={{ width: '65%' }}>
+            {packageDetails?.status === 'pending' ?
+              <View>
+                <Text style={styles.price}>Order has been placed.</Text>
+                <Text style={styles.price}>Cost will be notified in few minutes.</Text>
+              </View>
+              :
+              <Text style={styles.price}>₹{packageDetails?.order?.total_price}</Text>
+            }
+          </View>
+        </View>
       </View>
       <View style={styles.card}>
         <Text style={styles.subtitle}>Flower List</Text>
@@ -105,8 +144,15 @@ const Index = (props) => {
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
-              <Text style={styles.text}>{item.flower_name}</Text>
-              <Text style={styles.text}>{item.flower_quantity} {item.flower_unit}</Text>
+              <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
+                <View style={{ width: '50%' }}>
+                  <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold' }}>{item.flower_name}</Text>
+                </View>
+                <View style={{ width: '50%', alignItems: 'flex-end' }}>
+                  <Text style={{ color: '#000', fontSize: 14 }}>{item.flower_quantity} {item.flower_unit}</Text>
+                </View>
+              </View>
+
             </View>
           )}
         />
@@ -208,7 +254,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   price: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: 'bold',
     color: '#28a745',
     // marginTop: 10,

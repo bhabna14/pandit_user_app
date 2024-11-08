@@ -146,11 +146,54 @@ const Index = (props) => {
         <Text style={styles.text}>Description : {packageDetails?.flower_product?.description}</Text>
       </View>
       <View style={styles.card}>
-        <Text style={styles.text}>Price: <Text style={styles.price}>₹{packageDetails?.total_price}</Text></Text>
-        <Text style={styles.text}>Start Date : <Text style={{ color: '#000', fontFamily: 'Montserrat-Bold' }}>{moment(packageDetails?.subscription?.start_date).format('DD-MM-YYYY')}</Text></Text>
-        <Text style={styles.text}>End Date : <Text style={{ color: '#000', fontFamily: packageDetails?.subscription?.new_date ? null : 'Montserrat-Bold', textDecorationLine: packageDetails?.subscription?.new_date ? 'line-through' : null }}>{moment(packageDetails?.subscription?.end_date).format('DD-MM-YYYY')}</Text></Text>
-        {packageDetails?.subscription?.new_date && <Text style={styles.text}>New End Date : <Text style={{ color: '#000', fontFamily: 'Montserrat-Bold' }}>{moment(packageDetails?.subscription?.new_date).format('DD-MM-YYYY')}</Text></Text>}
-        <Text style={styles.text}>Subscription Status : <Text style={{ color: '#000', fontFamily: 'Montserrat-Bold' }}>{packageDetails?.subscription?.status}</Text></Text>
+        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
+          <View style={{ width: '35%' }}>
+            <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold' }}>Order Id:</Text>
+          </View>
+          <View style={{ width: '65%' }}>
+            <Text style={{ color: '#000', fontSize: 14 }}>{packageDetails?.order_id}</Text>
+          </View>
+        </View>
+        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
+          <View style={{ width: '35%' }}>
+            <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold' }}>Start Date:</Text>
+          </View>
+          <View style={{ width: '65%' }}>
+            <Text style={{ color: '#000', fontSize: 14 }}>{moment(packageDetails?.subscription?.start_date).format('DD-MM-YYYY')}</Text>
+          </View>
+        </View>
+        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
+          <View style={{ width: '35%' }}>
+            <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold' }}>End Date:</Text>
+          </View>
+          <View style={{ width: '65%' }}>
+            <Text style={{ color: '#000', fontFamily: packageDetails?.subscription?.new_date ? null : 'Montserrat-Bold', textDecorationLine: packageDetails?.subscription?.new_date ? 'line-through' : null }}>{moment(packageDetails?.subscription?.end_date).format('DD-MM-YYYY')}</Text>
+          </View>
+        </View>
+        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
+          <View style={{ width: '35%' }}>
+            <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold' }}>New End Date:</Text>
+          </View>
+          <View style={{ width: '65%' }}>
+            <Text style={{ color: '#000', fontSize: 14 }}>{moment(packageDetails?.subscription?.new_date).format('DD-MM-YYYY')}</Text>
+          </View>
+        </View>
+        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
+          <View style={{ width: '35%' }}>
+            <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold' }}>Subscription Status:</Text>
+          </View>
+          <View style={{ width: '65%' }}>
+            <Text style={{ color: '#000', fontSize: 14 }}>{packageDetails?.subscription?.status}</Text>
+          </View>
+        </View>
+        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
+          <View style={{ width: '35%' }}>
+            <Text style={styles.price}>Price:</Text>
+          </View>
+          <View style={{ width: '65%' }}>
+            <Text style={styles.price}>{packageDetails?.total_price}</Text>
+          </View>
+        </View>
       </View>
       <View style={styles.card}>
         <Text style={styles.subtitle}>Address</Text>
@@ -351,7 +394,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#28a745',
-    marginTop: 10,
+    // marginTop: 10,
   },
   image: {
     width: '100%',

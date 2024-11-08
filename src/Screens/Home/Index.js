@@ -130,19 +130,19 @@ const Index = (props) => {
             />
             <Text style={{ color: activeTab === 'podcast' ? '#fff' : '#000', fontSize: 16, fontWeight: '600', marginLeft: 6 }}>Podcast</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setActiveTab('pandit')} style={{ backgroundColor: activeTab === 'pandit' ? '#c9170a' : '#e3e3e1', width: '30%', paddingVertical: 10, borderRadius: 6, alignItems: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-            <Image
-              source={require('../../assets/logo/priest.png')}
-              style={{ width: 22, height: 25 }}
-            />
-            <Text style={{ color: activeTab === 'pandit' ? '#fff' : '#000', fontSize: 16, fontWeight: '600', marginLeft: 6 }}>Pandit</Text>
-          </TouchableOpacity>
           <TouchableOpacity onPress={() => setActiveTab('shop')} style={{ backgroundColor: activeTab === 'shop' ? '#c9170a' : '#e3e3e1', width: '30%', paddingVertical: 10, borderRadius: 6, alignItems: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
             <Image
               source={require('../../assets/logo/flower.png')}
               style={{ width: 25, height: 25 }}
             />
             <Text style={{ color: activeTab === 'shop' ? '#fff' : '#000', fontSize: 16, fontWeight: '600', marginLeft: 6 }}>Flower</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setActiveTab('pandit')} style={{ backgroundColor: activeTab === 'pandit' ? '#c9170a' : '#e3e3e1', width: '30%', paddingVertical: 10, borderRadius: 6, alignItems: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <Image
+              source={require('../../assets/logo/priest.png')}
+              style={{ width: 22, height: 25 }}
+            />
+            <Text style={{ color: activeTab === 'pandit' ? '#fff' : '#000', fontSize: 16, fontWeight: '600', marginLeft: 6 }}>Pandit</Text>
           </TouchableOpacity>
         </View>
       </View>

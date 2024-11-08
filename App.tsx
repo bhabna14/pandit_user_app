@@ -47,6 +47,7 @@ import PrivacyPolicy from './src/Screens/PrivacyPolicy/Index'
 import AboutUs from './src/Screens/AboutUs/Index'
 import ContactUs from './src/Screens/ContactUs/Index'
 import Help from './src/Screens/Help/Index'
+import AllPodcasts from './src/Screens/AllPodcasts/Index'
 
 const Stack = createNativeStackNavigator()
 
@@ -123,6 +124,7 @@ const App = () => {
             <Stack.Screen name="AboutUs" component={AboutUs} />
             <Stack.Screen name="ContactUs" component={ContactUs} />
             <Stack.Screen name="Help" component={Help} />
+            <Stack.Screen name="AllPodcasts" component={AllPodcasts} />
           </>
         )}
       </Stack.Navigator>

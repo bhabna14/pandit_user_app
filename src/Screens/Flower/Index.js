@@ -11,11 +11,11 @@ const Index = (props) => {
     const sliderImages = [
         {
             id: '1',
-            banner_img_url: 'https://pandit.33crores.com/images/banner.png',
+            banner_img_url: 'https://pandit.33crores.com/images/flower_banner2.png',
         },
         {
             id: '2',
-            banner_img_url: 'https://poojastore.33crores.com/cdn/shop/files/3_6426324a-0668-4d7a-b907-cc51d2f0d0b1.png',
+            banner_img_url: 'https://pandit.33crores.com/images/Yellow%20Professional%20Gradient%20App%20Development%20Banner%20Landscape%20(2).png',
         },
     ];
 
@@ -140,7 +140,7 @@ const Index = (props) => {
                                     <Text style={{ color: '#000', fontSize: 16, fontWeight: '500', marginBottom: 5, textTransform: 'capitalize' }}>{flowerRequest?.name}</Text>
                                     <Text style={{ color: '#000', fontSize: 13, fontWeight: '400', marginBottom: 2 }}>{flowerRequest?.immediate_price}</Text>
                                     <TouchableOpacity onPress={() => goToCheckoutPage(flowerRequest)} style={{ backgroundColor: '#c3272e', padding: 10, alignSelf: 'center', alignItems: 'center', width: '100%', borderRadius: 8, marginTop: 10 }}>
-                                        <Text style={{ color: '#fff' }}>Flower Request</Text>
+                                        <Text style={{ color: '#fff' }}>Order Now</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>

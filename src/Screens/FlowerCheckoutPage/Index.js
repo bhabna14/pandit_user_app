@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { base_url } from '../../../App';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Calendar } from 'react-native-calendars';
+import DatePicker from 'react-native-date-picker';
 
 const Index = (props) => {
 
@@ -34,6 +35,9 @@ const Index = (props) => {
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const openDatePicker = () => { setDatePickerVisibility(true) };
     const closeDatePicker = () => { setDatePickerVisibility(false) };
+
+    const [deliveryTime, setDeliveryTime] = useState(new Date(new Date().getTime() + 2 * 60 * 60 * 1000));
+    const [openTimePicker, setOpenTimePicker] = useState(false);
 
     const [orderModalVisible, setOrderModalVisible] = useState(false);
     const closeOrderModal = () => { setOrderModalVisible(false) };
@@ -272,6 +276,7 @@ const Index = (props) => {
                     address_id: selectedOption,
                     suggestion: suggestions,
                     date: moment(dob).format('YYYY-MM-DD'),
+                    time: moment(deliveryTime).format('hh:mm A'),
                     flower_name: flowerDetails.map(detail => detail.flowerName),
                     flower_unit: flowerDetails.map(detail => detail.flowerUnit),
                     flower_quantity: flowerDetails.map(detail => detail.flowerQuantity)
@@ -549,28 +554,26 @@ const Index = (props) => {
                                             </View>
                                         </View>
                                     </View>
-                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                        <View style={{ width: '49%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 1 }}>
-                                            {index === flowerDetails.length - 1 && (
-                                                <TouchableOpacity onPress={handleAddMore} style={{ backgroundColor: '#28a745', borderRadius: 5, alignItems: 'center', width: '45%', height: 46, alignItems: 'center', justifyContent: 'center' }}>
-                                                    <FontAwesome name="plus" color={'#fff'} size={20} />
-                                                </TouchableOpacity>
-                                            )}
-                                            {index > 0 && (
-                                                <TouchableOpacity onPress={() => handleRemove(index)} style={{ backgroundColor: '#dc3545', borderRadius: 5, alignItems: 'center', width: '45%', height: 46, alignItems: 'center', justifyContent: 'center' }}>
-                                                    <FontAwesome name="minus" color={'#fff'} size={20} />
-                                                </TouchableOpacity>
-                                            )}
-                                        </View>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'flex-end', width: '100%' }}>
+                                        {index === flowerDetails.length - 1 && (
+                                            <TouchableOpacity onPress={handleAddMore} style={{ backgroundColor: '#28a745', borderRadius: 5, alignItems: 'center', width: 100, height: 46, alignItems: 'center', justifyContent: 'center' }}>
+                                                <Text style={{ color: '#fff', fontSize: 16 }}>Add More</Text>
+                                            </TouchableOpacity>
+                                        )}
+                                        {index > 0 && (
+                                            <TouchableOpacity onPress={() => handleRemove(index)} style={{ backgroundColor: '#dc3545', borderRadius: 5, alignItems: 'center', width: 100, height: 46, alignItems: 'center', justifyContent: 'center', marginLeft: 8 }}>
+                                                <Text style={{ color: '#fff', fontSize: 16 }}>Remove</Text>
+                                            </TouchableOpacity>
+                                        )}
                                     </View>
                                 </View>
                             ))}
                         </View>
                     }
                     <View style={styles.address}>
-                        <View style={{ width: '100%', marginBottom: 15 }}>
+                        <View style={{ width: '100%', marginBottom: 5 }}>
                             {props.route.params.category === "Immediateproduct" ?
-                                <Text style={styles.label}>Customized Flower Date</Text>
+                                <Text style={styles.label}>Delivery Flower Date</Text>
                                 :
                                 <Text style={styles.label}>Subscription Start Date</Text>
                             }
@@ -580,9 +583,34 @@ const Index = (props) => {
                                     value={dob ? moment(dob).format('DD-MM-YYYY') : ""}
                                     editable={false}
                                 />
-                                <Fontisto name="date" color={'#555454'} size={20} style={{ position: 'absolute', right: 10, top: 10 }} />
+                                <MaterialCommunityIcons name="calendar-month" color={'#555454'} size={26} style={{ position: 'absolute', right: 10, top: 10 }} />
                             </TouchableOpacity>
                         </View>
+                        {props.route.params.category === "Immediateproduct" &&
+                            <View style={{ width: '100%', marginBottom: 15 }}>
+                                <Text style={styles.label}>Delivery Flower Time</Text>
+                                <TouchableOpacity onPress={() => setOpenTimePicker(true)}>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={deliveryTime ? moment(deliveryTime).format('hh:mm A') : ""}
+                                        editable={false}
+                                    />
+                                    <MaterialCommunityIcons name="av-timer" color={'#555454'} size={26} style={{ position: 'absolute', right: 10, top: 10 }} />
+                                </TouchableOpacity>
+                                <DatePicker
+                                    modal
+                                    mode="time"
+                                    open={openTimePicker}
+                                    date={deliveryTime}
+                                    onConfirm={(date) => {
+                                        setDeliveryTime(date);
+                                        setOpenTimePicker(false);
+                                    }}
+                                    onCancel={() => setOpenTimePicker(false)}
+                                    minimumDate={new Date(new Date().getTime() + 2 * 60 * 60 * 1000)}
+                                />
+                            </View>
+                        }
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                             <View style={{ width: '15%', height: 80, borderWidth: 0.8, borderRightWidth: 0, backgroundColor: '#fbfdff', alignItems: 'center', justifyContent: 'center', borderColor: '#edeff1', borderTopLeftRadius: 5, borderBottomLeftRadius: 5 }}>
                                 <Feather name="message-square" color={'#495057'} size={20} />

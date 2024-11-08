@@ -217,7 +217,7 @@ const Index = (props) => {
                 :
                 <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} showsVerticalScrollIndicator={false} style={{ flex: 1, marginBottom: 10 }}>
                     {activeTab === 'monthly_sub' ?
-                        subscriptionList.length > 0 ?
+                        subscriptionList?.length > 0 ?
                             <View style={{ width: '95%', alignSelf: 'center', marginTop: 10 }}>
                                 <FlatList
                                     data={subscriptionList}
@@ -259,7 +259,7 @@ const Index = (props) => {
                                 <Text style={{ color: '#000', fontSize: 20, fontWeight: 'bold' }}>No Package Found</Text>
                             </View>
                         :
-                        requested_orderList.length > 0 ?
+                        requested_orderList?.length > 0 ?
                             <View style={{ width: '95%', alignSelf: 'center', marginTop: 10 }}>
                                 <FlatList
                                     data={requested_orderList}
@@ -273,17 +273,23 @@ const Index = (props) => {
                                             <Image source={{ uri: item.flower_product.product_image_url }} style={{ width: 90, height: 90, borderRadius: 12, borderWidth: 1, borderColor: '#eee' }} />
                                             <View style={{ flex: 1, marginLeft: 15, justifyContent: 'center' }}>
                                                 <Text style={{ color: '#333', fontSize: 18, fontWeight: 'bold' }}>{item.flower_product.name}</Text>
-                                                {/* <Text style={{ color: '#666', fontSize: 14, marginTop: 4, lineHeight: 20 }}>{item.description}</Text> */}
                                                 <Text style={{ color: '#666', fontSize: 14 }}>Request Id: {item.request_id}</Text>
                                                 {item?.status === 'pending' ?
-                                                    <Text style={{ color: '#ff6347', fontSize: 16, fontWeight: '600' }}>{item.flower_product.immediate_price}</Text>
+                                                    <View style={{ backgroundColor: '#fae6e6', alignItems: 'center', justifyContent: 'center', padding: 3, borderRadius: 5, marginTop: 5 }}>
+                                                        <Text style={{ color: '#000', fontSize: 14, fontWeight: '600' }}>Order has been placed.</Text>
+                                                        <Text style={{ color: '#000', fontSize: 14, fontWeight: '600' }}>Cost will be notified in few minutes.</Text>
+                                                    </View>
                                                     :
-                                                    <Text style={{ color: '#ff6347', fontSize: 16, fontWeight: '600' }}>₹{item.order.total_price}</Text>
-                                                }
-                                                {item?.status === 'approved' &&
-                                                    <TouchableOpacity onPress={() => navigation.navigate("FlowerRequestDetails", item)} style={{ backgroundColor: 'green', width: 70, height: 30, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginTop: 8 }}>
-                                                        <Text style={{ color: '#fff' }}>Pay</Text>
-                                                    </TouchableOpacity>
+                                                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', marginTop: 5 }}>
+                                                        <View style={{ backgroundColor: '#fae6e6', alignItems: 'center', justifyContent: 'center', borderRadius: 5, width: 100, height: 30 }}>
+                                                            <Text style={{ color: '#000', fontSize: 15, fontWeight: '600' }}>₹{item.order.total_price}</Text>
+                                                        </View>
+                                                        {item?.status === 'approved' &&
+                                                            <TouchableOpacity onPress={() => navigation.navigate("FlowerRequestDetails", item)} style={{ backgroundColor: 'green', width: 70, height: 30, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginLeft: 10 }}>
+                                                                <Text style={{ color: '#fff' }}>Pay</Text>
+                                                            </TouchableOpacity>
+                                                        }
+                                                    </View>
                                                 }
                                             </View>
                                         </TouchableOpacity>

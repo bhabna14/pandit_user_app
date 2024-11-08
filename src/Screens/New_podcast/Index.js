@@ -43,6 +43,10 @@ const Index = (props) => {
     const closePlayerModal = () => setIsPlayerModalVisible(false);
     const [selectPodcast, setSelectPodcast] = useState(null);
 
+    const [allPodcastsModalVisisble, setAllPodcastsModalVisisble] = useState(false);
+    const openAllPodcastsModal = () => setAllPodcastsModalVisisble(true);
+    const closeAllPodcastsModal = () => setAllPodcastsModalVisisble(false);
+
     const clickMusic = (podcast) => {
         openPlayerModal();
         setSelectPodcast(podcast);
@@ -225,7 +229,7 @@ const Index = (props) => {
                     <Text style={{ color: '#ffcb44', fontSize: 17 }}>Loading...</Text>
                 </View>
                 :
-                <View refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} showsVerticalScrollIndicator={false} style={{ flex: 1, zIndex: 1, }}>
+                <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} showsVerticalScrollIndicator={false} style={{ flex: 1, zIndex: 1, }}>
                     <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center' }}>
                         <View style={{ width: '100%', marginBottom: 5, marginTop: 0, borderRadius: 10, overflow: 'hidden' }}>
                             <FlatListSlider
@@ -240,6 +244,35 @@ const Index = (props) => {
                             />
                         </View>
                     </View>
+                    {selectedCategory === null &&
+                        <View style={{ width: '100%', height: 285, marginTop: 10 }}>
+                            <View style={styles.mainBox}>
+                                <Image style={{ height: '100%', width: '100%', borderRadius: 14, resizeMode: 'cover' }} source={{ uri: allContent?.recent_podcast?.image_url }} />
+                                <TouchableOpacity onPress={() => clickMusic(allContent?.recent_podcast)} style={styles.overlay} />
+                                <View style={styles.spiritual}>
+                                    <Text style={{ color: '#fff', fontSize: 14, letterSpacing: 0.5 }}>Spiritual</Text>
+                                </View>
+                                <View style={styles.trackContainer}>
+                                    {currentTrack === allContent?.recent_podcast?.id && playbackState.state === "playing" ?
+                                        <FastImage
+                                            style={{ width: '60%', height: 50 }}
+                                            source={require('../../assets/GIF/giphy.gif')}
+                                            resizeMode={FastImage.resizeMode.cover}
+                                        />
+                                        :
+                                        <Image source={require('../../assets/images/track.png')} />
+                                    }
+                                    <TouchableOpacity onPress={() => togglePlayback(allContent.recent_podcast)} style={styles.playBtn}>
+                                        <AntDesign name={currentTrack === allContent?.recent_podcast?.id && playbackState.state === "playing" ? "pausecircle" : "play"} color={'#c9170a'} size={40} />
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={styles.descBox}>
+                                    <Text style={styles.podcastName}>{allContent?.recent_podcast?.name}</Text>
+                                    <Text style={styles.podcastDesc}>{allContent?.recent_podcast?.description.length > 55 ? `${allContent?.recent_podcast?.description.slice(0, 55)}...` : allContent?.recent_podcast?.description}</Text>
+                                </View>
+                            </View>
+                        </View>
+                    }
                     {allContent?.categories?.length > 0 &&
                         <View style={{ width: '100%', height: 120, marginTop: 5 }}>
                             <FlatList
@@ -267,114 +300,91 @@ const Index = (props) => {
                             />
                         </View>
                     }
-                    {selectedCategory === null &&
-                        <View style={{ width: '100%', height: 390, marginTop: 10 }}>
-                            <View style={styles.mainBox}>
-                                <Image style={{ height: '100%', width: '100%', borderRadius: 14, resizeMode: 'cover' }} source={{ uri: allContent?.recent_podcast?.image_url }} />
-                                <View style={styles.overlay} />
-                                <View style={styles.spiritual}>
-                                    <Text style={{ color: '#fff', fontSize: 14, letterSpacing: 0.5 }}>Spiritual</Text>
-                                </View>
-                                <View style={styles.trackContainer}>
-                                    {currentTrack === allContent?.recent_podcast?.id && playbackState.state === "playing" ?
-                                        <FastImage
-                                            style={{ width: '60%', height: 50 }}
-                                            source={require('../../assets/GIF/giphy.gif')}
-                                            resizeMode={FastImage.resizeMode.cover}
-                                        />
-                                        :
-                                        <Image source={require('../../assets/images/track.png')} />
-                                    }
-                                    <TouchableOpacity onPress={() => togglePlayback(allContent.recent_podcast)} style={styles.playBtn}>
-                                        <AntDesign name={currentTrack === allContent?.recent_podcast?.id && playbackState.state === "playing" ? "pausecircle" : "play"} color={'#c9170a'} size={40} />
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={styles.descBox}>
-                                    <Text style={styles.podcastName}>{allContent?.recent_podcast?.name}</Text>
-                                    <Text style={styles.podcastDesc}>{allContent?.recent_podcast?.description}</Text>
-                                </View>
+                    {selectedCategory === null && allContent?.last_week_podcasts?.length > 0 &&
+                        <View style={{ width: '100%', marginTop: 15 }}>
+                            <View style={{ width: '93%', alignSelf: 'center', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
+                                <Text style={{ color: '#000', fontSize: 17, letterSpacing: 0.3, fontWeight: '600' }}>Recent Podcast</Text>
                             </View>
                         </View>
                     }
-                    <ScrollView>
-                        {selectedCategory === null && allContent?.last_week_podcasts?.length > 0 &&
-                            <View style={{ width: '100%', marginTop: 15 }}>
-                                <View style={{ width: '93%', alignSelf: 'center', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <Text style={{ color: '#000', fontSize: 17, letterSpacing: 0.3, fontWeight: '600' }}>Recent Podcast</Text>
-                                </View>
-                            </View>
-                        }
-                        {allContent?.last_week_podcasts?.length > 0 && selectedCategory === null &&
-                            <View style={{ width: '100%', marginTop: 15 }}>
-                                <FlatList
-                                    data={allContent.last_week_podcasts}
-                                    horizontal
-                                    snapToAlignment="center"
-                                    decelerationRate="fast"
-                                    showsHorizontalScrollIndicator={false}
-                                    snapToInterval={itemWidth}
-                                    getItemLayout={(data, index) => ({
-                                        length: itemWidth,
-                                        offset: itemWidth * index,
-                                        index,
-                                    })}
-                                    renderItem={({ item, index }) => (
-                                        <View style={{ width: itemWidth, marginLeft: 10, backgroundColor: '#fff', borderRadius: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 13, elevation: 5, marginBottom: 10 }}>
-                                            <View style={{ width: '100%', height: 160, alignItems: 'center' }}>
-                                                <Image source={{ uri: item.image_url }} style={styles.image1} />
-                                                <View style={{ position: 'absolute', top: 50, left: 100 }}>
-                                                    <TouchableOpacity onPress={() => togglePlayback(item)} style={{ width: 50, height: 50, borderRadius: 50, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', right: 10, top: 10 }}>
-                                                        <AntDesign name={currentTrack === item.id && playbackState.state === "playing" ? "pausecircle" : "play"} color={'#c9170a'} size={40} />
-                                                    </TouchableOpacity>
-                                                </View>
-                                            </View>
-                                            <View style={{ padding: 10, width: '90%', alignItems: 'flex-start', justifyContent: 'center' }}>
-                                                <View style={{ width: '100%' }}>
-                                                    <Text style={{ color: '#000', fontSize: 15, fontWeight: '500', textTransform: 'capitalize' }}>{item.name}</Text>
-                                                </View>
-                                                <Text style={{ color: '#000', fontSize: 13, fontWeight: '300', textTransform: 'capitalize' }}>
-                                                    {item.description.length > 55 ? `${item.description.slice(0, 55)}...` : item.description}
-                                                </Text>
+                    {/* {allContent?.last_week_podcasts?.length > 0 && selectedCategory === null &&
+                        <View style={{ width: '100%', marginTop: 15 }}>
+                            <FlatList
+                                data={allContent.last_week_podcasts}
+                                horizontal
+                                snapToAlignment="center"
+                                decelerationRate="fast"
+                                showsHorizontalScrollIndicator={false}
+                                snapToInterval={itemWidth}
+                                getItemLayout={(data, index) => ({
+                                    length: itemWidth,
+                                    offset: itemWidth * index,
+                                    index,
+                                })}
+                                renderItem={({ item, index }) => (
+                                    <View style={{ width: itemWidth, marginLeft: 10, backgroundColor: '#fff', borderRadius: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 13, elevation: 5, marginBottom: 10 }}>
+                                        <View style={{ width: '100%', height: 160, alignItems: 'center' }}>
+                                            <Image source={{ uri: item.image_url }} style={styles.image1} />
+                                            <View style={{ position: 'absolute', top: 50, left: 100 }}>
+                                                <TouchableOpacity onPress={() => togglePlayback(item)} style={{ width: 50, height: 50, borderRadius: 50, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', right: 10, top: 10 }}>
+                                                    <AntDesign name={currentTrack === item.id && playbackState.state === "playing" ? "pausecircle" : "play"} color={'#c9170a'} size={40} />
+                                                </TouchableOpacity>
                                             </View>
                                         </View>
-                                    )}
-                                />
-                            </View>
-                        }
-                        {filterPodcastList?.length > 0 ?
-                            <View style={{ width: '100%', marginTop: 15 }}>
-                                <FlatList
-                                    data={filterPodcastList}
-                                    keyExtractor={(item) => item.id}
-                                    scrollEnabled={false}
-                                    showsHorizontalScrollIndicator={false}
-                                    renderItem={({ item }) => (
-                                        <View style={[styles.podcastList, currentTrack === item.id && { backgroundColor: '#f5dfdf' }]}>
-                                            <TouchableOpacity onPress={() => clickMusic(item)} style={{ width: '15%', flexDirection: 'row', alignItems: 'center' }}>
-                                                <Image source={{ uri: item.image_url }} style={{ width: 50, height: 50, borderRadius: 50 }} />
-                                            </TouchableOpacity>
-                                            <TouchableOpacity onPress={() => clickMusic(item)} style={{ width: '68%' }}>
+                                        <View style={{ padding: 10, width: '90%', alignItems: 'flex-start', justifyContent: 'center' }}>
+                                            <View style={{ width: '100%' }}>
                                                 <Text style={{ color: '#000', fontSize: 15, fontWeight: '500', textTransform: 'capitalize' }}>{item.name}</Text>
-                                                <Text style={{ color: '#000', fontSize: 13, fontWeight: '300', textTransform: 'capitalize' }}>
-                                                    {item.description.length > 55 ? `${item.description.slice(0, 55)}...` : item.description}
-                                                </Text>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity onPress={() => togglePlayback(item)} style={{ width: '15%', alignItems: 'flex-end' }}>
-                                                <AntDesign name={currentTrack === item.id && playbackState.state === "playing" ? "pausecircle" : "play"} color={'#c9170a'} size={40} />
-                                            </TouchableOpacity>
+                                            </View>
+                                            <Text style={{ color: '#000', fontSize: 13, fontWeight: '300', textTransform: 'capitalize' }}>
+                                                {item.description.length > 55 ? `${item.description.slice(0, 55)}...` : item.description}
+                                            </Text>
                                         </View>
-                                    )}
-                                />
+                                    </View>
+                                )}
+                            />
+                        </View>
+                    } */}
+                    {filterPodcastList?.length > 0 ?
+                        <View style={{ width: '100%', marginTop: 15 }}>
+                            <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 18 }}>
+                                <Text style={{ color: '#000', fontSize: 17, letterSpacing: 0.3, fontWeight: '600', marginLeft: 10 }}>All Podcasts</Text>
+                                <TouchableOpacity onPress={() => openAllPodcastsModal()} style={{ marginRight: 10, flexDirection: 'row', alignItems: 'center' }}>
+                                    <Text style={{ color: '#c9170a', fontSize: 15, fontWeight: '500' }}>View All</Text>
+                                    <Feather name="chevrons-right" color={'#c9170a'} size={20} />
+                                </TouchableOpacity>
                             </View>
-                            :
-                            <View style={{ width: '100%', height: 300, alignItems: 'center', justifyContent: 'center' }}>
-                                <Text style={{ color: '#000', fontSize: 17 }}>No Podcasts Found</Text>
-                            </View>
-                        }
-                    </ScrollView>
-                </View>
+                            <FlatList
+                                data={filterPodcastList.slice(0, 7)}
+                                keyExtractor={(item) => item.id}
+                                scrollEnabled={false}
+                                showsHorizontalScrollIndicator={false}
+                                renderItem={({ item }) => (
+                                    <View style={[styles.podcastList, currentTrack === item.id && { backgroundColor: '#f5dfdf' }]}>
+                                        <TouchableOpacity onPress={() => clickMusic(item)} style={{ width: '15%', flexDirection: 'row', alignItems: 'center' }}>
+                                            <Image source={{ uri: item.image_url }} style={{ width: 50, height: 50, borderRadius: 50 }} />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => clickMusic(item)} style={{ width: '68%' }}>
+                                            <Text style={{ color: '#000', fontSize: 15, fontWeight: '500', textTransform: 'capitalize' }}>{item.name}</Text>
+                                            <Text style={{ color: '#000', fontSize: 13, fontWeight: '300', textTransform: 'capitalize' }}>
+                                                {item.description.length > 55 ? `${item.description.slice(0, 55)}...` : item.description}
+                                            </Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => togglePlayback(item)} style={{ width: '15%', alignItems: 'flex-end' }}>
+                                            <AntDesign name={currentTrack === item.id && playbackState.state === "playing" ? "pausecircle" : "play"} color={'#c9170a'} size={40} />
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
+                            />
+                        </View>
+                        :
+                        <View style={{ width: '100%', height: 300, alignItems: 'center', justifyContent: 'center' }}>
+                            <Text style={{ color: '#000', fontSize: 17 }}>No Podcasts Found</Text>
+                        </View>
+                    }
+                </ScrollView>
             }
-            {currentTrack !== null &&
+            {
+                currentTrack !== null &&
                 <TouchableOpacity onPress={() => clickMusic(currentMusic)} style={{ width: '100%' }}>
                     <View style={{ width: '105%', alignSelf: 'center', height: 4, position: 'absolute', top: -1, zIndex: 999 }}>
                         <Slider
@@ -409,6 +419,54 @@ const Index = (props) => {
                     </View>
                 </TouchableOpacity>
             }
+
+            {/* All Podcast Modal Start */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={allPodcastsModalVisisble}
+                onRequestClose={closeAllPodcastsModal}
+            >
+                <View style={{ flex: 1, backgroundColor: '#f0f0f0' }}>
+                    <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#fff', paddingVertical: 13, paddingHorizontal: 5, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowRadius: 13, elevation: 5 }}>
+                        <TouchableOpacity onPress={closeAllPodcastsModal} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Feather name="chevron-left" color={'#000'} size={30} />
+                            <Text style={{ color: '#000', fontSize: 18, fontWeight: '500', marginBottom: 3, marginLeft: 5 }}>All Podcast</Text>
+                        </TouchableOpacity>
+                    </View>
+                    {filterPodcastList?.length > 0 ?
+                        <View style={{ flex: 1, marginTop: 10 }}>
+                            <FlatList
+                                data={filterPodcastList}
+                                keyExtractor={(item) => item.id}
+                                // scrollEnabled={false}
+                                showsHorizontalScrollIndicator={false}
+                                renderItem={({ item }) => (
+                                    <View style={[styles.podcastList, currentTrack === item.id && { backgroundColor: '#f5dfdf' }]}>
+                                        <TouchableOpacity onPress={() => clickMusic(item)} style={{ width: '15%', flexDirection: 'row', alignItems: 'center' }}>
+                                            <Image source={{ uri: item.image_url }} style={{ width: 50, height: 50, borderRadius: 50 }} />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => clickMusic(item)} style={{ width: '68%' }}>
+                                            <Text style={{ color: '#000', fontSize: 15, fontWeight: '500', textTransform: 'capitalize' }}>{item.name}</Text>
+                                            <Text style={{ color: '#000', fontSize: 13, fontWeight: '300', textTransform: 'capitalize' }}>
+                                                {item.description.length > 55 ? `${item.description.slice(0, 55)}...` : item.description}
+                                            </Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => togglePlayback(item)} style={{ width: '15%', alignItems: 'flex-end' }}>
+                                            <AntDesign name={currentTrack === item.id && playbackState.state === "playing" ? "pausecircle" : "play"} color={'#c9170a'} size={40} />
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
+                            />
+                        </View>
+                        :
+                        <View style={{ width: '100%', height: 300, alignItems: 'center', justifyContent: 'center' }}>
+                            <Text style={{ color: '#000', fontSize: 17 }}>No Podcasts Found</Text>
+                        </View>
+                    }
+                </View>
+            </Modal>
+            {/* All Podcast Modal End */}
 
             {/* Player Modal Start */}
             <Modal
@@ -466,7 +524,7 @@ const Index = (props) => {
                 </ImageBackground>
             </Modal>
             {/* Player Modal End */}
-        </View>
+        </View >
     )
 }
 
@@ -521,7 +579,7 @@ const styles = StyleSheet.create({
     mainBox: {
         backgroundColor: '#d7d7d9',
         width: '90%',
-        height: 280,
+        height: 200,
         alignSelf: 'center',
         borderRadius: 14
     },
@@ -553,8 +611,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         position: 'absolute',
         width: '85%',
-        height: 140,
-        top: 230,
+        height: 100,
+        top: 170,
         borderRadius: 15,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
