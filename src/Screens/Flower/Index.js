@@ -11,11 +11,11 @@ const Index = (props) => {
     const sliderImages = [
         {
             id: '1',
-            banner_img_url: 'https://pandit.33crores.com/images/flower_banner2.png',
+            banner_img_url: 'https://pandit.33crores.com/images/bg1.jpeg',
         },
         {
             id: '2',
-            banner_img_url: 'https://pandit.33crores.com/images/Yellow%20Professional%20Gradient%20App%20Development%20Banner%20Landscape%20(2).png',
+            banner_img_url: 'https://pandit.33crores.com/images/bg2.jpeg',
         },
     ];
 

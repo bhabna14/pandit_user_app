@@ -31,13 +31,17 @@ const Index = (props) => {
     const [addAddressModal, setAddAddressModal] = useState(false);
     const [profileDetails, setProfileDetails] = useState({});
 
-    const [dob, setDob] = useState(new Date(new Date().setDate(new Date().getDate() + 1)));
+    const [dob, setDob] = useState(props.route.params.category === "Immediateproduct" ? new Date() : new Date(new Date().setDate(new Date().getDate() + 1)));
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const openDatePicker = () => { setDatePickerVisibility(true) };
     const closeDatePicker = () => { setDatePickerVisibility(false) };
 
     const [deliveryTime, setDeliveryTime] = useState(new Date(new Date().getTime() + 2 * 60 * 60 * 1000));
     const [openTimePicker, setOpenTimePicker] = useState(false);
+
+    useEffect(() => {
+        setDeliveryTime(dob.toDateString() === new Date().toDateString() ? new Date(new Date().getTime() + 2 * 60 * 60 * 1000) : new Date());
+    }, [dob]);
 
     const [orderModalVisible, setOrderModalVisible] = useState(false);
     const closeOrderModal = () => { setOrderModalVisible(false) };
@@ -72,7 +76,6 @@ const Index = (props) => {
     };
 
     const [flowerNames, setFlowerNames] = useState([]);
-
     const [flowerUnits, setFlowerUnits] = useState([]);
 
     const getUnitList = async () => {
@@ -607,7 +610,7 @@ const Index = (props) => {
                                         setOpenTimePicker(false);
                                     }}
                                     onCancel={() => setOpenTimePicker(false)}
-                                    minimumDate={new Date(new Date().getTime() + 2 * 60 * 60 * 1000)}
+                                    minimumDate={dob.toDateString() === new Date().toDateString() ? new Date(new Date().getTime() + 2 * 60 * 60 * 1000) : undefined}
                                 />
                             </View>
                         }
@@ -716,7 +719,7 @@ const Index = (props) => {
                                     selectedColor: 'blue'
                                 }
                             }}
-                            minDate={moment().add(1, 'days').format('YYYY-MM-DD')}
+                            minDate={props.route.params.category === "Immediateproduct" ? new Date() : moment().add(1, 'days').format('YYYY-MM-DD')}
                         />
                     </View>
                 </View>

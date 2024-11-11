@@ -64,6 +64,8 @@ const Index = (props) => {
             setRefreshing(false);
             getPodcastData();
             getPodcastList();
+            setSelectedCategory(null);
+            setFilterPodcastList(allPodcasts);
             console.log("Refreshing Successful");
         }, 2000);
     }, []);
@@ -273,7 +275,7 @@ const Index = (props) => {
                             </View>
                         </View>
                     }
-                    {allContent?.categories?.length > 0 &&
+                    {/* {allContent?.categories?.length > 0 &&
                         <View style={{ width: '100%', height: 120, marginTop: 5 }}>
                             <FlatList
                                 horizontal
@@ -290,7 +292,6 @@ const Index = (props) => {
                                     <TouchableOpacity onPress={() => filterContent(item.id)} style={styles.itemContainer}>
                                         <View style={{ height: '65%', width: '100%' }}>
                                             <Image source={{ uri: item.image_url }} style={selectedCategory === item.id ? styles.selectedImage : styles.image} />
-                                            {/* {selectedCategory === item.id && <Entypo name="check" color={'#c9170a'} size={30} style={{ position: 'absolute', top: 3, right: 2 }} />} */}
                                         </View>
                                         <View style={{ height: '35%', width: '100%' }}>
                                             <Text style={styles.name}>{item.category_name.length > 15 ? `${item.category_name.substring(0, 15)}...` : item.category_name}</Text>
@@ -299,14 +300,14 @@ const Index = (props) => {
                                 )}
                             />
                         </View>
-                    }
-                    {selectedCategory === null && allContent?.last_week_podcasts?.length > 0 &&
+                    } */}
+                    {/* {selectedCategory === null && allContent?.last_week_podcasts?.length > 0 &&
                         <View style={{ width: '100%', marginTop: 15 }}>
                             <View style={{ width: '93%', alignSelf: 'center', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
                                 <Text style={{ color: '#000', fontSize: 17, letterSpacing: 0.3, fontWeight: '600' }}>Recent Podcast</Text>
                             </View>
                         </View>
-                    }
+                    } */}
                     {/* {allContent?.last_week_podcasts?.length > 0 && selectedCategory === null &&
                         <View style={{ width: '100%', marginTop: 15 }}>
                             <FlatList
@@ -345,7 +346,7 @@ const Index = (props) => {
                         </View>
                     } */}
                     {filterPodcastList?.length > 0 ?
-                        <View style={{ width: '100%', marginTop: 15 }}>
+                        <View style={{ width: '100%', marginTop: 0 }}>
                             <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 18 }}>
                                 <Text style={{ color: '#000', fontSize: 17, letterSpacing: 0.3, fontWeight: '600', marginLeft: 10 }}>All Podcasts</Text>
                                 <TouchableOpacity onPress={() => openAllPodcastsModal()} style={{ marginRight: 10, flexDirection: 'row', alignItems: 'center' }}>
@@ -578,7 +579,7 @@ const styles = StyleSheet.create({
     },
     mainBox: {
         backgroundColor: '#d7d7d9',
-        width: '90%',
+        width: '94%',
         height: 200,
         alignSelf: 'center',
         borderRadius: 14
