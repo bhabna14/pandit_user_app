@@ -11,11 +11,19 @@ const Index = (props) => {
     const sliderImages = [
         {
             id: '1',
-            banner_img_url: 'https://pandit.33crores.com/images/bg1.jpeg',
+            banner_img_url: 'https://pandit.33crores.com/images/1.png',
         },
         {
             id: '2',
-            banner_img_url: 'https://pandit.33crores.com/images/bg2.jpeg',
+            banner_img_url: 'https://pandit.33crores.com/images/2.png',
+        },
+        {
+            id: '3',
+            banner_img_url: 'https://pandit.33crores.com/images/3.png',
+        },
+        {
+            id: '4',
+            banner_img_url: 'https://pandit.33crores.com/images/4.png',
         },
     ];
 
