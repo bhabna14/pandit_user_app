@@ -13,17 +13,6 @@ import { base_url } from '../../../App';
 
 const Index = (props) => {
 
-    const sliderImages = [
-        {
-            id: '1',
-            banner_img_url: 'https://pandit.33crores.com/images/banner.png',
-        },
-        {
-            id: '2',
-            banner_img_url: 'https://poojastore.33crores.com/cdn/shop/files/3_6426324a-0668-4d7a-b907-cc51d2f0d0b1.png',
-        },
-    ];
-
     const screenWidth = Dimensions.get('window').width;
     const itemWidth = 0.6 * screenWidth;
     const navigation = useNavigation();
@@ -56,6 +45,31 @@ const Index = (props) => {
         const mins = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
         return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    };
+
+    const [sliderImages, setSliderImages] = useState([]);
+
+    const getPodcastBanner = async () => {
+        try {
+            setSpinner(true);
+            const response = await fetch(base_url + 'api/app-banners', {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            });
+            const responseData = await response.json();
+            if (responseData.status === 200) {
+                setSpinner(false);
+                // console.log("Podcast Banner: ", responseData.data);
+                const flowerBanners = responseData.data.filter(item => item.category === "podcast");
+                setSliderImages(flowerBanners);
+            }
+        } catch (error) {
+            console.log(error);
+            setSpinner(false);
+        }
     };
 
     const onRefresh = React.useCallback(() => {
@@ -178,6 +192,7 @@ const Index = (props) => {
         if (isFocused) {
             getPodcastData();
             getPodcastList();
+            getPodcastBanner();
         }
     }, [isFocused])
 
@@ -232,20 +247,22 @@ const Index = (props) => {
                 </View>
                 :
                 <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} showsVerticalScrollIndicator={false} style={{ flex: 1, zIndex: 1, }}>
-                    <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center' }}>
-                        <View style={{ width: '100%', marginBottom: 5, marginTop: 0, borderRadius: 10, overflow: 'hidden' }}>
-                            <FlatListSlider
-                                onPress={item => ""}
-                                indicator={false}
-                                data={sliderImages}
-                                imageKey={'banner_img_url'}
-                                height={195}
-                                timer={8000}
-                                animation
-                                autoscroll={false}
-                            />
+                    {sliderImages.length > 0 &&
+                        <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center' }}>
+                            <View style={{ width: '100%', marginBottom: 5, marginTop: 0, borderRadius: 10, overflow: 'hidden' }}>
+                                <FlatListSlider
+                                    onPress={item => ""}
+                                    indicator={false}
+                                    data={sliderImages}
+                                    imageKey={'banner_img_url'}
+                                    height={195}
+                                    timer={8000}
+                                    animation
+                                    autoscroll={false}
+                                />
+                            </View>
                         </View>
-                    </View>
+                    }
                     {selectedCategory === null &&
                         <View style={{ width: '100%', height: 285, marginTop: 10 }}>
                             <View style={styles.mainBox}>
@@ -348,7 +365,7 @@ const Index = (props) => {
                     {filterPodcastList?.length > 0 ?
                         <View style={{ width: '100%', marginTop: 0 }}>
                             <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 18 }}>
-                                <Text style={{ color: '#000', fontSize: 17, letterSpacing: 0.3, fontWeight: '600', marginLeft: 10 }}>All Podcasts</Text>
+                                <Text style={{ color: '#000', fontSize: 17, letterSpacing: 0.3, fontWeight: '600', marginLeft: 10 }}>Trending Podcasts</Text>
                                 <TouchableOpacity onPress={() => openAllPodcastsModal()} style={{ marginRight: 10, flexDirection: 'row', alignItems: 'center' }}>
                                     <Text style={{ color: '#c9170a', fontSize: 15, fontWeight: '500' }}>View All</Text>
                                     <Feather name="chevrons-right" color={'#c9170a'} size={20} />
@@ -384,8 +401,7 @@ const Index = (props) => {
                     }
                 </ScrollView>
             }
-            {
-                currentTrack !== null &&
+            {currentTrack !== null &&
                 <TouchableOpacity onPress={() => clickMusic(currentMusic)} style={{ width: '100%' }}>
                     <View style={{ width: '105%', alignSelf: 'center', height: 4, position: 'absolute', top: -1, zIndex: 999 }}>
                         <Slider
@@ -464,6 +480,42 @@ const Index = (props) => {
                         <View style={{ width: '100%', height: 300, alignItems: 'center', justifyContent: 'center' }}>
                             <Text style={{ color: '#000', fontSize: 17 }}>No Podcasts Found</Text>
                         </View>
+                    }
+                    {
+                        currentTrack !== null &&
+                        <TouchableOpacity onPress={() => clickMusic(currentMusic)} style={{ width: '100%' }}>
+                            <View style={{ width: '105%', alignSelf: 'center', height: 4, position: 'absolute', top: -1, zIndex: 999 }}>
+                                <Slider
+                                    style={{ width: '100%', height: 2, zIndex: 999 }}
+                                    value={progress.position}
+                                    minimumValue={0}
+                                    maximumValue={progress.duration}
+                                    thumbTintColor="red"
+                                    minimumTrackTintColor="#000"
+                                    maximumTrackTintColor="#ffb700"
+                                    onSlidingComplete={async (value) => {
+                                        await TrackPlayer.seekTo(value);
+                                    }}
+                                />
+                            </View>
+                            <View style={styles.musicSection}>
+                                <View style={{ width: '70%', flexDirection: 'row', alignItems: 'center', paddingLeft: 18 }}>
+                                    <Image style={styles.smallImg} source={{ uri: currentMusic?.image_url }} />
+                                    <View style={{ marginLeft: 20 }}>
+                                        <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>{currentMusic?.name}</Text>
+                                        <Text style={{ color: '#d4d2d2', fontSize: 14 }}> Spiritual</Text>
+                                    </View>
+                                </View>
+                                <View style={{ width: '30%', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
+                                    <TouchableOpacity onPress={() => togglePlayback(currentMusic)} style={{ marginRight: 15, padding: 3 }}>
+                                        <FontAwesome6 name={playbackState.state === "playing" ? "pause" : "play"} color={'#fff'} size={25} />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={closeMusic} style={{ marginRight: 15 }}>
+                                        <Ionicons name={"close-outline"} color={'#fff'} size={28} />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </TouchableOpacity>
                     }
                 </View>
             </Modal>

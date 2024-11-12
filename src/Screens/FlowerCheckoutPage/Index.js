@@ -7,7 +7,6 @@ import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Fontisto from 'react-native-vector-icons/Fontisto';
 import moment from 'moment';
 import RazorpayCheckout from 'react-native-razorpay';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -344,6 +343,10 @@ const Index = (props) => {
                 // console.log("getAllAddress-------", responseData);
                 setSpinner(false);
                 setAllAddresses(responseData.addressData);
+                if (responseData.addressData.length === 1 && responseData.addressData[0].default === 0) {
+                    handleDefaultAddress(responseData.addressData[0].id);
+                    // console.log("0 Index Address Id", responseData.addressData[0].id);
+                }
             }
         } catch (error) {
             console.log(error);
@@ -351,11 +354,63 @@ const Index = (props) => {
         }
     }
 
-    const [state, setState] = useState("");
+    const getAllLocality = async () => {
+        try {
+            const response = await fetch(base_url + 'api/localities', {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            });
+            const responseData = await response.json();
+            if (responseData.success === 200) {
+                const localityData = responseData.data.map((item) => ({
+                    label: item.locality_name,
+                    value: String(item.unique_code),  // Ensure value is a string for consistency
+                    pincode: item.pincode, // Include pincode in the object
+                }));
+                console.log('Fetched Locality Data:', localityData); // Debug: Check the fetched data
+                setLocalityList(localityData);
+            }
+        } catch (error) {
+            console.log('Error fetching localities:', error);
+        }
+    };
+
+    const handleLocalitySelect = (value) => {
+        // console.log('Selected Value:', value); // Debug: Check selected value
+        setLocalityValue(value);
+
+        // Additional log to see if localityList has correct data
+        // console.log('Current Locality List:', localityList);
+
+        const selectedLocality = localityList.find(locality => String(locality.value) === String(value));
+        if (selectedLocality) {
+            console.log('Found Locality:', selectedLocality); // Check if locality is correctly found
+            setPincode(selectedLocality.pincode); // Set pincode state
+        } else {
+            console.log('Locality not found in list.'); // Debug: No match found
+        }
+    };
+
+    const [isFocus, setIsFocus] = useState(false);
+    const [seletedAddress, setSeletedAddress] = useState(null);
+    const options = [
+        { label: 'Individual', value: 'individual' },
+        { label: 'Apartment', value: 'apartment' },
+        { label: 'Business', value: 'business' },
+        { label: 'Temple', value: 'temple' },
+    ];
+    const [apartment, setApartment] = useState("");
+    const [localityOpen, setLocalityOpen] = useState(false);
+    const [localityValue, setLocalityValue] = useState(null);
+    const [localityList, setLocalityList] = useState([]);
+    const [landmark, setLandmark] = useState("");
     const [city, setCity] = useState("");
+    const [state, setState] = useState("");
     const [pincode, setPincode] = useState("");
-    const [area, setArea] = useState("");
-    const [activeAddressType, setActiveAddressType] = useState('Home');
+    const [activeAddressType, setActiveAddressType] = useState(null);
     const [errors, setErrors] = useState({});
 
     const saveAddress = async () => {
@@ -370,24 +425,26 @@ const Index = (props) => {
                     'Authorization': `Bearer ${access_token}`
                 },
                 body: JSON.stringify({
-                    // fullname: name,
-                    // number: phoneNumber,
                     country: "India",
                     state: state,
                     city: city,
                     pincode: pincode,
-                    area: area,
-                    address_type: activeAddressType
+                    address_type: activeAddressType,
+                    locality: localityValue,
+                    place_category: String(selectedOption),
+                    apartment_flat_plot: apartment,
+                    landmark: landmark
                 }),
             });
 
             const responseData = await response.json();
             console.log("responseData", responseData);
 
-            if (response.ok) {
+            if (responseData.success === 200) {
                 console.log("Address saved successfully");
                 setAddAddressModal(false);
                 getAllAddress();
+                closeAddAddressModal();
             } else {
                 console.error('Failed to save address:', responseData.message);
             }
@@ -397,32 +454,56 @@ const Index = (props) => {
         }
     };
 
+    const closeAddAddressModal = () => {
+        setSeletedAddress(null);
+        setApartment("");
+        setLocalityValue(null);
+        setLandmark("");
+        setState("");
+        setCity("");
+        setPincode("");
+        setActiveAddressType(null);
+        setAddAddressModal(false);
+    }
+
     const validateFields = () => {
         let valid = true;
         let errors = {};
 
-        // if (name === "") {
-        //     errors.name = "Name is required";
-        //     valid = false;
-        // }
-        // if (phoneNumber === "") {
-        //     errors.phoneNumber = "Phone Number is required";
-        //     valid = false;
-        // }
-        if (state === "") {
-            errors.state = "State is required";
+        if (selectedOption === null) {
+            errors.residential = "Please select residential type";
+            valid = false;
+        }
+        if (apartment === "") {
+            errors.apartment = "Apartment/Plot/Flat Number is required";
+            valid = false;
+        }
+        if (localityValue === null) {
+            errors.locality = "Locality is required";
+            valid = false;
+        }
+        if (landmark === "") {
+            errors.landmark = "Landmark is required";
             valid = false;
         }
         if (city === "") {
             errors.city = "City is required";
             valid = false;
         }
+        if (state === "") {
+            errors.state = "State is required";
+            valid = false;
+        }
         if (pincode === "") {
             errors.pincode = "Pincode is required";
             valid = false;
         }
-        if (area === "") {
-            errors.area = "Area is required";
+        if (pincode.length !== 6) {
+            errors.pincode = "Pincode must be 6 digits";
+            valid = false;
+        }
+        if (activeAddressType === null) {
+            errors.activeAddressType = "Please select address type";
             valid = false;
         }
 
@@ -439,6 +520,7 @@ const Index = (props) => {
         if (isFocused) {
             // console.log("get Package details by props", props.route.params);
             getAllAddress();
+            getAllLocality();
             getProfile();
             getUnitList();
             getFlowerList();
@@ -662,8 +744,9 @@ const Index = (props) => {
                                                     {address.item.address_type === "Work" && <Text style={{ color: '#000', fontSize: 15, fontWeight: '600' }}>Work</Text>}
                                                     {address.item.address_type === "Other" && <Text style={{ color: '#000', fontSize: 15, fontWeight: '600' }}>Other</Text>}
                                                 </View>
-                                                <Text style={{ color: '#555454', fontSize: 13 }}>{address.item.area},  {address.item.city}</Text>
-                                                <Text style={{ color: '#555454', fontSize: 13 }}>{address.item.state},  {address.item.pincode},  {address.item.country}</Text>
+                                                <Text style={{ color: '#555454', fontSize: 13 }}>{address.item.apartment_flat_plot},  {address.item.landmark}</Text>
+                                                <Text style={{ color: '#555454', fontSize: 13 }}>{address.item.locality_details.locality_name},  {address.item.city},  {address.item.state}</Text>
+                                                <Text style={{ color: '#555454', fontSize: 13 }}>{address.item.pincode},  {address.item.place_category}</Text>
                                             </View>
                                             <View style={{ width: '10%', alignItems: 'center', justifyContent: 'center' }}>
                                                 {selectedOption === address.item.id ?
@@ -741,37 +824,114 @@ const Index = (props) => {
                         </TouchableOpacity>
                     </View>
                     <ScrollView style={{ width: '100%', marginTop: 20 }}>
-                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 25 }}>
-                            <Text style={styles.inputLable}>Area, Street, Sector, Village</Text>
+                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20 }}>
+                            <Text style={styles.inputLable}>Residential Type</Text>
+                            {options.reduce((rows, option, index) => {
+                                if (index % 2 === 0) rows.push([]);
+                                rows[rows.length - 1].push(option);
+                                return rows;
+                            }, []).map((row, rowIndex) => (
+                                <View key={rowIndex} style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
+                                    {row.map((option) => (
+                                        <TouchableOpacity
+                                            key={option.value}
+                                            style={{
+                                                flexDirection: 'row',
+                                                alignItems: 'center',
+                                                paddingVertical: 10,
+                                                paddingHorizontal: 15,
+                                                borderRadius: 20,
+                                                backgroundColor: selectedOption === option.value ? '#007AFF' : '#f0f0f0',
+                                                borderWidth: selectedOption === option.value ? 0 : 1,
+                                                borderColor: '#ccc',
+                                                flex: 1,
+                                                marginHorizontal: 5,
+                                            }}
+                                            onPress={() => setSelectedOption(option.value)}
+                                        >
+                                            <View
+                                                style={{
+                                                    height: 16,
+                                                    width: 16,
+                                                    borderRadius: 8,
+                                                    borderWidth: 2,
+                                                    borderColor: selectedOption === option.value ? '#fff' : '#007AFF',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    marginRight: 8,
+                                                }}
+                                            >
+                                                {selectedOption === option.value && (
+                                                    <View
+                                                        style={{
+                                                            height: 8,
+                                                            width: 8,
+                                                            borderRadius: 4,
+                                                            backgroundColor: '#fff',
+                                                        }}
+                                                    />
+                                                )}
+                                            </View>
+                                            <Text style={{ color: selectedOption === option.value ? '#fff' : '#333', fontWeight: 'bold' }}>
+                                                {option.label}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
+                            ))}
+                            {errors.residential && <Text style={styles.errorText}>{errors.residential}</Text>}
+                        </View>
+                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20 }}>
+                            <Text style={styles.inputLable}>Apartment / Plot / Flat  Number</Text>
                             <View style={styles.card}>
                                 <TextInput
                                     style={styles.inputs}
-                                    onChangeText={setArea}
-                                    value={area}
-                                    placeholder="Enter Your Area, Street, Sector, Village"
+                                    onChangeText={setApartment}
+                                    value={apartment}
+                                    placeholder="Enter Your Apartment/Plot/Flat Number"
                                     placeholderTextColor="#424242"
                                     underlineColorAndroid='transparent'
                                 />
                             </View>
-                            {errors.area && <Text style={styles.errorText}>{errors.area}</Text>}
+                            {errors.apartment && <Text style={styles.errorText}>{errors.apartment}</Text>}
                         </View>
-                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 25 }}>
-                            <Text style={styles.inputLable}>Pincode</Text>
+                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20, zIndex: localityOpen ? 10 : 1 }}>
+                            <Text style={styles.inputLable}>Locality</Text>
+                            <View style={styles.card}>
+                                <DropDownPicker
+                                    style={{ borderColor: 'transparent' }}
+                                    placeholder={!isFocus ? 'Locality' : '...'}
+                                    open={localityOpen}
+                                    value={localityValue}
+                                    items={localityList}
+                                    setOpen={setLocalityOpen}
+                                    setValue={(callback) => {
+                                        const selectedValue = typeof callback === 'function' ? callback(localityValue) : callback;
+                                        handleLocalitySelect(selectedValue);
+                                    }}
+                                    setItems={setLocalityList}
+                                    itemSeparator={true}
+                                    listMode="SCROLLVIEW"
+                                    autoScroll={true}
+                                />
+                            </View>
+                            {errors.locality && <Text style={styles.errorText}>{errors.locality}</Text>}
+                        </View>
+                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20 }}>
+                            <Text style={styles.inputLable}>LandMark</Text>
                             <View style={styles.card}>
                                 <TextInput
                                     style={styles.inputs}
-                                    onChangeText={setPincode}
-                                    value={pincode}
-                                    maxLength={6}
-                                    keyboardType='number-pad'
-                                    placeholder="Enter Your Pincode"
+                                    onChangeText={setLandmark}
+                                    value={landmark}
+                                    placeholder="Enter Your LandMark"
                                     placeholderTextColor="#424242"
                                     underlineColorAndroid='transparent'
                                 />
                             </View>
-                            {errors.pincode && <Text style={styles.errorText}>{errors.pincode}</Text>}
+                            {errors.landmark && <Text style={styles.errorText}>{errors.landmark}</Text>}
                         </View>
-                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 25 }}>
+                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20 }}>
                             <Text style={styles.inputLable}>Town/City</Text>
                             <View style={styles.card}>
                                 <TextInput
@@ -785,7 +945,7 @@ const Index = (props) => {
                             </View>
                             {errors.city && <Text style={styles.errorText}>{errors.city}</Text>}
                         </View>
-                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 25 }}>
+                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20 }}>
                             <Text style={styles.inputLable}>State</Text>
                             <View style={styles.card}>
                                 <TextInput
@@ -799,7 +959,24 @@ const Index = (props) => {
                             </View>
                             {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
                         </View>
-                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 25 }}>
+                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20 }}>
+                            <Text style={styles.inputLable}>Pincode</Text>
+                            <View style={[styles.card, { backgroundColor: '#ebe8e8' }]}>
+                                <TextInput
+                                    style={styles.inputs}
+                                    onChangeText={setPincode}
+                                    value={pincode} // This should reflect the updated pincode
+                                    maxLength={6}
+                                    editable={false} // Disable editing of pincode
+                                    keyboardType="number-pad"
+                                    placeholder="Enter Your Pincode"
+                                    placeholderTextColor="#424242"
+                                    underlineColorAndroid="transparent"
+                                />
+                            </View>
+                            {errors.pincode && <Text style={styles.errorText}>{errors.pincode}</Text>}
+                        </View>
+                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20 }}>
                             <Text style={styles.inputLable}>Type of address</Text>
                             <View style={{ flexDirection: 'row', alignItems: 'center', height: 40, marginTop: 5 }}>
                                 <TouchableOpacity onPress={() => setActiveAddressType('Home')} style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: activeAddressType === 'Home' ? '#c7d4f0' : '#fff', marginRight: 20, borderWidth: 0.8, borderColor: activeAddressType === 'Home' ? '#074feb' : '#000', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 20 }}>
@@ -815,6 +992,7 @@ const Index = (props) => {
                                     <Text style={{ color: activeAddressType === 'Other' ? '#074feb' : '#000', fontSize: 13, fontWeight: '500', marginLeft: 6 }}>Other</Text>
                                 </TouchableOpacity>
                             </View>
+                            {errors.activeAddressType && <Text style={styles.errorText}>{errors.activeAddressType}</Text>}
                         </View>
                     </ScrollView>
                     <TouchableOpacity onPress={saveAddress} style={styles.saveAddress}>
@@ -867,7 +1045,6 @@ const Index = (props) => {
                 </View>
             </Modal>
             {/* End Show Error Modal */}
-
         </SafeAreaView>
     )
 }

@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import messaging from '@react-native-firebase/messaging';
 import Notification from './src/Component/Notification';
 import NetInfo from "@react-native-community/netinfo";
+import PromotionModal from './src/Component/PromotionModal';
 
 // SplashScreen
 import SplashScreen from './src/Screens/SplashScreen/Index'
@@ -85,6 +86,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Notification />
+      <PromotionModal />
       <StatusBar backgroundColor="#c9170a" barStyle="light-content" />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {showSplash ? (<Stack.Screen name="SplashScreen" component={SplashScreen} options={{ presentation: 'modal', animationTypeForReplace: 'push', animation: 'slide_from_right' }} />) : null}

@@ -8,25 +8,6 @@ import { base_url } from '../../../App';
 
 const Index = (props) => {
 
-    const sliderImages = [
-        {
-            id: '1',
-            banner_img_url: 'https://pandit.33crores.com/images/1.png',
-        },
-        {
-            id: '2',
-            banner_img_url: 'https://pandit.33crores.com/images/2.png',
-        },
-        {
-            id: '3',
-            banner_img_url: 'https://pandit.33crores.com/images/3.png',
-        },
-        {
-            id: '4',
-            banner_img_url: 'https://pandit.33crores.com/images/4.png',
-        },
-    ];
-
     const navigation = useNavigation();
     const isFocused = useIsFocused();
     const [refreshing, setRefreshing] = useState(false);
@@ -34,6 +15,7 @@ const Index = (props) => {
     const [allPackages, setAllPackages] = useState([]);
     const [flowerRequest, setFlowerRequest] = useState([]);
     const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
+    const [sliderImages, setSliderImages] = useState([]);
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
@@ -43,6 +25,29 @@ const Index = (props) => {
             console.log("Refreshing Successful");
         }, 2000);
     }, []);
+
+    const getFlowerBanner = async () => {
+        try {
+            setSpinner(true);
+            const response = await fetch(base_url + 'api/app-banners', {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            });
+            const responseData = await response.json();
+            if (responseData.status === 200) {
+                setSpinner(false);
+                // console.log("Flower Banner: ", responseData.data);
+                const flowerBanners = responseData.data.filter(item => item.category === "flower");
+                setSliderImages(flowerBanners);
+            }
+        } catch (error) {
+            console.log(error);
+            setSpinner(false);
+        }
+    };
 
     const getAllPackages = async () => {
         setSpinner(true);
@@ -84,6 +89,7 @@ const Index = (props) => {
     useEffect(() => {
         if (isFocused) {
             getAllPackages();
+            getFlowerBanner();
         }
     }, [isFocused]);
 
@@ -94,12 +100,12 @@ const Index = (props) => {
             </View>
             <View style={{ margin: 10, width: '90%', alignItems: 'flex-start', justifyContent: 'center' }}>
                 <View style={{ width: '100%' }}>
-                    <Text style={{ color: '#000', fontSize: 15, fontFamily: 'Montserrat-Bold', textTransform: 'capitalize' }}>{item.name}</Text>
+                    <Text style={{ color: '#000', fontSize: 16, fontWeight: '500', textTransform: 'capitalize' }}>{item.name}</Text>
                 </View>
                 {item.category === 'Immediateproduct' ?
                     <Text style={{ color: '#000', fontSize: 14, fontWeight: '400', textTransform: 'capitalize' }}>{item.immediate_price}</Text>
                     :
-                    <View style={{ flexDirection: 'row', marginVertical: 5 }}>
+                    <View style={{ flexDirection: 'row', marginBottom: 5 }}>
                         {/* <Text style={{ color: '#000', fontSize: 14, fontWeight: '400', textTransform: 'capitalize', textDecorationLine: 'line-through', marginRight: 20 }}>Rs. {item.price}</Text> */}
                         <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold', textTransform: 'capitalize' }}>Rs. {item.price}</Text>
                     </View>
@@ -124,20 +130,22 @@ const Index = (props) => {
                 </View>
                 :
                 <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
-                    <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center' }}>
-                        <View style={{ width: '100%', marginBottom: 5, marginTop: 0, borderRadius: 10, overflow: 'hidden' }}>
-                            <FlatListSlider
-                                onPress={item => ""}
-                                indicator={false}
-                                data={sliderImages}
-                                imageKey={'banner_img_url'}
-                                height={195}
-                                timer={8000}
-                                animation
-                                autoscroll={false}
-                            />
+                    {sliderImages.length > 0 &&
+                        <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center' }}>
+                            <View style={{ width: '100%', marginBottom: 5, marginTop: 0, borderRadius: 10, overflow: 'hidden' }}>
+                                <FlatListSlider
+                                    onPress={item => ""}
+                                    indicator={false}
+                                    data={sliderImages}
+                                    imageKey={'banner_img_url'}
+                                    height={195}
+                                    timer={8000}
+                                    animation
+                                    autoscroll={false}
+                                />
+                            </View>
                         </View>
-                    </View>
+                    }
                     <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center' }}>
                         <View style={styles.flowerRequest}>
                             <TouchableOpacity style={{ width: '47%', height: '100%', borderRadius: 10, borderColor: '#000', borderWidth: 0.5 }}>
@@ -156,7 +164,7 @@ const Index = (props) => {
                     </View>
                     <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center' }}>
                         <View style={{ width: '100%', marginVertical: 10, borderRadius: 10, overflow: 'hidden' }}>
-                            <Text style={{ fontSize: 18, color: '#000', fontFamily: 'Montserrat-SemiBold' }}>FLOWER SUBSCRIPTION :-</Text>
+                            <Text style={{ fontSize: 18, color: '#000', fontWeight: 'bold' }}>FLOWER SUBSCRIPTION :-</Text>
                         </View>
                         <View style={{ width: '100%', borderRadius: 10, overflow: 'hidden' }}>
                             <FlatList
