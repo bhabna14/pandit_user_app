@@ -59,7 +59,7 @@ const Index = (props) => {
                     value: String(item.unique_code),  // Ensure value is a string for consistency
                     pincode: item.pincode, // Include pincode in the object
                 }));
-                console.log('Fetched Locality Data:', localityData); // Debug: Check the fetched data
+                // console.log('Fetched Locality Data:', localityData); // Debug: Check the fetched data
                 setLocalityList(localityData);
             }
         } catch (error) {
@@ -380,7 +380,8 @@ const Index = (props) => {
                         <View style={{ flex: 1 }}>
                             <FlatList
                                 showsHorizontalScrollIndicator={false}
-                                data={allAddresses.reverse()}
+                                data={allAddresses}
+                                inverted
                                 scrollEnabled={false}
                                 keyExtractor={(key) => {
                                     return key.id
@@ -540,8 +541,10 @@ const Index = (props) => {
                                     }}
                                     setItems={setLocalityList}
                                     itemSeparator={true}
-                                    listMode="SCROLLVIEW"
-                                    autoScroll={true}
+                                    listMode="MODAL"
+                                    searchable={true}
+                                    searchPlaceholder="Locality..."
+                                // autoScroll={true}
                                 />
                             </View>
                             {errors.locality && <Text style={styles.errorText}>{errors.locality}</Text>}
@@ -734,8 +737,10 @@ const Index = (props) => {
                                     }}
                                     setItems={setLocalityList}
                                     itemSeparator={true}
-                                    listMode="SCROLLVIEW"
-                                    autoScroll={true}
+                                    listMode="MODAL"
+                                    searchable={true}
+                                    searchPlaceholder="Locality..."
+                                // autoScroll={true}
                                 />
                             </View>
                             {errors.locality && <Text style={styles.errorText}>{errors.locality}</Text>}

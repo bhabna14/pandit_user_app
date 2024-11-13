@@ -58,7 +58,7 @@ const PromotionModal = () => {
                         <Text style={styles.description}>No promotions available for today.</Text>
                     )}
                     <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
-                        <Text style={styles.buttonText}>{promotion.button_title}</Text>
+                        <Text style={styles.buttonText}>{promotion?.button_title}</Text>
                     </TouchableOpacity>
                 </View>
             </View>

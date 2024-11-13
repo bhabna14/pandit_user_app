@@ -282,7 +282,7 @@ const Index = (props) => {
                                                     :
                                                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', marginTop: 5 }}>
                                                         <View style={{ backgroundColor: '#fae6e6', alignItems: 'center', justifyContent: 'center', borderRadius: 5, width: 100, height: 30 }}>
-                                                            <Text style={{ color: '#000', fontSize: 15, fontWeight: '600' }}>₹{item.order.total_price}</Text>
+                                                            <Text style={{ color: '#000', fontSize: 15, fontWeight: '600' }}>₹{item?.order?.total_price}</Text>
                                                         </View>
                                                         {item?.status === 'approved' &&
                                                             <TouchableOpacity onPress={() => navigation.navigate("FlowerRequestDetails", item)} style={{ backgroundColor: 'green', width: 70, height: 30, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginLeft: 10 }}>

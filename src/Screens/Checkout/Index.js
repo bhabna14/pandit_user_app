@@ -624,8 +624,10 @@ const Index = (props) => {
                                     }}
                                     setItems={setLocalityList}
                                     itemSeparator={true}
-                                    listMode="SCROLLVIEW"
-                                    autoScroll={true}
+                                    listMode="MODAL"
+                                    searchable={true}
+                                    searchPlaceholder="Locality..."
+                                // autoScroll={true}
                                 />
                             </View>
                             {errors.locality && <Text style={styles.errorText}>{errors.locality}</Text>}

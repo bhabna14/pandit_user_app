@@ -105,9 +105,10 @@ const Index = (props) => {
                 {item.category === 'Immediateproduct' ?
                     <Text style={{ color: '#000', fontSize: 14, fontWeight: '400', textTransform: 'capitalize' }}>{item.immediate_price}</Text>
                     :
-                    <View style={{ flexDirection: 'row', marginBottom: 5 }}>
-                        {/* <Text style={{ color: '#000', fontSize: 14, fontWeight: '400', textTransform: 'capitalize', textDecorationLine: 'line-through', marginRight: 20 }}>Rs. {item.price}</Text> */}
-                        <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold', textTransform: 'capitalize' }}>Rs. {item.price}</Text>
+                    <View style={{ flexDirection: 'row', marginVertical: 5 }}>
+                        <Text style={{ color: '#000', fontWeight: '500' }}>M.R.P -  </Text>
+                        {item.mrp && <Text style={{ color: '#c9170a', fontSize: 14, fontWeight: '400', textTransform: 'capitalize', textDecorationLine: 'line-through', marginRight: 10 }}>Rs.{item.mrp}</Text>}
+                        <Text style={{ color: '#000', fontSize: 15, fontWeight: 'bold', textTransform: 'capitalize' }}>Rs.{item.price}</Text>
                     </View>
                 }
                 <Text numberOfLines={4} ellipsizeMode='tail' style={{ color: '#000', fontSize: 13, fontFamily: 'Montserrat-Regular', textTransform: 'capitalize', lineHeight: 20 }}>{item.description}</Text>
