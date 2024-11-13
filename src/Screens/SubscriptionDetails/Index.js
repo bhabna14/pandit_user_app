@@ -195,15 +195,16 @@ const Index = (props) => {
           </View>
         </View>
       </View>
-      <View style={styles.card}>
-        <Text style={styles.subtitle}>Address</Text>
-        <Text style={styles.text}>{packageDetails?.address?.address_type}</Text>
-        <Text style={styles.text}>{packageDetails?.address?.area}</Text>
-        <Text style={styles.text}>
-          {packageDetails?.address?.city}, {packageDetails?.address?.state}, {packageDetails?.address?.pincode}
-        </Text>
-        <Text style={styles.text}>{packageDetails?.address?.country}</Text>
-      </View>
+      {packageDetails?.address &&
+        <View style={styles.card}>
+          <Text style={styles.subtitle}>Address</Text>
+          <Text style={styles.text}>{packageDetails?.address?.address_type}, {packageDetails?.address?.place_category}</Text>
+          <Text style={styles.text}>{packageDetails?.address?.apartment_flat_plot}, {packageDetails?.address?.landmark}</Text>
+          <Text style={styles.text}>{packageDetails?.address?.locality}, {packageDetails?.address?.city}</Text>
+          <Text style={styles.text}>{packageDetails?.address?.state}, {packageDetails?.address?.pincode}</Text>
+          <Text style={styles.text}>{packageDetails?.address?.country}</Text>
+        </View>
+      }
       <View style={styles.card}>
         {packageDetails?.subscription?.status !== "paused" ?
           <View>

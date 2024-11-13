@@ -58,7 +58,7 @@ const PromotionModal = () => {
                         <Text style={styles.description}>No promotions available for today.</Text>
                     )}
                     <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
-                        <Text style={styles.buttonText}>Get Started</Text>
+                        <Text style={styles.buttonText}>{promotion.button_title}</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
         width: 150,
         height: 150,
         marginBottom: 20,
+        borderRadius: 10,
     },
     button: {
         backgroundColor: '#FF4081',
