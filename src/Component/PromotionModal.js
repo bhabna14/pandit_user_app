@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Modal, StyleSheet, TouchableOpacity, Image } from 'react-native';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/Ionicons'; // Import the icon library
 import { base_url } from '../../App';
 
 const PromotionModal = () => {
@@ -48,6 +48,9 @@ const PromotionModal = () => {
         >
             <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
+                    <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+                        <Icon name="close" size={26} color="#333" />
+                    </TouchableOpacity>
                     {promotion ? (
                         <>
                             <Text style={styles.title}>{promotion.promo_heading}</Text>
@@ -79,6 +82,12 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 20,
         alignItems: 'center',
+        position: 'relative',
+    },
+    closeButton: {
+        position: 'absolute',
+        top: 25,
+        right: 15,
     },
     title: {
         fontSize: 24,

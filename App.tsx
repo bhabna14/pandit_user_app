@@ -50,7 +50,7 @@ import ContactUs from './src/Screens/ContactUs/Index'
 import Help from './src/Screens/Help/Index'
 import AllPodcasts from './src/Screens/AllPodcasts/Index'
 
-const Stack = createNativeStackNavigator()
+const Stack = createNativeStackNavigator();
 
 // export const base_url = "https://panditapp.mandirparikrama.com/"
 export const base_url = "https://pandit.33crores.com/"

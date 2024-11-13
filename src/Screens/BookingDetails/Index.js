@@ -321,10 +321,13 @@ const Index = (props) => {
                     </View>
                     <View style={[styles.detailsBox, !bookingDetails?.rating_details?.id ? { marginBottom: bookingDetails.status === "paid" && bookingDetails.payment_status === "paid" && bookingDetails.application_status === "approved" && bookingDetails.pooja_status === "pending" ? 90 : 50 } : null]}>
                         <Text style={styles.sectionHeader}>Address Information</Text>
-                        <Text style={styles.infoText}>Area: {bookingDetails?.address?.area}</Text>
+                        <Text style={styles.infoText}>Apartment / Plot / Flat Number: {bookingDetails?.address?.apartment_flat_plot}</Text>
+                        <Text style={styles.infoText}>Landmark: {bookingDetails?.address?.landmark}</Text>
+                        <Text style={styles.infoText}>Locality: {bookingDetails?.address?.locality_details?.locality_name}</Text>
                         <Text style={styles.infoText}>City: {bookingDetails?.address?.city}</Text>
                         <Text style={styles.infoText}>State: {bookingDetails?.address?.state}</Text>
                         <Text style={styles.infoText}>Pincode: {bookingDetails?.address?.pincode}</Text>
+                        <Text style={styles.infoText}>Residential: {bookingDetails?.address?.place_category}</Text>
                         <Text style={styles.infoText}>Type: {bookingDetails?.address?.address_type}</Text>
                     </View>
                     {bookingDetails?.rating_details?.id ?

@@ -370,7 +370,7 @@ const Index = (props) => {
                     value: String(item.unique_code),  // Ensure value is a string for consistency
                     pincode: item.pincode, // Include pincode in the object
                 }));
-                console.log('Fetched Locality Data:', localityData); // Debug: Check the fetched data
+                // console.log('Fetched Locality Data:', localityData); // Debug: Check the fetched data
                 setLocalityList(localityData);
             }
         } catch (error) {
@@ -431,7 +431,7 @@ const Index = (props) => {
                     pincode: pincode,
                     address_type: activeAddressType,
                     locality: localityValue,
-                    place_category: String(selectedOption),
+                    place_category: String(seletedAddress),
                     apartment_flat_plot: apartment,
                     landmark: landmark
                 }),
@@ -841,13 +841,13 @@ const Index = (props) => {
                                                 paddingVertical: 10,
                                                 paddingHorizontal: 15,
                                                 borderRadius: 20,
-                                                backgroundColor: selectedOption === option.value ? '#007AFF' : '#f0f0f0',
-                                                borderWidth: selectedOption === option.value ? 0 : 1,
+                                                backgroundColor: seletedAddress === option.value ? '#007AFF' : '#f0f0f0',
+                                                borderWidth: seletedAddress === option.value ? 0 : 1,
                                                 borderColor: '#ccc',
                                                 flex: 1,
                                                 marginHorizontal: 5,
                                             }}
-                                            onPress={() => setSelectedOption(option.value)}
+                                            onPress={() => setSeletedAddress(option.value)}
                                         >
                                             <View
                                                 style={{
@@ -855,13 +855,13 @@ const Index = (props) => {
                                                     width: 16,
                                                     borderRadius: 8,
                                                     borderWidth: 2,
-                                                    borderColor: selectedOption === option.value ? '#fff' : '#007AFF',
+                                                    borderColor: seletedAddress === option.value ? '#fff' : '#007AFF',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
                                                     marginRight: 8,
                                                 }}
                                             >
-                                                {selectedOption === option.value && (
+                                                {seletedAddress === option.value && (
                                                     <View
                                                         style={{
                                                             height: 8,
@@ -872,7 +872,7 @@ const Index = (props) => {
                                                     />
                                                 )}
                                             </View>
-                                            <Text style={{ color: selectedOption === option.value ? '#fff' : '#333', fontWeight: 'bold' }}>
+                                            <Text style={{ color: seletedAddress === option.value ? '#fff' : '#333', fontWeight: 'bold' }}>
                                                 {option.label}
                                             </Text>
                                         </TouchableOpacity>

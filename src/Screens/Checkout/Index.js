@@ -115,7 +115,7 @@ const Index = (props) => {
             });
 
             const responseData = await response.json();
-            // console.log("responseData", responseData.booking);
+            console.log("responseData", responseData.booking);
             if (response.ok) {
                 console.log("Booking successfully");
                 setBookingDetails(responseData.booking);
@@ -189,7 +189,7 @@ const Index = (props) => {
                     value: String(item.unique_code),  // Ensure value is a string for consistency
                     pincode: item.pincode, // Include pincode in the object
                 }));
-                console.log('Fetched Locality Data:', localityData); // Debug: Check the fetched data
+                // console.log('Fetched Locality Data:', localityData); // Debug: Check the fetched data
                 setLocalityList(localityData);
             }
         } catch (error) {
@@ -250,7 +250,7 @@ const Index = (props) => {
                     pincode: pincode,
                     address_type: activeAddressType,
                     locality: localityValue,
-                    place_category: String(selectedOption),
+                    place_category: String(seletedAddress),
                     apartment_flat_plot: apartment,
                     landmark: landmark
                 }),
@@ -779,7 +779,7 @@ const Index = (props) => {
                             </View>
                             <View style={{ width: '100%', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 }}>
                                 <Text style={{ color: '#332e2e', fontSize: 16, fontWeight: '400', width: '50%' }}>Address</Text>
-                                <Text style={styles.details}>{bookingDetails?.address?.area}, {bookingDetails?.address?.city}, {bookingDetails?.address?.state}, {bookingDetails?.address?.pincode}, {bookingDetails?.address?.country}</Text>
+                                <Text style={styles.details}>{bookingDetails?.address?.apartment_flat_plot}, {bookingDetails?.address?.landmark}, {bookingDetails?.address?.city}, {bookingDetails?.address?.state}, {bookingDetails?.address?.pincode}, {bookingDetails?.address?.country}</Text>
                             </View>
                         </View>
                         <View style={{ width: '93%', alignSelf: 'center', marginTop: 20 }}>
