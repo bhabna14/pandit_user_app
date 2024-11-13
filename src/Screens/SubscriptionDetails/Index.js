@@ -200,7 +200,7 @@ const Index = (props) => {
           <Text style={styles.subtitle}>Address</Text>
           <Text style={styles.text}>{packageDetails?.address?.address_type}, {packageDetails?.address?.place_category}</Text>
           <Text style={styles.text}>{packageDetails?.address?.apartment_flat_plot}, {packageDetails?.address?.landmark}</Text>
-          <Text style={styles.text}>{packageDetails?.address?.locality}, {packageDetails?.address?.city}</Text>
+          <Text style={styles.text}>{packageDetails?.address?.locality_details?.locality_name}, {packageDetails?.address?.city}</Text>
           <Text style={styles.text}>{packageDetails?.address?.state}, {packageDetails?.address?.pincode}</Text>
           <Text style={styles.text}>{packageDetails?.address?.country}</Text>
         </View>
