@@ -37,6 +37,7 @@ import RatingPuja from './src/Screens/RatingPuja/Index'
 import Flower from './src/Screens/Flower/Index'
 import FlowerCheckoutPage from './src/Screens/FlowerCheckoutPage/Index'
 import PackageHistory from './src/Screens/PackageHistory/Index'
+import Flower_req_history from './src/Screens/Flower_req_history/Index'
 import PackageDetails from './src/Screens/PackageDetails/Index'
 import SubscriptionDetails from './src/Screens/SubscriptionDetails/Index'
 import FlowerRequestDetails from './src/Screens/FlowerRequestDetails/Index'
@@ -115,6 +116,7 @@ const App = () => {
             <Stack.Screen name="Flower" component={Flower} />
             <Stack.Screen name='FlowerCheckoutPage' component={FlowerCheckoutPage} />
             <Stack.Screen name="PackageHistory" component={PackageHistory} />
+            <Stack.Screen name="Flower_req_history" component={Flower_req_history} />
             <Stack.Screen name="PackageDetails" component={PackageDetails} />
             <Stack.Screen name="SubscriptionDetails" component={SubscriptionDetails} />
             <Stack.Screen name="FlowerRequestDetails" component={FlowerRequestDetails} />

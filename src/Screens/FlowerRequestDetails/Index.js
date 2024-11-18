@@ -120,9 +120,29 @@ const Index = (props) => {
             <Text style={{ color: '#000', fontSize: 14 }}>{packageDetails?.status}</Text>
           </View>
         </View>
+        {packageDetails?.order?.requested_flower_price &&
+          <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
+            <View style={{ width: '35%' }}>
+              <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold' }}>Package Price:</Text>
+            </View>
+            <View style={{ width: '65%' }}>
+              <Text style={{ color: '#000', fontSize: 14 }}>₹ {packageDetails?.order?.requested_flower_price}</Text>
+            </View>
+          </View>
+        }
+        {packageDetails?.order?.delivery_charge &&
+          <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
+            <View style={{ width: '35%' }}>
+              <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold' }}>Delivery Price:</Text>
+            </View>
+            <View style={{ width: '65%' }}>
+              <Text style={{ color: '#000', fontSize: 14 }}>₹ {packageDetails?.order?.delivery_charge}</Text>
+            </View>
+          </View>
+        }
         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
           <View style={{ width: '35%' }}>
-            <Text style={styles.price}>Price:</Text>
+            <Text style={styles.price}>Total Price:</Text>
           </View>
           <View style={{ width: '65%' }}>
             {packageDetails?.status === 'pending' ?
@@ -131,7 +151,7 @@ const Index = (props) => {
                 <Text style={styles.price}>Cost will be notified in few minutes.</Text>
               </View>
               :
-              <Text style={styles.price}>₹{packageDetails?.order?.total_price}</Text>
+              <Text style={styles.price}>₹ {packageDetails?.order?.total_price}</Text>
             }
           </View>
         </View>
@@ -174,8 +194,6 @@ const Index = (props) => {
           </LinearGradient>
         </TouchableOpacity>
       }
-
-      {/* Your Order is Pending For Price Calculation. */}
 
       {/* Start Show Error Modal */}
       <Modal

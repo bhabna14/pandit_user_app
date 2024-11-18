@@ -44,6 +44,8 @@ const Index = (props) => {
 
     const [orderModalVisible, setOrderModalVisible] = useState(false);
     const closeOrderModal = () => { setOrderModalVisible(false) };
+    const [flowerRequestModalVisible, setFlowerRequestModalVisible] = useState(false);
+    const closeFlowerRequestModal = () => { setFlowerRequestModalVisible(false) };
     const scaleAnim = useRef(new Animated.Value(1)).current;
 
     const [flowerDetails, setFlowerDetails] = useState([
@@ -288,7 +290,7 @@ const Index = (props) => {
             const responseData = await response.json();
             if (response.ok) {
                 console.log("Booking successfully", responseData);
-                setOrderModalVisible(true);
+                setFlowerRequestModalVisible(true);
             } else {
                 setErrorModal(true);
                 setErrormasg(responseData.message);
@@ -584,6 +586,7 @@ const Index = (props) => {
                                                         });
                                                     }}
                                                     placeholder="Flower"
+                                                    listMode="MODAL"
                                                     style={{ borderColor: '#edeff1', borderRadius: 5, marginTop: 5 }}
                                                     dropDownContainerStyle={{ borderColor: '#edeff1' }}
                                                     zIndex={2000}
@@ -591,7 +594,7 @@ const Index = (props) => {
                                                 />
                                             </View>
                                         </View>
-                                        <View style={{ width: '30%', marginBottom: 15, zIndex: 1500, elevation: 1500 }}>
+                                        <View style={{ width: '25%', marginBottom: 15, zIndex: 1500, elevation: 1500 }}>
                                             <Text style={styles.label}>Quantity</Text>
                                             <TextInput
                                                 style={{ borderColor: '#edeff1', borderRadius: 5, borderWidth: 1, padding: 10, fontSize: 15, color: '#000', marginTop: 3 }}
@@ -609,7 +612,7 @@ const Index = (props) => {
                                                 underlineColorAndroid='transparent'
                                             />
                                         </View>
-                                        <View style={{ width: '30%', zIndex: 1000, elevation: 1000 }}>
+                                        <View style={{ width: '40%', zIndex: 1000, elevation: 1000 }}>
                                             <Text style={styles.label}>Select Unit</Text>
                                             <View style={{ zIndex: 1000, elevation: 1000 }}>
                                                 <DropDownPicker
@@ -631,6 +634,7 @@ const Index = (props) => {
                                                         });
                                                     }}
                                                     placeholder="Unit"
+                                                    // listMode="MODAL"
                                                     style={{ borderColor: '#edeff1', borderRadius: 5, marginTop: 5 }}
                                                     dropDownContainerStyle={{ borderColor: '#edeff1' }}
                                                     zIndex={1000}
@@ -1018,6 +1022,26 @@ const Index = (props) => {
                         <Text style={styles.pModalDetailText}>Your order has been placed successfully.</Text>
                     </View>
                     <TouchableOpacity onPress={() => navigation.replace('PackageHistory')} style={styles.pModalButton}>
+                        <Text style={styles.pModalButtonText}>Order Details</Text>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={flowerRequestModalVisible}
+                onRequestClose={closeFlowerRequestModal}
+            >
+                <View style={styles.pModalContainer}>
+                    <View style={styles.pModalContent}>
+                        <Animated.View style={[styles.pModalCheckCircle, { transform: [{ scale: scaleAnim }] }]}>
+                            <FontAwesome name='check' color={'#fff'} size={60} />
+                        </Animated.View>
+                        <Text style={styles.pModalCongratulationsText}>Congratulations!</Text>
+                        <Text style={styles.pModalDetailText}>Your order has been placed successfully.</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => navigation.replace('Flower_req_history')} style={styles.pModalButton}>
                         <Text style={styles.pModalButtonText}>Order Details</Text>
                     </TouchableOpacity>
                 </View>

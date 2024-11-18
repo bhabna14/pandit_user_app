@@ -170,14 +170,16 @@ const Index = (props) => {
             <Text style={{ color: '#000', fontFamily: packageDetails?.subscription?.new_date ? null : 'Montserrat-Bold', textDecorationLine: packageDetails?.subscription?.new_date ? 'line-through' : null }}>{moment(packageDetails?.subscription?.end_date).format('DD-MM-YYYY')}</Text>
           </View>
         </View>
-        <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
-          <View style={{ width: '35%' }}>
-            <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold' }}>New End Date:</Text>
+        {packageDetails?.subscription?.new_date &&
+          <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
+            <View style={{ width: '35%' }}>
+              <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold' }}>New End Date:</Text>
+            </View>
+            <View style={{ width: '65%' }}>
+              <Text style={{ color: '#000', fontSize: 14 }}>{moment(packageDetails?.subscription?.new_date).format('DD-MM-YYYY')}</Text>
+            </View>
           </View>
-          <View style={{ width: '65%' }}>
-            <Text style={{ color: '#000', fontSize: 14 }}>{moment(packageDetails?.subscription?.new_date).format('DD-MM-YYYY')}</Text>
-          </View>
-        </View>
+        }
         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
           <View style={{ width: '35%' }}>
             <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold' }}>Subscription Status:</Text>
@@ -205,42 +207,44 @@ const Index = (props) => {
           <Text style={styles.text}>{packageDetails?.address?.country}</Text>
         </View>
       }
-      <View style={styles.card}>
-        {packageDetails?.subscription?.status !== "paused" ?
-          <View>
-            <Text style={styles.label}>Pause Start Time</Text>
-            <TouchableOpacity onPress={openStartDatePicker}>
-              <TextInput
-                style={styles.input}
-                value={startDate.toLocaleDateString()}
-                editable={false}
-              />
-            </TouchableOpacity>
+      {moment(packageDetails?.subscription?.start_date).format('YYYY-MM-DD') <= moment().format('YYYY-MM-DD') &&
+        <View style={styles.card}>
+          {packageDetails?.subscription?.status !== "paused" ?
+            <View>
+              <Text style={styles.label}>Pause Start Time</Text>
+              <TouchableOpacity onPress={openStartDatePicker}>
+                <TextInput
+                  style={styles.input}
+                  value={startDate.toLocaleDateString()}
+                  editable={false}
+                />
+              </TouchableOpacity>
 
-            <Text style={styles.label}>Pause End Time</Text>
-            <TouchableOpacity onPress={openEndDatePicker}>
-              <TextInput
-                style={styles.input}
-                value={endDate.toLocaleDateString()}
-                editable={false}
-              />
-            </TouchableOpacity>
+              <Text style={styles.label}>Pause End Time</Text>
+              <TouchableOpacity onPress={openEndDatePicker}>
+                <TextInput
+                  style={styles.input}
+                  value={endDate.toLocaleDateString()}
+                  editable={false}
+                />
+              </TouchableOpacity>
 
-            <TouchableOpacity style={styles.dateButton} onPress={submitPauseDates}>
-              <Text style={styles.dateText}>Submit</Text>
-            </TouchableOpacity>
-          </View>
-          :
-          <View style={{ flex: 1 }}>
-            <Text style={{ color: '#c9170a', fontSize: 17, fontFamily: 'Montserrat-ExtraBold' }}>Your subscription is paused from {moment(packageDetails?.subscription?.pause_start_date).format('DD-MM-YYYY')} to {moment(packageDetails?.subscription?.pause_end_date).format('DD-MM-YYYY')}</Text>
-            <TouchableOpacity onPress={handleResumeButton}>
-              <LinearGradient colors={['#c9170a', '#f0837f']} style={styles.submitButton}>
-                <Text style={styles.submitText}>Resume</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-          </View>
-        }
-      </View>
+              <TouchableOpacity style={styles.dateButton} onPress={submitPauseDates}>
+                <Text style={styles.dateText}>Submit</Text>
+              </TouchableOpacity>
+            </View>
+            :
+            <View style={{ flex: 1 }}>
+              <Text style={{ color: '#c9170a', fontSize: 17, fontFamily: 'Montserrat-ExtraBold' }}>Your subscription is paused from {moment(packageDetails?.subscription?.pause_start_date).format('DD-MM-YYYY')} to {moment(packageDetails?.subscription?.pause_end_date).format('DD-MM-YYYY')}</Text>
+              <TouchableOpacity onPress={handleResumeButton}>
+                <LinearGradient colors={['#c9170a', '#f0837f']} style={styles.submitButton}>
+                  <Text style={styles.submitText}>Resume</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          }
+        </View>
+      }
 
       <Modal
         animationType="slide"
@@ -338,7 +342,6 @@ const Index = (props) => {
           </View>
         </View>
       </Modal>
-
     </ScrollView>
   );
 };

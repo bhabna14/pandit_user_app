@@ -14,8 +14,6 @@ const Index = (props) => {
     const [spinner, setSpinner] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [subscriptionList, setSubscriptionList] = useState([]);
-    const [requested_orderList, setRequested_orderList] = useState([]);
-    const [activeTab, setActiveTab] = useState('monthly_sub');
 
     const [startDate, setStartDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1)));
     const [endDate, setEndDate] = useState(new Date(new Date().setDate(new Date().getDate() + 1)));
@@ -133,7 +131,6 @@ const Index = (props) => {
             if (response.success === 200) {
                 // console.log("object", response.data);
                 setSubscriptionList(response.data.subscriptions_order);
-                setRequested_orderList(response.data.requested_orders);
                 setSpinner(false);
             } else {
                 console.error('Failed to fetch packages:', response.message);
@@ -195,19 +192,11 @@ const Index = (props) => {
                 </TouchableOpacity>
             </View>
             <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
-                <TouchableOpacity
-                    style={activeTab === "monthly_sub" ? styles.activeTabBtm : styles.tabBtm}
-                    value="monthly_sub"
-                    onPress={() => setActiveTab('monthly_sub')}
-                >
-                    <Text style={activeTab === "monthly_sub" ? styles.activeTabBtmText : styles.tabBtmText}>Monthly Subscription</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={activeTab === "flower_request" ? styles.activeTabBtm : styles.tabBtm}
-                    value="flower_request"
-                    onPress={() => setActiveTab('flower_request')}
-                >
-                    <Text style={activeTab === "flower_request" ? styles.activeTabBtmText : styles.tabBtmText}>Flower Request</Text>
+                <View style={styles.activeTabBtm}>
+                    <Text style={styles.activeTabBtmText}>Monthly Subscription</Text>
+                </View>
+                <TouchableOpacity style={styles.tabBtm} onPress={() => navigation.navigate('Flower_req_history')}>
+                    <Text style={styles.tabBtmText}>Flower Request</Text>
                 </TouchableOpacity>
             </View>
             {spinner === true ?
@@ -216,90 +205,51 @@ const Index = (props) => {
                 </View>
                 :
                 <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} showsVerticalScrollIndicator={false} style={{ flex: 1, marginBottom: 10 }}>
-                    {activeTab === 'monthly_sub' ?
-                        subscriptionList?.length > 0 ?
-                            <View style={{ width: '95%', alignSelf: 'center', marginTop: 10 }}>
-                                <FlatList
-                                    data={subscriptionList}
-                                    scrollEnabled={false}
-                                    keyExtractor={(item, index) => index.toString()}
-                                    renderItem={({ item }) => (
-                                        <TouchableOpacity
-                                            onPress={() => navigation.navigate("SubscriptionDetails", item)}
-                                            style={{ flexDirection: 'row', backgroundColor: '#fff', padding: 15, marginBottom: 15, borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.5, shadowRadius: 10, elevation: 6, overflow: 'hidden' }}
-                                        >
-                                            <Image source={{ uri: item.flower_product.product_image_url }} style={{ width: 90, height: 90, borderRadius: 12, borderWidth: 1, borderColor: '#eee' }} />
-                                            <View style={{ flex: 1, marginLeft: 15 }}>
-                                                <Text style={{ color: '#333', fontSize: 18, fontWeight: 'bold' }}>{item.flower_product.name}</Text>
-                                                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
-                                                    <Text style={{ color: '#ff6347', fontSize: 16, fontWeight: '600' }}>₹{item.flower_product.price}</Text>
-                                                    <Text style={{ color: '#888', fontSize: 14, marginLeft: 8 }}>({item.flower_product.duration} Month)</Text>
-                                                </View>
-                                                {/* <Text style={{ color: '#666', fontSize: 14, marginTop: 4, lineHeight: 20 }}>{item.flower_product.category}</Text> */}
-                                                <Text style={{ color: '#666', fontSize: 14 }}>Order Id: <Text style={{ color: '#000' }}>{item.order_id}</Text></Text>
-                                                {item?.subscription?.status === "paused" ?
-                                                    <View>
-                                                        <Text style={{ color: '#c9170a', fontSize: 14, fontWeight: '600' }}>Your subscription is paused from {item.subscription.pause_start_date} to {item.subscription.pause_end_date}</Text>
-                                                        <TouchableOpacity onPress={() => handleResumeButton(item)} style={{ backgroundColor: 'green', width: 70, height: 30, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginTop: 8 }}>
-                                                            <Text style={{ color: '#fff' }}>Resume</Text>
-                                                        </TouchableOpacity>
-                                                    </View>
-                                                    :
-                                                    <TouchableOpacity onPress={() => handlePauseButton(item.order_id)} style={{ backgroundColor: 'red', width: 70, height: 30, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginTop: 8 }}>
-                                                        <Text style={{ color: '#fff' }}>Pause</Text>
+                    {subscriptionList?.length > 0 ?
+                        <View style={{ width: '95%', alignSelf: 'center', marginTop: 10 }}>
+                            <FlatList
+                                data={subscriptionList}
+                                scrollEnabled={false}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity
+                                        onPress={() => navigation.navigate("SubscriptionDetails", item)}
+                                        style={{ flexDirection: 'row', backgroundColor: '#fff', padding: 15, marginBottom: 15, borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.5, shadowRadius: 10, elevation: 6, overflow: 'hidden' }}
+                                    >
+                                        <Image source={{ uri: item.flower_product.product_image_url }} style={{ width: 90, height: 90, borderRadius: 12, borderWidth: 1, borderColor: '#eee' }} />
+                                        <View style={{ flex: 1, marginLeft: 15 }}>
+                                            <Text style={{ color: '#333', fontSize: 18, fontWeight: 'bold' }}>{item.flower_product.name}</Text>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+                                                <Text style={{ color: '#ff6347', fontSize: 16, fontWeight: '600' }}>₹{item.flower_product.price}</Text>
+                                                <Text style={{ color: '#888', fontSize: 14, marginLeft: 8 }}>({item.flower_product.duration} Month)</Text>
+                                            </View>
+                                            {/* <Text style={{ color: '#666', fontSize: 14, marginTop: 4, lineHeight: 20 }}>{item.flower_product.category}</Text> */}
+                                            <Text style={{ color: '#666', fontSize: 14 }}>Order Id: <Text style={{ color: '#000' }}>{item.order_id}</Text></Text>
+                                            {item?.subscription?.status === "paused" ?
+                                                <View>
+                                                    <Text style={{ color: '#c9170a', fontSize: 14, fontWeight: '600' }}>Your subscription is paused from {item.subscription.pause_start_date} to {item.subscription.pause_end_date}</Text>
+                                                    <TouchableOpacity onPress={() => handleResumeButton(item)} style={{ backgroundColor: 'green', width: 70, height: 30, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginTop: 8 }}>
+                                                        <Text style={{ color: '#fff' }}>Resume</Text>
                                                     </TouchableOpacity>
-                                                }
-                                            </View>
-                                        </TouchableOpacity>
-                                    )}
-                                />
-                            </View>
-                            :
-                            <View style={{ flex: 1, alignItems: 'center', paddingTop: 300 }}>
-                                <Text style={{ color: '#000', fontSize: 20, fontWeight: 'bold' }}>No Package Found</Text>
-                            </View>
+                                                </View>
+                                                :
+                                                moment(item.subscription.start_date).format('YYYY-MM-DD') <= moment().format('YYYY-MM-DD') &&
+                                                <TouchableOpacity onPress={() => handlePauseButton(item.order_id)} style={{ backgroundColor: 'red', width: 70, height: 30, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginTop: 8 }}>
+                                                    <Text style={{ color: '#fff' }}>Pause</Text>
+                                                </TouchableOpacity>
+                                            }
+                                            {moment(item.subscription.start_date).format('YYYY-MM-DD') > moment().format('YYYY-MM-DD') &&
+                                                <Text style={{ color: '#000', fontSize: 15, fontWeight: 'bold' }}>Your subscription will start on {moment(item.subscription.start_date).format('MMM Do YYYY')}</Text>
+                                            }
+                                        </View>
+                                    </TouchableOpacity>
+                                )}
+                            />
+                        </View>
                         :
-                        requested_orderList?.length > 0 ?
-                            <View style={{ width: '95%', alignSelf: 'center', marginTop: 10 }}>
-                                <FlatList
-                                    data={requested_orderList}
-                                    scrollEnabled={false}
-                                    keyExtractor={(item, index) => index.toString()}
-                                    renderItem={({ item }) => (
-                                        <TouchableOpacity
-                                            onPress={() => navigation.navigate("FlowerRequestDetails", item)}
-                                            style={{ flexDirection: 'row', backgroundColor: '#fff', padding: 15, marginBottom: 15, borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.5, shadowRadius: 10, elevation: 6, overflow: 'hidden' }}
-                                        >
-                                            <Image source={{ uri: item.flower_product.product_image_url }} style={{ width: 90, height: 90, borderRadius: 12, borderWidth: 1, borderColor: '#eee' }} />
-                                            <View style={{ flex: 1, marginLeft: 15, justifyContent: 'center' }}>
-                                                <Text style={{ color: '#333', fontSize: 18, fontWeight: 'bold' }}>{item.flower_product.name}</Text>
-                                                <Text style={{ color: '#666', fontSize: 14 }}>Request Id: {item.request_id}</Text>
-                                                {item?.status === 'pending' ?
-                                                    <View style={{ backgroundColor: '#fae6e6', alignItems: 'center', justifyContent: 'center', padding: 3, borderRadius: 5, marginTop: 5 }}>
-                                                        <Text style={{ color: '#000', fontSize: 14, fontWeight: '600' }}>Order has been placed.</Text>
-                                                        <Text style={{ color: '#000', fontSize: 14, fontWeight: '600' }}>Cost will be notified in few minutes.</Text>
-                                                    </View>
-                                                    :
-                                                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', marginTop: 5 }}>
-                                                        <View style={{ backgroundColor: '#fae6e6', alignItems: 'center', justifyContent: 'center', borderRadius: 5, width: 100, height: 30 }}>
-                                                            <Text style={{ color: '#000', fontSize: 15, fontWeight: '600' }}>₹{item?.order?.total_price}</Text>
-                                                        </View>
-                                                        {item?.status === 'approved' &&
-                                                            <TouchableOpacity onPress={() => navigation.navigate("FlowerRequestDetails", item)} style={{ backgroundColor: 'green', width: 70, height: 30, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginLeft: 10 }}>
-                                                                <Text style={{ color: '#fff' }}>Pay</Text>
-                                                            </TouchableOpacity>
-                                                        }
-                                                    </View>
-                                                }
-                                            </View>
-                                        </TouchableOpacity>
-                                    )}
-                                />
-                            </View>
-                            :
-                            <View style={{ flex: 1, alignItems: 'center', paddingTop: 300 }}>
-                                <Text style={{ color: '#000', fontSize: 20, fontWeight: 'bold' }}>No Request Found</Text>
-                            </View>
+                        <View style={{ flex: 1, alignItems: 'center', paddingTop: 300 }}>
+                            <Text style={{ color: '#000', fontSize: 20, fontWeight: 'bold' }}>No Package Found</Text>
+                        </View>
                     }
                 </ScrollView>
             }
