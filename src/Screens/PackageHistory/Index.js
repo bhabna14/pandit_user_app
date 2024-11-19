@@ -116,6 +116,14 @@ const Index = (props) => {
         }, 2000);
     }, []);
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            getSubscriptionList();
+        }, 30000);
+
+        return () => clearInterval(interval);
+    }, []);
+
     const getSubscriptionList = async () => {
         var access_token = await AsyncStorage.getItem('storeAccesstoken');
         setSpinner(true);
