@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { base_url } from '../../App';
 import OTPVerifyModal from '../Component/OtpVerifyModal';
 
-const LoginModal = ({ visible, onClose }) => {
+const LoginModal = ({ visible, onClose, selectedItem, page }) => {
     const navigation = useNavigation();
     const [phone, setPhone] = useState('+91');
     const [errorMessage, setErrorMessage] = useState('');
@@ -103,6 +103,8 @@ const LoginModal = ({ visible, onClose }) => {
                 onClose={() => setOtpModalVisible(false)}
                 phone={phone}
                 orderId={orderId}
+                selectedItem={selectedItem}
+                page={page}
             />
         </>
     );

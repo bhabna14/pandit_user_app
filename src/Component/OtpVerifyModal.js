@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useNavigation } from '@react-navigation/native';
 import { base_url } from '../../App';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
@@ -8,7 +9,9 @@ import DeviceInfo from 'react-native-device-info';
 import Notification from './Notification';
 
 
-const OTPVerifyModal = ({ visible, onClose, phone, orderId }) => {
+const OTPVerifyModal = ({ visible, onClose, phone, orderId, selectedItem, page }) => {
+
+    const navigation = useNavigation();
     const [otp, setOtp] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [showError, setShowError] = useState(false);
@@ -85,7 +88,11 @@ const OTPVerifyModal = ({ visible, onClose, phone, orderId }) => {
                 console.log('Login successfully', data);
                 await AsyncStorage.setItem('storeAccesstoken', data.token);
                 // navigation.navigate('Home');
-                modalclose();
+                if (page == 'FlowerCheckoutPage') {
+                    navigation.navigate('FlowerCheckoutPage', selectedItem);
+                } else {
+                    modalclose();
+                }
             } else {
                 // Handle error response
                 setErrorMessage(data.message || 'Failed to Login. Please try again.');

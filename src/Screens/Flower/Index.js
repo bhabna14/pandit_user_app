@@ -74,6 +74,8 @@ const Index = (props) => {
         });
     };
 
+    const [selectedItem, setSelectedItem] = useState(null);
+
     const goToCheckoutPage = async (flower) => {
         var access_token = await AsyncStorage.getItem('storeAccesstoken');
         if (access_token) {
@@ -83,6 +85,7 @@ const Index = (props) => {
         else {
             // navigation.navigate('Login');
             setIsLoginModalVisible(true);
+            setSelectedItem(flower);
         }
     }
 
@@ -111,7 +114,7 @@ const Index = (props) => {
                         <Text style={{ color: '#000', fontSize: 15, fontWeight: 'bold', textTransform: 'capitalize' }}>Rs.{item.price}</Text>
                     </View>
                 }
-                <Text numberOfLines={4} ellipsizeMode='tail' style={{ color: '#000', fontSize: 13, fontFamily: 'Montserrat-Regular', textTransform: 'capitalize', lineHeight: 20 }}>{item.description}</Text>
+                <Text style={{ color: '#000', fontSize: 13, fontFamily: 'Montserrat-Regular', textTransform: 'capitalize', lineHeight: 20 }}>{item.description}</Text>
             </View>
             <View style={{ width: '96%', alignSelf: 'center', marginBottom: 18 }}>
                 <TouchableOpacity onPress={() => goToCheckoutPage(item)} style={{ width: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#c9170a', borderRadius: 6, padding: 8 }}>
@@ -123,7 +126,7 @@ const Index = (props) => {
 
     return (
         <SafeAreaView style={{ flex: 1, flexDirection: 'column' }}>
-            <LoginModal visible={isLoginModalVisible} onClose={() => setIsLoginModalVisible(false)} />
+            <LoginModal visible={isLoginModalVisible} onClose={() => setIsLoginModalVisible(false)} selectedItem={selectedItem} page={'FlowerCheckoutPage'} />
             {spinner === true ?
                 <View style={{ flex: 1, alignSelf: 'center', top: '30%' }}>
                     {/* <Image style={{ width: 50, height: 50 }} source={require('../../assets/img/loading.gif')} /> */}
