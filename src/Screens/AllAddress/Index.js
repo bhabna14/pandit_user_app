@@ -32,10 +32,13 @@ const Index = (props) => {
         { label: 'Business', value: 'business' },
         { label: 'Temple', value: 'temple' },
     ];
-    const [apartment, setApartment] = useState("");
+    const [plotFlatNumber, setPlotFlatNumber] = useState("");
     const [localityOpen, setLocalityOpen] = useState(false);
     const [localityValue, setLocalityValue] = useState(null);
     const [localityList, setLocalityList] = useState([]);
+    const [apartmentOpen, setApartmentOpen] = useState(false);
+    const [apartmentValue, setApartmentValue] = useState(null);
+    const [apartmentList, setApartmentList] = useState([]);
     const [landmark, setLandmark] = useState("");
     const [city, setCity] = useState("");
     const [state, setState] = useState("");
@@ -58,6 +61,7 @@ const Index = (props) => {
                     label: item.locality_name,
                     value: String(item.unique_code),  // Ensure value is a string for consistency
                     pincode: item.pincode, // Include pincode in the object
+                    apartment: item.apartment || [], // Include apartment list in the object
                 }));
                 // console.log('Fetched Locality Data:', localityData); // Debug: Check the fetched data
                 setLocalityList(localityData);
@@ -68,18 +72,25 @@ const Index = (props) => {
     };
 
     const handleLocalitySelect = (value) => {
-        // console.log('Selected Value:', value); // Debug: Check selected value
-        setLocalityValue(value);
+        setLocalityValue(value); // Update selected locality value
 
-        // Additional log to see if localityList has correct data
-        // console.log('Current Locality List:', localityList);
-
+        // Find the selected locality from localityList
         const selectedLocality = localityList.find(locality => String(locality.value) === String(value));
         if (selectedLocality) {
-            console.log('Found Locality:', selectedLocality); // Check if locality is correctly found
-            setPincode(selectedLocality.pincode); // Set pincode state
+            // Update pincode and apartment list
+            setPincode(selectedLocality.pincode);
+
+            // Map apartment list to dropdown-compatible format
+            const apartments = selectedLocality.apartment.map(apartment => ({
+                label: apartment.apartment_name,
+                value: apartment.apartment_id,
+            }));
+            setApartmentList(apartments);
+
+            // Reset apartment selection if locality changes
+            setApartmentValue(null);
         } else {
-            console.log('Locality not found in list.'); // Debug: No match found
+            console.log('Locality not found in list.');
         }
     };
 
@@ -119,8 +130,8 @@ const Index = (props) => {
             errors.residential = "Please select residential type";
             valid = false;
         }
-        if (apartment === "") {
-            errors.apartment = "Apartment/Plot/Flat Number is required";
+        if (plotFlatNumber === "") {
+            errors.plotFlatNumber = "Plot/Flat Number is required";
             valid = false;
         }
         if (localityValue === null) {
@@ -175,7 +186,7 @@ const Index = (props) => {
                     address_type: activeAddressType,
                     locality: localityValue,
                     place_category: String(selectedOption),
-                    apartment_flat_plot: apartment,
+                    apartment_flat_plot: plotFlatNumber,
                     landmark: landmark
                 }),
             });
@@ -199,8 +210,9 @@ const Index = (props) => {
 
     const closeAddAddressModal = () => {
         setSelectedOption(null);
-        setApartment("");
+        setPlotFlatNumber("");
         setLocalityValue(null);
+        setApartmentValue(null);
         setLandmark("");
         setState("");
         setCity("");
@@ -211,8 +223,9 @@ const Index = (props) => {
 
     const closeEditAddressModal = () => {
         setSelectedOption(null);
-        setApartment("");
+        setPlotFlatNumber("");
         setLocalityValue(null);
+        setApartmentValue(null);
         setLandmark("");
         setState("");
         setCity("");
@@ -225,7 +238,7 @@ const Index = (props) => {
         // console.log("address-=-=-=-=", address);
         setAddressId(address.id);
         setSelectedOption(address.place_category);
-        setApartment(address.apartment_flat_plot);
+        setPlotFlatNumber(address.apartment_flat_plot);
         setLocalityValue(address.locality_details.unique_code);
         setLandmark(address.landmark);
         setCity(address.city);
@@ -255,7 +268,7 @@ const Index = (props) => {
                     address_type: activeAddressType,
                     locality: localityValue,
                     place_category: String(selectedOption),
-                    apartment_flat_plot: apartment,
+                    apartment_flat_plot: plotFlatNumber,
                     landmark: landmark
                 }),
             });
@@ -511,20 +524,6 @@ const Index = (props) => {
                             ))}
                             {errors.residential && <Text style={styles.errorText}>{errors.residential}</Text>}
                         </View>
-                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20 }}>
-                            <Text style={styles.inputLable}>Apartment / Plot / Flat  Number</Text>
-                            <View style={styles.card}>
-                                <TextInput
-                                    style={styles.inputs}
-                                    onChangeText={setApartment}
-                                    value={apartment}
-                                    placeholder="Enter Your Apartment/Plot/Flat Number"
-                                    placeholderTextColor="#424242"
-                                    underlineColorAndroid='transparent'
-                                />
-                            </View>
-                            {errors.apartment && <Text style={styles.errorText}>{errors.apartment}</Text>}
-                        </View>
                         <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20, zIndex: localityOpen ? 10 : 1 }}>
                             <Text style={styles.inputLable}>Locality</Text>
                             <View style={styles.card}>
@@ -548,6 +547,44 @@ const Index = (props) => {
                                 />
                             </View>
                             {errors.locality && <Text style={styles.errorText}>{errors.locality}</Text>}
+                        </View>
+                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20, zIndex: localityOpen ? 10 : 1 }}>
+                            <Text style={styles.inputLable}>Apartment</Text>
+                            <View style={styles.card}>
+                                <DropDownPicker
+                                    style={{ borderColor: 'transparent' }}
+                                    placeholder={!isFocus ? 'Apartment' : '...'}
+                                    open={apartmentOpen}
+                                    value={apartmentValue}
+                                    items={apartmentList}
+                                    setOpen={setApartmentOpen}
+                                    setValue={(callback) => {
+                                        const selectedValue = typeof callback === 'function' ? callback(apartmentValue) : callback;
+                                        setApartmentValue(selectedValue);
+                                    }}
+                                    setItems={setApartmentList}
+                                    itemSeparator={true}
+                                    listMode="MODAL"
+                                    searchable={true}
+                                    searchPlaceholder="Apartment..."
+                                // autoScroll={true}
+                                />
+                            </View>
+                            {errors.locality && <Text style={styles.errorText}>{errors.locality}</Text>}
+                        </View>
+                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20 }}>
+                            <Text style={styles.inputLable}>Plot / Flat  Number</Text>
+                            <View style={styles.card}>
+                                <TextInput
+                                    style={styles.inputs}
+                                    onChangeText={setPlotFlatNumber}
+                                    value={plotFlatNumber}
+                                    placeholder="Enter Your Plot/Flat Number"
+                                    placeholderTextColor="#424242"
+                                    underlineColorAndroid='transparent'
+                                />
+                            </View>
+                            {errors.plotFlatNumber && <Text style={styles.errorText}>{errors.plotFlatNumber}</Text>}
                         </View>
                         <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20 }}>
                             <Text style={styles.inputLable}>LandMark</Text>
@@ -708,18 +745,18 @@ const Index = (props) => {
                             {errors.residential && <Text style={styles.errorText}>{errors.residential}</Text>}
                         </View>
                         <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20 }}>
-                            <Text style={styles.inputLable}>Apartment / Plot / Flat  Number</Text>
+                            <Text style={styles.inputLable}>Plot / Flat  Number</Text>
                             <View style={styles.card}>
                                 <TextInput
                                     style={styles.inputs}
-                                    onChangeText={setApartment}
-                                    value={apartment}
+                                    onChangeText={setPlotFlatNumber}
+                                    value={plotFlatNumber}
                                     placeholder="Enter Your Apartment/Plot/Flat Number"
                                     placeholderTextColor="#424242"
                                     underlineColorAndroid='transparent'
                                 />
                             </View>
-                            {errors.apartment && <Text style={styles.errorText}>{errors.apartment}</Text>}
+                            {errors.plotFlatNumber && <Text style={styles.errorText}>{errors.plotFlatNumber}</Text>}
                         </View>
                         <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20, zIndex: localityOpen ? 10 : 1 }}>
                             <Text style={styles.inputLable}>Locality</Text>
