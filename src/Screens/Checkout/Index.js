@@ -188,6 +188,7 @@ const Index = (props) => {
                     label: item.locality_name,
                     value: String(item.unique_code),  // Ensure value is a string for consistency
                     pincode: item.pincode, // Include pincode in the object
+                    apartment: item.apartment || [], // Include apartment list in the object
                 }));
                 // console.log('Fetched Locality Data:', localityData); // Debug: Check the fetched data
                 setLocalityList(localityData);
@@ -198,18 +199,25 @@ const Index = (props) => {
     };
 
     const handleLocalitySelect = (value) => {
-        // console.log('Selected Value:', value); // Debug: Check selected value
-        setLocalityValue(value);
+        setLocalityValue(value); // Update selected locality value
 
-        // Additional log to see if localityList has correct data
-        // console.log('Current Locality List:', localityList);
-
+        // Find the selected locality from localityList
         const selectedLocality = localityList.find(locality => String(locality.value) === String(value));
         if (selectedLocality) {
-            console.log('Found Locality:', selectedLocality); // Check if locality is correctly found
-            setPincode(selectedLocality.pincode); // Set pincode state
+            // Update pincode and apartment list
+            setPincode(selectedLocality.pincode);
+
+            // Map apartment list to dropdown-compatible format
+            const apartments = selectedLocality.apartment.map(apartment => ({
+                label: apartment.apartment_name,
+                value: apartment.apartment_name,
+            }));
+            setApartmentList(apartments);
+
+            // Reset apartment selection if locality changes
+            setApartmentValue(null);
         } else {
-            console.log('Locality not found in list.'); // Debug: No match found
+            console.log('Locality not found in list.');
         }
     };
 
@@ -221,10 +229,13 @@ const Index = (props) => {
         { label: 'Business', value: 'business' },
         { label: 'Temple', value: 'temple' },
     ];
-    const [apartment, setApartment] = useState("");
+    const [plotFlatNumber, setPlotFlatNumber] = useState("");
     const [localityOpen, setLocalityOpen] = useState(false);
     const [localityValue, setLocalityValue] = useState(null);
     const [localityList, setLocalityList] = useState([]);
+    const [apartmentOpen, setApartmentOpen] = useState(false);
+    const [apartmentValue, setApartmentValue] = useState(null);
+    const [apartmentList, setApartmentList] = useState([]);
     const [landmark, setLandmark] = useState("");
     const [city, setCity] = useState("");
     const [state, setState] = useState("");
@@ -250,8 +261,9 @@ const Index = (props) => {
                     pincode: pincode,
                     address_type: activeAddressType,
                     locality: localityValue,
+                    apartment_name: apartmentValue,
                     place_category: String(seletedAddress),
-                    apartment_flat_plot: apartment,
+                    apartment_flat_plot: plotFlatNumber,
                     landmark: landmark
                 }),
             });
@@ -274,9 +286,10 @@ const Index = (props) => {
     };
 
     const closeAddAddressModal = () => {
-        setSeletedAddress(null);
-        setApartment("");
+        setSelectedOption(null);
+        setPlotFlatNumber("");
         setLocalityValue(null);
+        setApartmentValue(null);
         setLandmark("");
         setState("");
         setCity("");
@@ -293,12 +306,16 @@ const Index = (props) => {
             errors.residential = "Please select residential type";
             valid = false;
         }
-        if (apartment === "") {
-            errors.apartment = "Apartment/Plot/Flat Number is required";
+        if (plotFlatNumber === "") {
+            errors.plotFlatNumber = "Plot/Flat Number is required";
             valid = false;
         }
         if (localityValue === null) {
             errors.locality = "Locality is required";
+            valid = false;
+        }
+        if (apartmentValue === null) {
+            errors.apartment = "Apartment is required";
             valid = false;
         }
         if (landmark === "") {
@@ -341,10 +358,6 @@ const Index = (props) => {
             getAllLocality();
         }
     }, [isFocused])
-
-    // useEffect(() => {
-    //     console.log("eventDate", moment(eventDate).format("MMMM Do YYYY, h:mm a"));
-    // }, [eventDate])
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#f0f0f0' }}>
@@ -480,7 +493,7 @@ const Index = (props) => {
                                                     {address.item.address_type === "Work" && <Text style={{ color: '#000', fontSize: 15, fontWeight: '600' }}>Work</Text>}
                                                     {address.item.address_type === "Other" && <Text style={{ color: '#000', fontSize: 15, fontWeight: '600' }}>Other</Text>}
                                                 </View>
-                                                <Text style={{ color: '#555454', fontSize: 13 }}>{address.item.apartment_flat_plot},  {address.item.landmark}</Text>
+                                                <Text style={{ color: '#555454', fontSize: 13 }}>{address.item.apartment_name},  {address.item.apartment_flat_plot},  {address.item.landmark}</Text>
                                                 <Text style={{ color: '#555454', fontSize: 13 }}>{address.item.locality_details.locality_name},  {address.item.city},  {address.item.state}</Text>
                                                 <Text style={{ color: '#555454', fontSize: 13 }}>{address.item.pincode},  {address.item.place_category}</Text>
                                             </View>
@@ -521,11 +534,12 @@ const Index = (props) => {
                 </TouchableOpacity>
             )}
 
+            {/* Add Address Modal */}
             <Modal
                 animationType="slide"
                 transparent={true}
                 visible={addAddressModal}
-                onRequestClose={() => { closeAddAddressModal }}
+                onRequestClose={() => { setAddAddressModal(false) }}
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.headerPart}>
@@ -554,13 +568,13 @@ const Index = (props) => {
                                                 paddingVertical: 10,
                                                 paddingHorizontal: 15,
                                                 borderRadius: 20,
-                                                backgroundColor: seletedAddress === option.value ? '#007AFF' : '#f0f0f0',
-                                                borderWidth: seletedAddress === option.value ? 0 : 1,
+                                                backgroundColor: selectedOption === option.value ? '#007AFF' : '#f0f0f0',
+                                                borderWidth: selectedOption === option.value ? 0 : 1,
                                                 borderColor: '#ccc',
                                                 flex: 1,
                                                 marginHorizontal: 5,
                                             }}
-                                            onPress={() => setSeletedAddress(option.value)}
+                                            onPress={() => setSelectedOption(option.value)}
                                         >
                                             <View
                                                 style={{
@@ -568,13 +582,13 @@ const Index = (props) => {
                                                     width: 16,
                                                     borderRadius: 8,
                                                     borderWidth: 2,
-                                                    borderColor: seletedAddress === option.value ? '#fff' : '#007AFF',
+                                                    borderColor: selectedOption === option.value ? '#fff' : '#007AFF',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
                                                     marginRight: 8,
                                                 }}
                                             >
-                                                {seletedAddress === option.value && (
+                                                {selectedOption === option.value && (
                                                     <View
                                                         style={{
                                                             height: 8,
@@ -585,7 +599,7 @@ const Index = (props) => {
                                                     />
                                                 )}
                                             </View>
-                                            <Text style={{ color: seletedAddress === option.value ? '#fff' : '#333', fontWeight: 'bold' }}>
+                                            <Text style={{ color: selectedOption === option.value ? '#fff' : '#333', fontWeight: 'bold' }}>
                                                 {option.label}
                                             </Text>
                                         </TouchableOpacity>
@@ -593,20 +607,6 @@ const Index = (props) => {
                                 </View>
                             ))}
                             {errors.residential && <Text style={styles.errorText}>{errors.residential}</Text>}
-                        </View>
-                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20 }}>
-                            <Text style={styles.inputLable}>Apartment / Plot / Flat  Number</Text>
-                            <View style={styles.card}>
-                                <TextInput
-                                    style={styles.inputs}
-                                    onChangeText={setApartment}
-                                    value={apartment}
-                                    placeholder="Enter Your Apartment/Plot/Flat Number"
-                                    placeholderTextColor="#424242"
-                                    underlineColorAndroid='transparent'
-                                />
-                            </View>
-                            {errors.apartment && <Text style={styles.errorText}>{errors.apartment}</Text>}
                         </View>
                         <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20, zIndex: localityOpen ? 10 : 1 }}>
                             <Text style={styles.inputLable}>Locality</Text>
@@ -631,6 +631,44 @@ const Index = (props) => {
                                 />
                             </View>
                             {errors.locality && <Text style={styles.errorText}>{errors.locality}</Text>}
+                        </View>
+                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20, zIndex: localityOpen ? 10 : 1 }}>
+                            <Text style={styles.inputLable}>Apartment</Text>
+                            <View style={styles.card}>
+                                <DropDownPicker
+                                    style={{ borderColor: 'transparent' }}
+                                    placeholder={!isFocus ? 'Apartment' : '...'}
+                                    open={apartmentOpen}
+                                    value={apartmentValue}
+                                    items={apartmentList}
+                                    setOpen={setApartmentOpen}
+                                    setValue={(callback) => {
+                                        const selectedValue = typeof callback === 'function' ? callback(apartmentValue) : callback;
+                                        setApartmentValue(selectedValue);
+                                    }}
+                                    setItems={setApartmentList}
+                                    itemSeparator={true}
+                                    listMode="MODAL"
+                                    searchable={true}
+                                    searchPlaceholder="Apartment..."
+                                // autoScroll={true}
+                                />
+                            </View>
+                            {errors.apartment && <Text style={styles.errorText}>{errors.apartment}</Text>}
+                        </View>
+                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20 }}>
+                            <Text style={styles.inputLable}>Plot / Flat  Number</Text>
+                            <View style={styles.card}>
+                                <TextInput
+                                    style={styles.inputs}
+                                    onChangeText={setPlotFlatNumber}
+                                    value={plotFlatNumber}
+                                    placeholder="Enter Your Plot/Flat Number"
+                                    placeholderTextColor="#424242"
+                                    underlineColorAndroid='transparent'
+                                />
+                            </View>
+                            {errors.plotFlatNumber && <Text style={styles.errorText}>{errors.plotFlatNumber}</Text>}
                         </View>
                         <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20 }}>
                             <Text style={styles.inputLable}>LandMark</Text>

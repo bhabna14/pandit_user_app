@@ -2,9 +2,11 @@ import { StyleSheet, Text, View, StatusBar } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import Notification from './src/Component/Notification';
 import NetInfo from "@react-native-community/netinfo";
+import DeviceInfo from 'react-native-device-info';
 import PromotionModal from './src/Component/PromotionModal';
 
 // SplashScreen
@@ -60,6 +62,91 @@ const App = () => {
 
   const [showSplash, setShowSplash] = useState(true);
   const [isConnected, setIsConnected] = useState(true);
+
+  // Request user permission for notifications
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+      getFCMToken();
+    }
+  }
+
+  const [fcmToken, setFcmToken] = useState<string | null>(null);
+
+  // Get the FCM token for the device
+  async function getFCMToken() {
+    try {
+      const token = await messaging().getToken();
+      console.log('FCM Token:', token);
+      setFcmToken(token);
+    } catch (error) {
+      console.log('Error getting FCM token:', error);
+    }
+  }
+
+  useEffect(() => {
+    requestUserPermission();
+    postDeviceDetails();
+  }, [])
+
+  const postDeviceDetails = async () => {
+    try {
+      const deviceId = await DeviceInfo.getUniqueId();
+      const deviceModel = DeviceInfo.getModel();
+      const deviceInfo = {
+        device_id: deviceId,
+        device_model: deviceModel,
+        platform: 'android',
+      };
+      console.log("deviceInfo", deviceInfo);
+      const response = await fetch(`${base_url}api/save-token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(deviceInfo),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Device details posted successfully:", data);
+      } else {
+        console.log('Error:', response);
+      }
+    } catch (error) {
+      console.log('Error posting device details:', error);
+    }
+  };
+
+  useEffect(() => {
+    messaging().onMessage(async remoteMessage => {
+      console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+  }, [])
+
+  useEffect(() => {
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      console.log(
+        'Notification caused app to open from background state:',
+        remoteMessage.notification,
+      );
+    });
+
+    messaging()
+      .getInitialNotification()
+      .then(remoteMessage => {
+        if (remoteMessage) {
+          console.log(
+            'Notification caused app to open from quit state:',
+            remoteMessage.notification,
+          );
+        }
+      });
+  }, [])
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
