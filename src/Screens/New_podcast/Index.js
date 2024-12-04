@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, RefreshControl, Image, Dimensions, Modal, ImageBackground } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, RefreshControl, Image, Modal, ImageBackground } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import { FlatListSlider } from 'react-native-flatlist-slider';
@@ -13,8 +13,6 @@ import { base_url } from '../../../App';
 
 const Index = (props) => {
 
-    const screenWidth = Dimensions.get('window').width;
-    const itemWidth = 0.6 * screenWidth;
     const navigation = useNavigation();
     const isFocused = useIsFocused();
     const [spinner, setSpinner] = useState(false);
