@@ -131,8 +131,8 @@ const Index = (props) => {
                 await TrackPlayer.reset();
                 await TrackPlayer.add({
                     id: track.id.toString(),
-                    url: track.music_url,
-                    title: track.name,
+                    url: track.podcast_music,
+                    title: track.podcast_prepair.podcast_name,
                     artist: 'Unknown Artist',
                 });
                 setCurrentMusic(track);
@@ -264,7 +264,7 @@ const Index = (props) => {
                     {selectedCategory === null &&
                         <View style={{ width: '100%', height: 285, marginTop: 10 }}>
                             <View style={styles.mainBox}>
-                                <Image style={{ height: '100%', width: '100%', borderRadius: 14, resizeMode: 'cover' }} source={{ uri: allContent?.recent_podcast?.image_url }} />
+                                <Image style={{ height: '100%', width: '100%', borderRadius: 14, resizeMode: 'cover' }} source={{ uri: allContent?.recent_podcast?.podcast_image }} />
                                 <TouchableOpacity onPress={() => clickMusic(allContent?.recent_podcast)} style={styles.overlay} />
                                 <View style={styles.spiritual}>
                                     <Text style={{ color: '#fff', fontSize: 14, letterSpacing: 0.5 }}>Spiritual</Text>
@@ -284,7 +284,7 @@ const Index = (props) => {
                                     </TouchableOpacity>
                                 </View>
                                 <View style={styles.descBox}>
-                                    <Text style={styles.podcastName}>{allContent?.recent_podcast?.name}</Text>
+                                    <Text style={styles.podcastName}>{allContent?.recent_podcast?.podcast_prepair?.podcast_name}</Text>
                                     <Text style={styles.podcastDesc}>{allContent?.recent_podcast?.description.length > 55 ? `${allContent?.recent_podcast?.description.slice(0, 55)}...` : allContent?.recent_podcast?.description}</Text>
                                 </View>
                             </View>
@@ -377,10 +377,10 @@ const Index = (props) => {
                                 renderItem={({ item }) => (
                                     <View style={[styles.podcastList, currentTrack === item.id && { backgroundColor: '#f5dfdf' }]}>
                                         <TouchableOpacity onPress={() => clickMusic(item)} style={{ width: '15%', flexDirection: 'row', alignItems: 'center' }}>
-                                            <Image source={{ uri: item.image_url }} style={{ width: 50, height: 50, borderRadius: 50 }} />
+                                            <Image source={{ uri: item.podcast_image }} style={{ width: 50, height: 50, borderRadius: 50 }} />
                                         </TouchableOpacity>
                                         <TouchableOpacity onPress={() => clickMusic(item)} style={{ width: '68%' }}>
-                                            <Text style={{ color: '#000', fontSize: 15, fontWeight: '500', textTransform: 'capitalize' }}>{item.name}</Text>
+                                            <Text style={{ color: '#000', fontSize: 15, fontWeight: '500', textTransform: 'capitalize' }}>{item.podcast_prepair.podcast_name}</Text>
                                             <Text style={{ color: '#000', fontSize: 13, fontWeight: '300', textTransform: 'capitalize' }}>
                                                 {item.description.length > 55 ? `${item.description.slice(0, 55)}...` : item.description}
                                             </Text>
@@ -417,9 +417,9 @@ const Index = (props) => {
                     </View>
                     <View style={styles.musicSection}>
                         <View style={{ width: '70%', flexDirection: 'row', alignItems: 'center', paddingLeft: 18 }}>
-                            <Image style={styles.smallImg} source={{ uri: currentMusic?.image_url }} />
+                            <Image style={styles.smallImg} source={{ uri: currentMusic?.podcast_image }} />
                             <View style={{ marginLeft: 20 }}>
-                                <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>{currentMusic?.name}</Text>
+                                <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>{currentMusic?.podcast_prepair.podcast_name}</Text>
                                 <Text style={{ color: '#d4d2d2', fontSize: 14 }}> Spiritual</Text>
                             </View>
                         </View>
@@ -459,10 +459,10 @@ const Index = (props) => {
                                 renderItem={({ item }) => (
                                     <View style={[styles.podcastList, currentTrack === item.id && { backgroundColor: '#f5dfdf' }]}>
                                         <TouchableOpacity onPress={() => clickMusic(item)} style={{ width: '15%', flexDirection: 'row', alignItems: 'center' }}>
-                                            <Image source={{ uri: item.image_url }} style={{ width: 50, height: 50, borderRadius: 50 }} />
+                                            <Image source={{ uri: item.podcast_image }} style={{ width: 50, height: 50, borderRadius: 50 }} />
                                         </TouchableOpacity>
                                         <TouchableOpacity onPress={() => clickMusic(item)} style={{ width: '68%' }}>
-                                            <Text style={{ color: '#000', fontSize: 15, fontWeight: '500', textTransform: 'capitalize' }}>{item.name}</Text>
+                                            <Text style={{ color: '#000', fontSize: 15, fontWeight: '500', textTransform: 'capitalize' }}>{item.podcast_prepair.podcast_name}</Text>
                                             <Text style={{ color: '#000', fontSize: 13, fontWeight: '300', textTransform: 'capitalize' }}>
                                                 {item.description.length > 55 ? `${item.description.slice(0, 55)}...` : item.description}
                                             </Text>
@@ -498,9 +498,9 @@ const Index = (props) => {
                             </View>
                             <View style={styles.musicSection}>
                                 <View style={{ width: '70%', flexDirection: 'row', alignItems: 'center', paddingLeft: 18 }}>
-                                    <Image style={styles.smallImg} source={{ uri: currentMusic?.image_url }} />
+                                    <Image style={styles.smallImg} source={{ uri: currentMusic?.podcast_image }} />
                                     <View style={{ marginLeft: 20 }}>
-                                        <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>{currentMusic?.name}</Text>
+                                        <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>{currentMusic?.podcast_prepair?.podcast_name}</Text>
                                         <Text style={{ color: '#d4d2d2', fontSize: 14 }}> Spiritual</Text>
                                     </View>
                                 </View>
@@ -535,11 +535,11 @@ const Index = (props) => {
                     </View>
                     <View style={{ flex: 1, width: '90%', alignSelf: 'center', padding: 20, alignItems: 'center' }}>
                         <Image
-                            source={{ uri: selectPodcast?.image_url }}
+                            source={{ uri: selectPodcast?.podcast_image }}
                             style={styles.coverImage}
                         />
                         <View style={styles.infoContainer}>
-                            <Text style={styles.songTitle}>{selectPodcast?.name}</Text>
+                            <Text style={styles.songTitle}>{selectPodcast?.podcast_prepair?.podcast_name}</Text>
                             <Text style={styles.source}>{selectPodcast?.description}</Text>
                         </View>
                         <Slider
