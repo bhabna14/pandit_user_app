@@ -22,7 +22,6 @@ const Index = (props) => {
     const [allAddresses, setAllAddresses] = useState([]);
     const [addAddressModal, setAddAddressModal] = useState(false);
     const [editAddressModal, setEditAddressModal] = useState(false);
-
     const [isFocus, setIsFocus] = useState(false);
     const [addressId, setAddressId] = useState(null);
     const [selectedOption, setSelectedOption] = useState(null);
@@ -255,6 +254,7 @@ const Index = (props) => {
 
     const getAddressById = (address) => {
         // console.log("address-=-=-=-=", address);
+        handleLocalitySelect(address.locality_details.unique_code);
         setAddressId(address.id);
         setSelectedOption(address.place_category);
         setPlotFlatNumber(address.apartment_flat_plot);
@@ -580,7 +580,7 @@ const Index = (props) => {
                                         value={apartmentValue}
                                         items={[
                                             ...apartmentList,
-                                            { label: 'Add New Apartment', value: 'add_new' }, // Special "Other" option
+                                            { label: 'Add Your Apartment', value: 'add_new' }, // Special "Other" option
                                         ]}
                                         setOpen={setApartmentOpen}
                                         setValue={(callback) => {
@@ -601,7 +601,7 @@ const Index = (props) => {
                                         style={styles.inputs}
                                         onChangeText={setApartmentValue}
                                         value={apartmentValue !== 'add_new' ? apartmentValue : ''}
-                                        placeholder="Enter New Apartment Name"
+                                        placeholder="Enter Your Apartment Name"
                                         placeholderTextColor="#424242"
                                         underlineColorAndroid="transparent"
                                     />
@@ -614,7 +614,7 @@ const Index = (props) => {
                                         style={styles.inputs}
                                         onChangeText={setApartmentValue}
                                         value={apartmentValue !== 'add_new' ? apartmentValue : ''}
-                                        placeholder="Enter New Apartment Name"
+                                        placeholder="Enter Your Apartment Name"
                                         placeholderTextColor="#424242"
                                         underlineColorAndroid="transparent"
                                     />

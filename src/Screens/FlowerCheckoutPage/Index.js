@@ -499,7 +499,7 @@ const Index = (props) => {
         let valid = true;
         let errors = {};
 
-        if (selectedOption === null) {
+        if (seletedAddress === null) {
             errors.residential = "Please select residential type";
             valid = false;
         }
@@ -877,13 +877,13 @@ const Index = (props) => {
                                                 paddingVertical: 10,
                                                 paddingHorizontal: 15,
                                                 borderRadius: 20,
-                                                backgroundColor: selectedOption === option.value ? '#007AFF' : '#f0f0f0',
-                                                borderWidth: selectedOption === option.value ? 0 : 1,
+                                                backgroundColor: seletedAddress === option.value ? '#007AFF' : '#f0f0f0',
+                                                borderWidth: seletedAddress === option.value ? 0 : 1,
                                                 borderColor: '#ccc',
                                                 flex: 1,
                                                 marginHorizontal: 5,
                                             }}
-                                            onPress={() => setSelectedOption(option.value)}
+                                            onPress={() => setSeletedAddress(option.value)}
                                         >
                                             <View
                                                 style={{
@@ -891,13 +891,13 @@ const Index = (props) => {
                                                     width: 16,
                                                     borderRadius: 8,
                                                     borderWidth: 2,
-                                                    borderColor: selectedOption === option.value ? '#fff' : '#007AFF',
+                                                    borderColor: seletedAddress === option.value ? '#fff' : '#007AFF',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
                                                     marginRight: 8,
                                                 }}
                                             >
-                                                {selectedOption === option.value && (
+                                                {seletedAddress === option.value && (
                                                     <View
                                                         style={{
                                                             height: 8,
@@ -908,7 +908,7 @@ const Index = (props) => {
                                                     />
                                                 )}
                                             </View>
-                                            <Text style={{ color: selectedOption === option.value ? '#fff' : '#333', fontWeight: 'bold' }}>
+                                            <Text style={{ color: seletedAddress === option.value ? '#fff' : '#333', fontWeight: 'bold' }}>
                                                 {option.label}
                                             </Text>
                                         </TouchableOpacity>
@@ -943,26 +943,55 @@ const Index = (props) => {
                         </View>
                         <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20, zIndex: localityOpen ? 10 : 1 }}>
                             <Text style={styles.inputLable}>Apartment</Text>
-                            <View style={styles.card}>
-                                <DropDownPicker
-                                    style={{ borderColor: 'transparent' }}
-                                    placeholder={!isFocus ? 'Apartment' : '...'}
-                                    open={apartmentOpen}
-                                    value={apartmentValue}
-                                    items={apartmentList}
-                                    setOpen={setApartmentOpen}
-                                    setValue={(callback) => {
-                                        const selectedValue = typeof callback === 'function' ? callback(apartmentValue) : callback;
-                                        setApartmentValue(selectedValue);
-                                    }}
-                                    setItems={setApartmentList}
-                                    itemSeparator={true}
-                                    listMode="MODAL"
-                                    searchable={true}
-                                    searchPlaceholder="Apartment..."
-                                // autoScroll={true}
-                                />
-                            </View>
+                            {apartmentList.length > 0 ?
+                                <View style={styles.card}>
+                                    <DropDownPicker
+                                        style={{ borderColor: 'transparent' }}
+                                        placeholder={!isFocus ? 'Apartment' : '...'}
+                                        open={apartmentOpen}
+                                        value={apartmentValue}
+                                        items={[
+                                            ...apartmentList,
+                                            { label: 'Add Your Apartment', value: 'add_new' }, // Special "Other" option
+                                        ]}
+                                        setOpen={setApartmentOpen}
+                                        setValue={(callback) => {
+                                            const selectedValue = typeof callback === 'function' ? callback(apartmentValue) : callback;
+                                            setApartmentValue(selectedValue);
+                                        }}
+                                        setItems={setApartmentList}
+                                        itemSeparator={true}
+                                        listMode="MODAL"
+                                        searchable={true}
+                                        searchPlaceholder="Apartment..."
+                                    // autoScroll={true}
+                                    />
+                                </View>
+                                :
+                                <View style={styles.card}>
+                                    <TextInput
+                                        style={styles.inputs}
+                                        onChangeText={setApartmentValue}
+                                        value={apartmentValue !== 'add_new' ? apartmentValue : ''}
+                                        placeholder="Enter Your Apartment Name"
+                                        placeholderTextColor="#424242"
+                                        underlineColorAndroid="transparent"
+                                    />
+                                </View>
+                            }
+                            {errors.apartment && <Text style={styles.errorText}>{errors.apartment}</Text>}
+                            {apartmentValue === 'add_new' && (
+                                <View style={[styles.card, { marginTop: 15 }]}>
+                                    <TextInput
+                                        style={styles.inputs}
+                                        onChangeText={setApartmentValue}
+                                        value={apartmentValue !== 'add_new' ? apartmentValue : ''}
+                                        placeholder="Enter Your Apartment Name"
+                                        placeholderTextColor="#424242"
+                                        underlineColorAndroid="transparent"
+                                    />
+                                </View>
+                            )}
                             {errors.apartment && <Text style={styles.errorText}>{errors.apartment}</Text>}
                         </View>
                         <View style={{ width: '90%', alignSelf: 'center', marginBottom: 20 }}>
