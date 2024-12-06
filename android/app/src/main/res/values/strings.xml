@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">33Crores</string>
+    <string name="onesignal_notification_accent_color">c9170a</string>
 </resources>

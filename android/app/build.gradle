@@ -80,8 +80,8 @@ android {
         applicationId "com.thirtythreecroresapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 11
-        versionName "2.0"
+        versionCode 12
+        versionName "2.1"
     }
     signingConfigs {
         release {
@@ -122,6 +122,8 @@ dependencies {
 
     implementation platform('com.google.firebase:firebase-bom:32.0.0') // FireBase
     implementation 'com.google.firebase:firebase-messaging' // FireBase
+
+    implementation 'com.onesignal:OneSignal:[5.0.0, 5.99.99]' // OneSignal
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
