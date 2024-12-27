@@ -43,6 +43,7 @@ import PackageDetails from './src/Screens/PackageDetails/Index'
 import SubscriptionDetails from './src/Screens/SubscriptionDetails/Index'
 import FlowerRequestDetails from './src/Screens/FlowerRequestDetails/Index'
 import Shop from './src/Screens/Shop/Index'
+import NotificationPage from './src/Screens/NotificationPage/Index';
 import YoutubeLive from './src/Screens/YoutubeLive/Index'
 import Panji from './src/Screens/Panji/Index'
 import TermsOfUse from './src/Screens/TermsOfUse/Index'
@@ -141,6 +142,7 @@ const App = () => {
             <Stack.Screen name="SubscriptionDetails" component={SubscriptionDetails} />
             <Stack.Screen name="FlowerRequestDetails" component={FlowerRequestDetails} />
             <Stack.Screen name="Shop" component={Shop} />
+            <Stack.Screen name="NotificationPage" component={NotificationPage} />
             <Stack.Screen name="YoutubeLive" component={YoutubeLive} />
             <Stack.Screen name="Panji" component={Panji} />
             <Stack.Screen name="TermsOfUse" component={TermsOfUse} />

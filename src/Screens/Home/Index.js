@@ -5,7 +5,7 @@ import { useNavigation, useIsFocused } from '@react-navigation/native'
 import Octicons from 'react-native-vector-icons/Octicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
-import Fontisto from 'react-native-vector-icons/Fontisto';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { FlatListSlider } from 'react-native-flatlist-slider';
@@ -14,6 +14,7 @@ import DrawerModal from '../../Component/DrawerModal';
 // import Podcast from '../Podcast/Index'
 import New_podcast from '../New_podcast/Index'
 import Flower from '../Flower/Index'
+import Shop from '../Shop/Index'
 import { base_url } from '../../../App';
 import Notification from '../../Component/Notification';
 
@@ -123,21 +124,28 @@ const Index = (props) => {
       <DrawerModal visible={isModalVisible} navigation={navigation} onClose={closeModal} />
       <View style={{ width: '100%', alignItems: 'center', paddingVertical: 10, backgroundColor: '#fff' }}>
         <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-around', marginTop: 0 }}>
-          <TouchableOpacity onPress={() => setActiveTab('podcast')} style={{ backgroundColor: activeTab === 'podcast' ? '#c9170a' : '#e3e3e1', width: '30%', paddingVertical: 10, borderRadius: 6, alignItems: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+          <TouchableOpacity onPress={() => setActiveTab('podcast')} style={{ backgroundColor: activeTab === 'podcast' ? '#c9170a' : '#e3e3e1', width: '23.5%', paddingVertical: 8, borderRadius: 6, alignItems: 'center', alignItems: 'center', justifyContent: 'center' }}>
             <Image
               source={require('../../assets/logo/microphone.png')}
               style={{ width: 22, height: 22 }}
             />
             <Text style={{ color: activeTab === 'podcast' ? '#fff' : '#000', fontSize: 16, fontWeight: '600', marginLeft: 6 }}>Podcast</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setActiveTab('shop')} style={{ backgroundColor: activeTab === 'shop' ? '#c9170a' : '#e3e3e1', width: '30%', paddingVertical: 10, borderRadius: 6, alignItems: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+          <TouchableOpacity onPress={() => setActiveTab('shop')} style={{ backgroundColor: activeTab === 'shop' ? '#c9170a' : '#e3e3e1', width: '23.5%', paddingVertical: 8, borderRadius: 6, alignItems: 'center', alignItems: 'center', justifyContent: 'center' }}>
             <Image
               source={require('../../assets/logo/flower.png')}
               style={{ width: 25, height: 25 }}
             />
             <Text style={{ color: activeTab === 'shop' ? '#fff' : '#000', fontSize: 16, fontWeight: '600', marginLeft: 6 }}>Flower</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setActiveTab('pandit')} style={{ backgroundColor: activeTab === 'pandit' ? '#c9170a' : '#e3e3e1', width: '30%', paddingVertical: 10, borderRadius: 6, alignItems: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+          <TouchableOpacity onPress={() => setActiveTab('product')} style={{ backgroundColor: activeTab === 'product' ? '#c9170a' : '#e3e3e1', width: '23.5%', paddingVertical: 8, borderRadius: 6, alignItems: 'center', alignItems: 'center', justifyContent: 'center' }}>
+            <Image
+              source={require('../../assets/logo/product.png')}
+              style={{ width: 50, height: 25 }}
+            />
+            <Text style={{ color: activeTab === 'product' ? '#fff' : '#000', fontSize: 16, fontWeight: '600', marginLeft: 6 }}>Product</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setActiveTab('pandit')} style={{ backgroundColor: activeTab === 'pandit' ? '#c9170a' : '#e3e3e1', width: '23.5%', paddingVertical: 8, borderRadius: 6, alignItems: 'center', alignItems: 'center', justifyContent: 'center' }}>
             <Image
               source={require('../../assets/logo/priest.png')}
               style={{ width: 22, height: 25 }}
@@ -364,6 +372,11 @@ const Index = (props) => {
             <Flower />
           </View>
         }
+        {activeTab === 'product' &&
+          <View style={{ flex: 1 }}>
+            <Shop />
+          </View>
+        }
       </View>
       <View style={{ padding: 0, height: 58, borderRadius: 0, backgroundColor: '#fff', alignItems: 'center' }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', margin: 0 }}>
@@ -376,10 +389,10 @@ const Index = (props) => {
             </TouchableHighlight>
           </View>
           <View style={{ padding: 0, width: '19%' }}>
-            <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" onPress={() => props.navigation.navigate('Shop')} style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
+            <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" onPress={() => props.navigation.navigate('NotificationPage')} style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
               <View style={{ alignItems: 'center' }}>
-                <Fontisto name="shopping-bag-1" color={'#000'} size={22} />
-                <Text style={{ color: '#000', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>SHOP</Text>
+                <FontAwesome name="bell" color={'#000'} size={22} />
+                <Text style={{ color: '#000', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>NOTIFY</Text>
               </View>
             </TouchableHighlight>
           </View>
