@@ -1,226 +1,120 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, Image, SafeAreaView, ScrollView, TouchableOpacity, Modal, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { base_url } from '../../../App';
+import moment from 'moment';
 
 export default function Index() {
 
     const navigation = useNavigation();
-    const [isModalVisible, setModalVisible] = useState(false);
-    const [selectedItem, setSelectedItem] = useState(null);
+    const isFocused = useIsFocused();
+    const [allNotifications, setAllNotifications] = useState([]);
+    const [spinner, setSpinner] = useState(false);
 
-    const DATA = [
-        {
-            id: 1,
-            image:
-                'https://st3.depositphotos.com/1006542/12890/i/450/depositphotos_128904720-stock-photo-portrait-of-horror-zombie-woman.jpg',
-
-            comment:
-                'Your Suterday Daily Rundown .Saying bye',
-            time: 'just now'
-        },
-        {
-            id: 2,
-            image:
-                'https://st3.depositphotos.com/1006542/12890/i/450/depositphotos_128904720-stock-photo-portrait-of-horror-zombie-woman.jpg',
-
-            comment:
-                'Your Suterday Daily Rundown .Saying bye to an office bestie; Easing into a new career; ',
-            time: 'just now'
-        },
-        {
-            id: 3,
-            image:
-                'https://st3.depositphotos.com/1006542/12890/i/450/depositphotos_128904720-stock-photo-portrait-of-horror-zombie-woman.jpg',
-
-            comment:
-                'Your Suterday Daily Rundown .Saying bye to an office bestie; Easing into a new career; and other top news for you;and other top news for you ;and other top news for you',
-            time: '1 min'
-        },
-        {
-            id: 4,
-            image:
-                'https://st3.depositphotos.com/1006542/12890/i/450/depositphotos_128904720-stock-photo-portrait-of-horror-zombie-woman.jpg',
-
-            comment:
-                'Your Suterday Daily Rundown .Saying bye to an office bestie; Easing into a new career; and other top news for you',
-            time: '6 min'
-        },
-        {
-            id: 5,
-            image:
-                'https://st3.depositphotos.com/1006542/12890/i/450/depositphotos_128904720-stock-photo-portrait-of-horror-zombie-woman.jpg',
-
-            comment:
-                'Your Suterday Daily Rundown .Saying bye to an office bestie; Easing into a new career; and other top news for you',
-            time: '9 min'
-        },
-        {
-            id: 6,
-            image:
-                'https://st3.depositphotos.com/1006542/12890/i/450/depositphotos_128904720-stock-photo-portrait-of-horror-zombie-woman.jpg',
-
-            comment:
-                'Your Suterday Daily Rundown .Saying bye to an office bestie; Easing into a new career; and other top news for you',
-            time: '14 min'
-        },
-        {
-            id: 7,
-            image:
-                'https://st3.depositphotos.com/1006542/12890/i/450/depositphotos_128904720-stock-photo-portrait-of-horror-zombie-woman.jpg',
-
-            comment:
-                'Your Suterday Daily Rundown .Saying bye to an office bestie; Easing into a new career; and other top news for you',
-            time: '18 min'
-        },
-        {
-            id: 8,
-            image:
-                'https://st3.depositphotos.com/1006542/12890/i/450/depositphotos_128904720-stock-photo-portrait-of-horror-zombie-woman.jpg',
-
-            comment:
-                'Your Suterday Daily Rundown .Saying bye to an office bestie; Easing into a new career; and other top news for you',
-            time: '23 min'
-        },
-        {
-            id: 9,
-            image:
-                'https://st3.depositphotos.com/1006542/12890/i/450/depositphotos_128904720-stock-photo-portrait-of-horror-zombie-woman.jpg',
-
-            comment:
-                'Your Suterday Daily Rundown .Saying bye to an office bestie; Easing into a new career; and other top news for you',
-            time: '29 min'
-        },
-        {
-            id: 10,
-            image:
-                'https://st3.depositphotos.com/1006542/12890/i/450/depositphotos_128904720-stock-photo-portrait-of-horror-zombie-woman.jpg',
-
-            comment:
-                'Your Suterday Daily Rundown .Saying bye to an office bestie; Easing into a new career; and other top news for you',
-            time: '32 min'
-        },
-        {
-            id: 11,
-            image:
-                'https://st3.depositphotos.com/1006542/12890/i/450/depositphotos_128904720-stock-photo-portrait-of-horror-zombie-woman.jpg',
-
-            comment:
-                'Your Suterday Daily Rundown .Saying bye to an office bestie; Easing into a new career; and other top news for you',
-            time: '43 min'
-        },
-        {
-            id: 12,
-            image:
-                'https://st3.depositphotos.com/1006542/12890/i/450/depositphotos_128904720-stock-photo-portrait-of-horror-zombie-woman.jpg',
-
-            comment:
-                'Your Suterday Daily Rundown .Saying bye to an office bestie; Easing into a new career; and other top news for you',
-            time: '45 min'
-        },
-        {
-            id: 13,
-            image:
-                'https://st3.depositphotos.com/1006542/12890/i/450/depositphotos_128904720-stock-photo-portrait-of-horror-zombie-woman.jpg',
-
-            comment:
-                'Your Suterday Daily Rundown .Saying bye to an office bestie; Easing into a new career; and other top news for you',
-            time: '49 min'
-        },
-        {
-            id: 14,
-            image:
-                'https://st3.depositphotos.com/1006542/12890/i/450/depositphotos_128904720-stock-photo-portrait-of-horror-zombie-woman.jpg',
-
-            comment:
-                'Your Suterday Daily Rundown .Saying bye to an office bestie; Easing into a new career; and other top news for you',
-            time: '51 min'
-        },
-        {
-            id: 15,
-            image:
-                'https://st3.depositphotos.com/1006542/12890/i/450/depositphotos_128904720-stock-photo-portrait-of-horror-zombie-woman.jpg',
-
-            comment:
-                'Your Suterday Daily Rundown .Saying bye to an office bestie; Easing into a new career; and other top news for you',
-            time: '1 hr'
-        },
-    ];
-
-    const handleMorePress = (item) => {
-        setSelectedItem(item);
-        setModalVisible(true);
+    const getAllNotifications = async () => {
+        try {
+            setSpinner(true);
+            const response = await fetch(base_url + 'api/fcm-bulk-notifications', {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            });
+            const responseData = await response.json();
+            if (responseData.status === 200) {
+                setAllNotifications(responseData.data);
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setSpinner(false);
+        }
     };
 
-    const handleDelete = () => {
-        setModalVisible(false);
-        Alert.alert('Delete', 'Notification deleted successfully!');
-        // Add delete logic here
+    useEffect(() => {
+        if (isFocused) {
+            getAllNotifications();
+        }
+    }, [isFocused]);
+
+    const formatNotificationTime = (createdAt) => {
+        const now = moment();
+        const notificationTime = moment(createdAt);
+
+        const diffInMinutes = now.diff(notificationTime, 'minutes');
+        const diffInHours = now.diff(notificationTime, 'hours');
+        const diffInDays = now.diff(notificationTime, 'days');
+
+        if (diffInMinutes < 1) {
+            return 'Just now';
+        } else if (diffInMinutes < 60) {
+            return `${diffInMinutes} min ago`;
+        } else if (diffInHours < 24) {
+            return `${diffInHours} hr ago`;
+        } else if (diffInDays < 7) {
+            return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+        } else {
+            return notificationTime.format('DD/MM/YYYY');
+        }
     };
 
-    const handleVisit = () => {
-        setModalVisible(false);
-        Alert.alert('Visit', `Visiting notification: ${selectedItem?.comment}`);
-        // Add navigation or visit logic here
+    const renderNotificationCard = ({ item }) => {
+
+        const renderImageOrInitial = () => {
+            if (item.image) {
+                return <Image style={styles.image} source={{ uri: item.image }} />;
+            }
+            return (
+                <View style={styles.placeholder}>
+                    <Text style={styles.placeholderText}>
+                        {item.title ? item.title.charAt(0).toUpperCase() : '?'}
+                    </Text>
+                </View>
+            );
+        };
+
+        return (
+            <View style={styles.card}>
+                {renderImageOrInitial()}
+                <View style={styles.textContainer}>
+                    <Text style={styles.titleText}>{item.title}</Text>
+                    <Text style={styles.descriptionText}>{item.description}</Text>
+                    <View style={styles.timeContainer}>
+                        <MaterialIcons name="access-time" size={16} color="#555" />
+                        <Text style={styles.timeText}>{formatNotificationTime(item.created_at)}</Text>
+                    </View>
+                </View>
+            </View>
+        );
     };
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    style={styles.backButton}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                     <Feather name="chevron-left" color="#333" size={30} />
                     <Text style={styles.headerTitle}>Notifications</Text>
                 </TouchableOpacity>
             </View>
-            <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+            {spinner ? (
+                <View style={styles.loaderContainer}>
+                    <ActivityIndicator size="large" color="#ffcb44" />
+                    <Text style={styles.loaderText}>Loading...</Text>
+                </View>
+            ) : (
                 <FlatList
-                    data={DATA}
-                    scrollEnabled={false}
+                    data={allNotifications}
                     keyExtractor={(item) => item.id.toString()}
                     contentContainerStyle={styles.listContainer}
-                    renderItem={({ item }) => (
-                        <View style={styles.card}>
-                            <Image style={styles.image} source={{ uri: item.image }} />
-                            <View style={styles.textContainer}>
-                                <Text style={styles.commentText}>{item.comment}</Text>
-                                <View style={styles.timeContainer}>
-                                    <MaterialIcons name="access-time" size={16} color="#555" />
-                                    <Text style={styles.timeText}>{item.time}</Text>
-                                </View>
-                            </View>
-                            <TouchableOpacity onPress={() => handleMorePress(item)} style={styles.moreButton}>
-                                <Feather name="more-vertical" size={24} color="#333" />
-                            </TouchableOpacity>
-                        </View>
-                    )}
+                    renderItem={renderNotificationCard}
                 />
-            </ScrollView>
-            {/* Modal for options */}
-            <Modal
-                transparent
-                visible={isModalVisible}
-                animationType="fade"
-                onRequestClose={() => setModalVisible(false)}
-            >
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalContent}>
-                        <TouchableOpacity style={styles.modalButton} onPress={handleDelete}>
-                            <Text style={styles.modalButtonText}>Delete</Text>
-                        </TouchableOpacity>
-                        <View style={{ height: 1.5, width: '100%', backgroundColor: '#ddd' }} />
-                        <TouchableOpacity style={styles.modalButton} onPress={handleVisit}>
-                            <Text style={styles.modalButtonText}>Visit</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Modal>
+            )}
         </View>
-    )
+    );
 }
-
 
 const styles = StyleSheet.create({
     container: {
@@ -248,78 +142,72 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         paddingHorizontal: 10,
-        paddingTop: 10,
+        paddingVertical: 10,
     },
     card: {
         flexDirection: 'row',
         backgroundColor: '#fff',
         borderRadius: 10,
-        marginBottom: 10,
-        padding: 10,
+        marginBottom: 15,
+        padding: 15,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 4,
-        elevation: 2,
+        elevation: 4,
     },
     image: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
+        width: 60,
+        height: 60,
+        borderRadius: 10,
+        marginRight: 10,
+    },
+    placeholder: {
+        width: 60,
+        height: 60,
+        borderRadius: 10,
+        backgroundColor: '#e0e0e0',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 10,
+    },
+    placeholderText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#666',
     },
     textContainer: {
         flex: 1,
-        marginLeft: 10,
         justifyContent: 'center',
     },
-    commentText: {
-        fontSize: 14,
-        fontWeight: '500',
+    titleText: {
+        fontSize: 16,
+        fontWeight: 'bold',
         color: '#333',
+    },
+    descriptionText: {
+        fontSize: 14,
+        color: '#666',
+        marginTop: 5,
     },
     timeContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 5,
+        marginTop: 10,
     },
     timeText: {
         fontSize: 12,
-        color: '#777',
+        color: '#999',
         marginLeft: 5,
     },
-    moreButton: {
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    modalOverlay: {
+    loaderContainer: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         justifyContent: 'center',
         alignItems: 'center',
     },
-    modalContent: {
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        width: 200,
-        padding: 15,
-        alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-    },
-    modalButton: {
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        width: '100%',
-        alignItems: 'center',
-        // borderBottomWidth: 1,
-        // borderBottomColor: '#ddd',
-    },
-    modalButtonText: {
+    loaderText: {
+        marginTop: 10,
         fontSize: 16,
-        color: '#007bff',
-        fontWeight: 'bold',
+        color: '#ffcb44',
     },
 });

@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, View, TextInput, TouchableOpacity, Image, Alert, Modal, ScrollView, FlatList, KeyboardAvoidingView, ActivityIndicator, Animated, Easing } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, View, TextInput, TouchableOpacity, Image, Alert, Modal, ScrollView, FlatList, Linking, ActivityIndicator, Animated, Easing } from 'react-native'
 import React, { useEffect, useState, useRef } from 'react'
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -1105,6 +1105,10 @@ const Index = (props) => {
                         </Animated.View>
                         <Text style={styles.pModalCongratulationsText}>Congratulations!</Text>
                         <Text style={styles.pModalDetailText}>Your order has been placed successfully.</Text>
+                        <Text style={[styles.pModalCallText, { marginTop: 10 }]}>For any inquiry call us at this number</Text>
+                        <TouchableOpacity onPress={() => Linking.openURL('tel:9861032347')}>
+                            <Text style={{ color: '#fff', fontSize: 16, fontWeight: '500', textAlign: 'center', marginTop: 5 }}>9861032347</Text>
+                        </TouchableOpacity>
                     </View>
                     <TouchableOpacity onPress={() => navigation.replace('PackageHistory')} style={styles.pModalButton}>
                         <Text style={styles.pModalButtonText}>Order Details</Text>
@@ -1125,6 +1129,10 @@ const Index = (props) => {
                         </Animated.View>
                         <Text style={styles.pModalCongratulationsText}>Congratulations!</Text>
                         <Text style={styles.pModalDetailText}>Your order has been placed successfully.</Text>
+                        <Text style={[styles.pModalCallText, { marginTop: 10 }]}>For any inquiry call us at this number</Text>
+                        <TouchableOpacity onPress={() => Linking.openURL('tel:9861032347')}>
+                            <Text style={{ color: '#fff', fontSize: 16, fontWeight: '500', textAlign: 'center', marginTop: 5 }}>9861032347</Text>
+                        </TouchableOpacity>
                     </View>
                     <TouchableOpacity onPress={() => navigation.replace('Flower_req_history')} style={styles.pModalButton}>
                         <Text style={styles.pModalButtonText}>Order Details</Text>

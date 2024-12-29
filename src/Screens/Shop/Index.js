@@ -5,7 +5,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FlatListSlider } from 'react-native-flatlist-slider';
 import LoginModal from '../../Component/LoginModal';
 import { base_url } from '../../../App';
-import { WebView } from 'react-native-webview';
 
 const Index = (props) => {
 
@@ -40,7 +39,7 @@ const Index = (props) => {
             if (responseData.status === 200) {
                 setSpinner(false);
                 // console.log("Flower Banner: ", responseData.data);
-                const flowerBanners = responseData.data.filter(item => item.category === "flower");
+                const flowerBanners = responseData.data.filter(item => item.category === "product");
                 setSliderImages(flowerBanners);
             }
         } catch (error) {
@@ -151,11 +150,11 @@ const Index = (props) => {
                     }
                     <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center' }}>
                         <View style={{ width: '100%', marginVertical: 10, borderRadius: 10, overflow: 'hidden' }}>
-                            <Text style={{ fontSize: 18, color: '#000', fontWeight: 'bold' }}>FLOWER SUBSCRIPTION :-</Text>
+                            <Text style={{ fontSize: 18, color: '#000', fontWeight: 'bold' }}>PRODUCT SUBSCRIPTION :-</Text>
                         </View>
                         <View style={{ width: '100%', borderRadius: 10, overflow: 'hidden' }}>
                             <FlatList
-                                data={allPackages.filter(item => item.category === "Subscription")}
+                                data={allPackages.filter(item => item.category === "Package")}
                                 renderItem={renderItem}
                                 scrollEnabled={false}
                                 keyExtractor={item => item.id}
