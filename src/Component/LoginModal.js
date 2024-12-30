@@ -83,6 +83,7 @@ const LoginModal = ({ visible, onClose, selectedItem, page }) => {
                             maxLength={13}
                             keyboardType="phone-pad"
                             autoCapitalize="none"
+                            autoComplete='off'
                             placeholderTextColor="#ccc"
                         />
                         {showError && <Text style={styles.errorText}>{errorMessage}</Text>}

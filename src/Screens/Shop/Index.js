@@ -74,16 +74,16 @@ const Index = (props) => {
 
     const [selectedItem, setSelectedItem] = useState(null);
 
-    const goToCheckoutPage = async (flower) => {
+    const goToCheckoutPage = async (product) => {
         var access_token = await AsyncStorage.getItem('storeAccesstoken');
         if (access_token) {
-            console.log("flower Details", flower);
-            navigation.navigate('FlowerCheckoutPage', flower);
+            console.log("product Details", product);
+            navigation.navigate('ShopCheckoutPage', product);
         }
         else {
             // navigation.navigate('Login');
             setIsLoginModalVisible(true);
-            setSelectedItem(flower);
+            setSelectedItem(product);
         }
     }
 
@@ -124,7 +124,7 @@ const Index = (props) => {
 
     return (
         <SafeAreaView style={{ flex: 1, flexDirection: 'column' }}>
-            <LoginModal visible={isLoginModalVisible} onClose={() => setIsLoginModalVisible(false)} selectedItem={selectedItem} page={'FlowerCheckoutPage'} />
+            <LoginModal visible={isLoginModalVisible} onClose={() => setIsLoginModalVisible(false)} selectedItem={selectedItem} page={'ShopCheckoutPage'} />
             {spinner === true ?
                 <View style={{ flex: 1, alignSelf: 'center', top: '30%' }}>
                     {/* <Image style={{ width: 50, height: 50 }} source={require('../../assets/img/loading.gif')} /> */}
