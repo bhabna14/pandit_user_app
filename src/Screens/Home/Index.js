@@ -131,12 +131,12 @@ const Index = (props) => {
             />
             <Text style={{ color: activeTab === 'podcast' ? '#fff' : '#000', fontSize: 16, fontWeight: '600', marginLeft: 6 }}>Podcast</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setActiveTab('shop')} style={{ backgroundColor: activeTab === 'shop' ? '#c9170a' : '#e3e3e1', width: '23.5%', paddingVertical: 8, borderRadius: 6, alignItems: 'center', alignItems: 'center', justifyContent: 'center' }}>
+          <TouchableOpacity onPress={() => setActiveTab('flower')} style={{ backgroundColor: activeTab === 'flower' ? '#c9170a' : '#e3e3e1', width: '23.5%', paddingVertical: 8, borderRadius: 6, alignItems: 'center', alignItems: 'center', justifyContent: 'center' }}>
             <Image
               source={require('../../assets/logo/flower.png')}
               style={{ width: 25, height: 25 }}
             />
-            <Text style={{ color: activeTab === 'shop' ? '#fff' : '#000', fontSize: 16, fontWeight: '600', marginLeft: 6 }}>Flower</Text>
+            <Text style={{ color: activeTab === 'flower' ? '#fff' : '#000', fontSize: 16, fontWeight: '600', marginLeft: 6 }}>Flower</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setActiveTab('product')} style={{ backgroundColor: activeTab === 'product' ? '#c9170a' : '#e3e3e1', width: '23.5%', paddingVertical: 8, borderRadius: 6, alignItems: 'center', alignItems: 'center', justifyContent: 'center' }}>
             <Image
@@ -158,6 +158,16 @@ const Index = (props) => {
         {activeTab === 'podcast' &&
           <View style={{ flex: 1 }}>
             <New_podcast />
+          </View>
+        }
+        {activeTab === 'flower' &&
+          <View style={{ flex: 1 }}>
+            <Flower />
+          </View>
+        }
+        {activeTab === 'product' &&
+          <View style={{ flex: 1 }}>
+            <Shop />
           </View>
         }
         {activeTab === 'pandit' &&
@@ -365,16 +375,6 @@ const Index = (props) => {
                 </ScrollView>
               </KeyboardAvoidingView>
             }
-          </View>
-        }
-        {activeTab === 'shop' &&
-          <View style={{ flex: 1 }}>
-            <Flower />
-          </View>
-        }
-        {activeTab === 'product' &&
-          <View style={{ flex: 1 }}>
-            <Shop />
           </View>
         }
       </View>
