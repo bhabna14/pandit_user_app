@@ -43,6 +43,8 @@ import PackageDetails from './src/Screens/PackageDetails/Index'
 import SubscriptionDetails from './src/Screens/SubscriptionDetails/Index'
 import FlowerRequestDetails from './src/Screens/FlowerRequestDetails/Index'
 import Shop from './src/Screens/Shop/Index'
+import ProductHistory from './src/Screens/ProductHistory/Index'
+import ProductDetails from './src/Screens/Product_details/Index'
 import ShopCheckoutPage from './src/Screens/ShopCheckoutPage/Index'
 import NotificationPage from './src/Screens/NotificationPage/Index';
 import YoutubeLive from './src/Screens/YoutubeLive/Index'
@@ -143,6 +145,8 @@ const App = () => {
             <Stack.Screen name="SubscriptionDetails" component={SubscriptionDetails} />
             <Stack.Screen name="FlowerRequestDetails" component={FlowerRequestDetails} />
             <Stack.Screen name="Shop" component={Shop} />
+            <Stack.Screen name="ProductHistory" component={ProductHistory} />
+            <Stack.Screen name="ProductDetails" component={ProductDetails} />
             <Stack.Screen name="ShopCheckoutPage" component={ShopCheckoutPage} />
             <Stack.Screen name="NotificationPage" component={NotificationPage} />
             <Stack.Screen name="YoutubeLive" component={YoutubeLive} />

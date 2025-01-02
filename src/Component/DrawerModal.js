@@ -117,6 +117,16 @@ const DrawerModal = ({ visible, onClose }) => {
         }
     };
 
+    const gotoProductHistoryPage = () => {
+        if (accessToken) {
+            onClose();
+            navigation.navigate('ProductHistory');
+        } else {
+            onClose();
+            navigation.navigate('Login');
+        }
+    };
+
     const goToAddressPage = () => {
         if (accessToken) {
             onClose();
@@ -164,6 +174,11 @@ const DrawerModal = ({ visible, onClose }) => {
                                 {/* <Image style={{ height: 27, width: 27 }} source={require("../assets/logo/orderHistory.png")} /> */}
                                 <Ionicons name="flower-outline" color={'#fff'} size={22} />
                                 <Text style={styles.drawerLable}>Flower Subscription</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => gotoProductHistoryPage()} style={styles.drawerCell}>
+                                <Image style={{ height: 27, width: 27 }} source={require("../assets/logo/productHistory.png")} />
+                                {/* <Ionicons name="flower-outline" color={'#fff'} size={22} /> */}
+                                <Text style={styles.drawerLable}>Product History</Text>
                             </TouchableOpacity>
                             {/* <TouchableOpacity onPress={() => { onClose(); navigation.navigate('OrderHistory') }} style={styles.drawerCell}>
                                 <Image style={{ height: 27, width: 27 }} source={require("../assets/logo/orderHistory.png")} />
