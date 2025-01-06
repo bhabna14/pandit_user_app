@@ -221,12 +221,17 @@ const Index = (props) => {
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity
-                                        onPress={() => navigation.navigate("SubscriptionDetails", item)}
+                                        onPress={() => navigation.navigate("ProductDetails", item)}
                                         style={{ flexDirection: 'row', backgroundColor: '#fff', padding: 15, marginBottom: 15, borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.5, shadowRadius: 10, elevation: 6, overflow: 'hidden' }}
                                     >
                                         <Image source={{ uri: item.flower_product.product_image_url }} style={{ width: 90, height: 90, borderRadius: 12, borderWidth: 1, borderColor: '#eee' }} />
                                         <View style={{ flex: 1, marginLeft: 15 }}>
                                             <Text style={{ color: '#333', fontSize: 18, fontWeight: 'bold' }}>{item.flower_product.name}</Text>
+                                            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+                                                <Text style={{ color: '#ff6347', fontSize: 16, fontWeight: '600' }}>₹{item.flower_product.price}</Text>
+                                                <Text style={{ color: '#888', fontSize: 14, marginLeft: 8 }}>({item.flower_product.duration} Month)</Text>
+                                            </View>
+                                            <Text style={{ color: '#666', fontSize: 14 }}>Order Id: <Text style={{ color: '#000' }}>{item.order_id}</Text></Text>
                                         </View>
                                     </TouchableOpacity>
                                 )}

@@ -825,11 +825,11 @@ const Index = (props) => {
                         <Text style={styles.pModalCongratulationsText}>Congratulations!</Text>
                         <Text style={styles.pModalDetailText}>Your order has been placed successfully.</Text>
                         <Text style={[styles.pModalCallText, { marginTop: 10 }]}>For any inquiry call us at this number</Text>
-                        <TouchableOpacity onPress={() => Linking.openURL('tel:9861032347')}>
-                            <Text style={{ color: '#fff', fontSize: 16, fontWeight: '500', textAlign: 'center', marginTop: 5 }}>9861032347</Text>
+                        <TouchableOpacity onPress={() => Linking.openURL('tel:9776888887')}>
+                            <Text style={{ color: '#fff', fontSize: 16, fontWeight: '500', textAlign: 'center', marginTop: 5 }}>9776888887</Text>
                         </TouchableOpacity>
                     </View>
-                    <TouchableOpacity onPress={() => navigation.replace('PackageHistory')} style={styles.pModalButton}>
+                    <TouchableOpacity onPress={() => navigation.replace('ProductHistory')} style={styles.pModalButton}>
                         <Text style={styles.pModalButtonText}>Order Details</Text>
                     </TouchableOpacity>
                 </View>
