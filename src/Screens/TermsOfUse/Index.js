@@ -13,7 +13,7 @@ const Index = (props) => {
         </TouchableOpacity>
       </View> */}
       <View style={{ flex: 1 }}>
-        <WebView source={{ uri: 'https://poojastore.33crores.com/pages/terms-of-use' }} style={{ flex: 1 }} />
+        <WebView source={{ uri: 'https://pandit.33crores.com/term-condition' }} style={{ flex: 1 }} />
       </View>
     </SafeAreaView>
   )
