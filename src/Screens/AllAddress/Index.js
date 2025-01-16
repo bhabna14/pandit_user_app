@@ -424,20 +424,20 @@ const Index = (props) => {
                                     return (
                                         <View style={styles.addressBox}>
                                             <View style={{ width: '15%', alignItems: 'center', justifyContent: 'center' }}>
-                                                {address.item.address_type === "Home" && <AntDesign name="home" color={'#555454'} size={22} />}
-                                                {address.item.address_type === "Work" && <MaterialIcons name="work-outline" color={'#555454'} size={22} />}
-                                                {address.item.address_type === "Other" && <Fontisto name="world-o" color={'#555454'} size={22} />}
+                                                {address?.item?.address_type === "Home" && <AntDesign name="home" color={'#555454'} size={22} />}
+                                                {address?.item?.address_type === "Work" && <MaterialIcons name="work-outline" color={'#555454'} size={22} />}
+                                                {address?.item?.address_type === "Other" && <Fontisto name="world-o" color={'#555454'} size={22} />}
 
-                                                {address.item.address_type === "Home" && <Text style={{ fontSize: 13, fontWeight: '400', color: '#616161' }}>Home</Text>}
-                                                {address.item.address_type === "Work" && <Text style={{ fontSize: 13, fontWeight: '400', color: '#616161' }}>Work</Text>}
-                                                {address.item.address_type === "Other" && <Text style={{ fontSize: 13, fontWeight: '400', color: '#616161' }}>Other</Text>}
+                                                {address?.item?.address_type === "Home" && <Text style={{ fontSize: 13, fontWeight: '400', color: '#616161' }}>Home</Text>}
+                                                {address?.item?.address_type === "Work" && <Text style={{ fontSize: 13, fontWeight: '400', color: '#616161' }}>Work</Text>}
+                                                {address?.item?.address_type === "Other" && <Text style={{ fontSize: 13, fontWeight: '400', color: '#616161' }}>Other</Text>}
                                             </View>
                                             <View style={{ width: '3%' }}></View>
                                             <View style={{ width: '72%', alignItems: 'flex-start', justifyContent: 'center' }}>
-                                                <Text style={{ fontSize: 14, fontWeight: '500', color: '#545353', letterSpacing: 0.6 }}>{address.item.apartment_name},  {address.item.apartment_flat_plot},  {address.item.locality_details.locality_name}</Text>
-                                                <Text style={{ fontSize: 14, fontWeight: '500', color: '#545353', letterSpacing: 0.6 }}>{address.item.landmark},  {address.item.city}</Text>
-                                                <Text style={{ fontSize: 14, fontWeight: '500', color: '#545353', letterSpacing: 0.6 }}>{address.item.state},  {address.item.pincode},  {address.item.place_category}</Text>
-                                                {address.item.default === 1 ?
+                                                <Text style={{ fontSize: 14, fontWeight: '500', color: '#545353', letterSpacing: 0.6 }}>{address?.item?.apartment_name},  {address?.item?.apartment_flat_plot},  {address?.item?.locality_details?.locality_name}</Text>
+                                                <Text style={{ fontSize: 14, fontWeight: '500', color: '#545353', letterSpacing: 0.6 }}>{address?.item?.landmark},  {address?.item?.city}</Text>
+                                                <Text style={{ fontSize: 14, fontWeight: '500', color: '#545353', letterSpacing: 0.6 }}>{address?.item?.state},  {address?.item?.pincode},  {address?.item?.place_category}</Text>
+                                                {address?.item?.default === 1 ?
                                                     <View style={{ marginTop: 4, flexDirection: 'row', alignItems: 'center' }}>
                                                         <FontAwesome name='check-circle' color='#5286f7' size={18} />
                                                         <Text style={{ fontSize: 15, fontWeight: '500', color: '#5286f7', letterSpacing: 0.6, marginLeft: 5 }}>Default Address</Text>
@@ -452,7 +452,7 @@ const Index = (props) => {
                                                 <TouchableOpacity onPress={() => getAddressById(address.item)} style={{ backgroundColor: '#fff' }}>
                                                     <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
                                                 </TouchableOpacity>
-                                                {address.item.default === 0 &&
+                                                {address?.item.default === 0 &&
                                                     <TouchableOpacity onPress={() => confirmDelete(address.item.id)} style={{ backgroundColor: '#fff' }}>
                                                         <MaterialCommunityIcons name="delete-circle-outline" color={'#ffcb44'} size={26} />
                                                     </TouchableOpacity>
