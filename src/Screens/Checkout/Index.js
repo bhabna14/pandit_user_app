@@ -236,6 +236,7 @@ const Index = (props) => {
     const [apartmentOpen, setApartmentOpen] = useState(false);
     const [apartmentValue, setApartmentValue] = useState(null);
     const [apartmentList, setApartmentList] = useState([]);
+    const [newApartment, setNewApartment] = useState('');
     const [landmark, setLandmark] = useState("");
     const [city, setCity] = useState("");
     const [state, setState] = useState("");
@@ -245,6 +246,7 @@ const Index = (props) => {
 
     const saveAddress = async () => {
         if (!validateFields()) return;
+        const apartment = apartmentValue && apartmentValue !== 'add_new' ? apartmentValue : newApartment;
         const access_token = await AsyncStorage.getItem('storeAccesstoken');
         try {
             const response = await fetch(base_url + 'api/saveaddress', {
@@ -261,7 +263,7 @@ const Index = (props) => {
                     pincode: pincode,
                     address_type: activeAddressType,
                     locality: localityValue,
-                    apartment_name: apartmentValue,
+                    apartment_name: apartment,
                     place_category: String(seletedAddress),
                     apartment_flat_plot: plotFlatNumber,
                     landmark: landmark
@@ -290,6 +292,7 @@ const Index = (props) => {
         setPlotFlatNumber("");
         setLocalityValue(null);
         setApartmentValue(null);
+        setNewApartment("");
         setLandmark("");
         setState("");
         setCity("");
@@ -314,7 +317,7 @@ const Index = (props) => {
             errors.locality = "Locality is required";
             valid = false;
         }
-        if (apartmentValue === null) {
+        if (apartmentValue === null && newApartment === "") {
             errors.apartment = "Apartment is required";
             valid = false;
         }
@@ -662,8 +665,8 @@ const Index = (props) => {
                                 <View style={styles.card}>
                                     <TextInput
                                         style={styles.inputs}
-                                        onChangeText={setApartmentValue}
-                                        value={apartmentValue !== 'add_new' ? apartmentValue : ''}
+                                        onChangeText={setNewApartment}
+                                        value={newApartment}
                                         placeholder="Enter Your Apartment Name"
                                         placeholderTextColor="#424242"
                                         underlineColorAndroid="transparent"
@@ -675,8 +678,8 @@ const Index = (props) => {
                                 <View style={[styles.card, { marginTop: 15 }]}>
                                     <TextInput
                                         style={styles.inputs}
-                                        onChangeText={setApartmentValue}
-                                        value={apartmentValue !== 'add_new' ? apartmentValue : ''}
+                                        onChangeText={setNewApartment}
+                                        value={newApartment}
                                         placeholder="Enter Your Apartment Name"
                                         placeholderTextColor="#424242"
                                         underlineColorAndroid="transparent"
