@@ -69,8 +69,8 @@ const Index = (props) => {
 
     const handleResumeButton = (item) => {
         setSelectedResumePackageId(item.order_id);
-        setPause_start_date(item.subscription.pause_start_date);
-        setPause_end_date(item.subscription.pause_end_date);
+        setPause_start_date(item.pause_start_date);
+        setPause_end_date(item.pause_end_date);
         openResumeModal();
     };
 
@@ -224,30 +224,30 @@ const Index = (props) => {
                                         onPress={() => navigation.navigate("SubscriptionDetails", item)}
                                         style={{ flexDirection: 'row', backgroundColor: '#fff', padding: 15, marginBottom: 15, borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.5, shadowRadius: 10, elevation: 6, overflow: 'hidden' }}
                                     >
-                                        <Image source={{ uri: item.flower_product.product_image_url }} style={{ width: 90, height: 90, borderRadius: 12, borderWidth: 1, borderColor: '#eee' }} />
+                                        <Image source={{ uri: item.flower_products.product_image_url }} style={{ width: 90, height: 90, borderRadius: 12, borderWidth: 1, borderColor: '#eee' }} />
                                         <View style={{ flex: 1, marginLeft: 15 }}>
-                                            <Text style={{ color: '#333', fontSize: 18, fontWeight: 'bold' }}>{item.flower_product.name}</Text>
+                                            <Text style={{ color: '#333', fontSize: 18, fontWeight: 'bold' }}>{item.flower_products.name}</Text>
                                             <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
-                                                <Text style={{ color: '#ff6347', fontSize: 16, fontWeight: '600' }}>₹{item.flower_product.price}</Text>
-                                                <Text style={{ color: '#888', fontSize: 14, marginLeft: 8 }}>({item.flower_product.duration} Month)</Text>
+                                                <Text style={{ color: '#ff6347', fontSize: 16, fontWeight: '600' }}>₹{item.flower_products.price}</Text>
+                                                <Text style={{ color: '#888', fontSize: 14, marginLeft: 8 }}>({item.flower_products.duration} Month)</Text>
                                             </View>
-                                            {/* <Text style={{ color: '#666', fontSize: 14, marginTop: 4, lineHeight: 20 }}>{item.flower_product.category}</Text> */}
+                                            {/* <Text style={{ color: '#666', fontSize: 14, marginTop: 4, lineHeight: 20 }}>{item.flower_products.category}</Text> */}
                                             <Text style={{ color: '#666', fontSize: 14 }}>Order Id: <Text style={{ color: '#000' }}>{item.order_id}</Text></Text>
                                             {item?.subscription?.status === "paused" ?
                                                 <View>
-                                                    <Text style={{ color: '#c9170a', fontSize: 14, fontWeight: '600' }}>Your subscription is paused from {item.subscription.pause_start_date} to {item.subscription.pause_end_date}</Text>
+                                                    <Text style={{ color: '#c9170a', fontSize: 14, fontWeight: '600' }}>Your subscription is paused from {item.pause_start_date} to {item.pause_end_date}</Text>
                                                     <TouchableOpacity onPress={() => handleResumeButton(item)} style={{ backgroundColor: 'green', width: 70, height: 30, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginTop: 8 }}>
                                                         <Text style={{ color: '#fff' }}>Resume</Text>
                                                     </TouchableOpacity>
                                                 </View>
                                                 :
-                                                moment(item.subscription.start_date).format('YYYY-MM-DD') <= moment().format('YYYY-MM-DD') &&
+                                                moment(item.start_date).format('YYYY-MM-DD') <= moment().format('YYYY-MM-DD') &&
                                                 <TouchableOpacity onPress={() => handlePauseButton(item.order_id)} style={{ backgroundColor: 'red', width: 70, height: 30, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginTop: 8 }}>
                                                     <Text style={{ color: '#fff' }}>Pause</Text>
                                                 </TouchableOpacity>
                                             }
-                                            {moment(item.subscription.start_date).format('YYYY-MM-DD') > moment().format('YYYY-MM-DD') &&
-                                                <Text style={{ color: '#000', fontSize: 15, fontWeight: 'bold' }}>Your subscription will start on {moment(item.subscription.start_date).format('MMM Do YYYY')}</Text>
+                                            {moment(item.start_date).format('YYYY-MM-DD') > moment().format('YYYY-MM-DD') &&
+                                                <Text style={{ color: '#000', fontSize: 15, fontWeight: 'bold' }}>Your subscription will start on {moment(item.start_date).format('MMM Do YYYY')}</Text>
                                             }
                                         </View>
                                     </TouchableOpacity>

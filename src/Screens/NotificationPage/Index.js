@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity, ActivityIndicator, ScrollView, RefreshControl } from 'react-native';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -12,6 +12,16 @@ export default function Index() {
     const isFocused = useIsFocused();
     const [allNotifications, setAllNotifications] = useState([]);
     const [spinner, setSpinner] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+            getAllNotifications();
+            console.log("Refreshing Successful");
+        }, 2000);
+    }, []);
 
     const getAllNotifications = async () => {
         try {
@@ -99,19 +109,28 @@ export default function Index() {
                     <Text style={styles.headerTitle}>Notifications</Text>
                 </TouchableOpacity>
             </View>
-            {spinner ? (
+            {spinner ?
                 <View style={styles.loaderContainer}>
                     <ActivityIndicator size="large" color="#ffcb44" />
                     <Text style={styles.loaderText}>Loading...</Text>
                 </View>
-            ) : (
-                <FlatList
-                    data={allNotifications}
-                    keyExtractor={(item) => item.id.toString()}
-                    contentContainerStyle={styles.listContainer}
-                    renderItem={renderNotificationCard}
-                />
-            )}
+                :
+                <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} showsVerticalScrollIndicator={false} style={{ flex: 1, marginBottom: 10 }}>
+                    {allNotifications.length > 0 ?
+                        <FlatList
+                            data={allNotifications}
+                            keyExtractor={(item) => item.id.toString()}
+                            contentContainerStyle={styles.listContainer}
+                            renderItem={renderNotificationCard}
+                            scrollEnabled={false}
+                        />
+                        :
+                        <View style={{ flex: 1, alignItems: 'center', paddingTop: 300 }}>
+                            <Text style={{ color: '#000', fontSize: 20, fontWeight: 'bold' }}>No Notification Found</Text>
+                        </View>
+                    }
+                </ScrollView>
+            }
         </View>
     );
 }

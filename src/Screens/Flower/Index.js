@@ -16,12 +16,14 @@ const Index = (props) => {
     const [flowerRequest, setFlowerRequest] = useState([]);
     const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
     const [sliderImages, setSliderImages] = useState([]);
+    const [currentOrder, setCurrentOrder] = useState(null);
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         setTimeout(() => {
             setRefreshing(false);
             getAllPackages();
+            getCurrentOrder();
             console.log("Refreshing Successful");
         }, 2000);
     }, []);
@@ -74,6 +76,29 @@ const Index = (props) => {
         });
     };
 
+    const getCurrentOrder = async () => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
+        if (access_token) {
+            await fetch(base_url + 'api/current-orders', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + access_token
+                },
+            }).then(response => response.json()).then(response => {
+                if (response.success === true) {
+                    // console.log("Current Order: ", response.data[0]);
+                    setCurrentOrder(response.data[0]);
+                } else {
+                    console.error('Failed to fetch packages:', response.message);
+                }
+            }).catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    };
+
     const [selectedItem, setSelectedItem] = useState(null);
 
     const goToCheckoutPage = async (flower) => {
@@ -93,12 +118,13 @@ const Index = (props) => {
         if (isFocused) {
             getAllPackages();
             getFlowerBanner();
+            getCurrentOrder();
         }
     }, [isFocused]);
 
     const renderItem = ({ item }) => (
         <View style={styles.mostPPlrItem}>
-            <View style={{ width: '100%', height: 170, borderRadius: 10 }}>
+            <View style={{ width: '100%', height: 170, borderRadius: 10, padding: 4 }}>
                 <Image source={{ uri: item.product_image }} style={styles.mostPPImage} />
             </View>
             <View style={{ margin: 10, width: '90%', alignItems: 'flex-start', justifyContent: 'center' }}>
@@ -150,11 +176,44 @@ const Index = (props) => {
                             </View>
                         </View>
                     }
+                    {currentOrder &&
+                        <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center' }}>
+                            <View style={{ backgroundColor: '#fff', width: '100%', alignSelf: 'center', borderRadius: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 13, elevation: 4, marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between', padding: 6, marginTop: 10 }}>
+                                <TouchableOpacity onPress={() => navigation.navigate('PackageHistory')} style={{ width: '47%', height: '100%', borderRadius: 10, borderColor: '#000', borderWidth: 0.5 }}>
+                                    <Image source={{ uri: currentOrder?.flower_product?.product_image }} style={{ flex: 1, borderRadius: 10, resizeMode: 'cover' }} />
+                                </TouchableOpacity>
+                                <View style={{ width: '51%' }}>
+                                    <View style={{ margin: 10, width: '90%', alignItems: 'flex-start', justifyContent: 'center' }}>
+                                        <Text style={{ color: '#000', fontSize: 16, fontWeight: '500', marginBottom: 5, textTransform: 'capitalize' }}>{currentOrder.flower_product.name}</Text>
+                                        <View style={{ flexDirection: 'row' }}>
+                                            <Text style={{ color: '#c9170a', fontWeight: '500' }}>M.R.P -  </Text>
+                                            <Text style={{ color: '#000', fontSize: 15, fontWeight: 'bold', textTransform: 'capitalize' }}>Rs.{currentOrder.flower_product.price}</Text>
+                                        </View>
+                                        <Text style={{ color: '#4a4a49', fontWeight: 'bold', fontSize: 15 }}>From: <Text style={{ fontWeight: '400' }}>{currentOrder.subscription.start_date}</Text> To: <Text style={{ fontWeight: '400' }}>{currentOrder.subscription.new_date ? currentOrder.subscription.new_date : currentOrder.subscription.end_date}</Text></Text>
+                                        {currentOrder.subscription.status === 'active' ?
+                                            <View style={{ backgroundColor: '#c3272e', padding: 10, alignSelf: 'center', alignItems: 'center', width: '100%', borderRadius: 8, marginTop: 10 }}>
+                                                <Text style={{ color: '#fff' }}>Remaining - {currentOrder?.subscription?.remaining_time?.d} Day's</Text>
+                                            </View>
+                                            :
+                                            currentOrder.subscription.status === 'pending' ?
+                                                <View style={{ backgroundColor: '#c3272e', padding: 10, alignSelf: 'center', alignItems: 'center', width: '100%', borderRadius: 8, marginTop: 10 }}>
+                                                    <Text style={{ color: '#fff' }}>Order Pending</Text>
+                                                </View>
+                                                :
+                                                <TouchableOpacity onPress={() => goToCheckoutPage(currentOrder)} style={{ backgroundColor: '#c3272e', padding: 10, alignSelf: 'center', alignItems: 'center', width: '100%', borderRadius: 8, marginTop: 10 }}>
+                                                    <Text style={{ color: '#fff' }}>Renew Order</Text>
+                                                </TouchableOpacity>
+                                        }
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                    }
                     <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center' }}>
                         <View style={styles.flowerRequest}>
-                            <TouchableOpacity style={{ width: '47%', height: '100%', borderRadius: 10, borderColor: '#000', borderWidth: 0.5 }}>
+                            <View style={{ width: '47%', height: '100%', borderRadius: 10, borderColor: '#000', borderWidth: 0.5 }}>
                                 <Image source={{ uri: flowerRequest?.product_image }} style={{ flex: 1, borderRadius: 10, resizeMode: 'cover' }} />
-                            </TouchableOpacity>
+                            </View>
                             <View style={{ width: '51%' }}>
                                 <View style={{ margin: 10, width: '90%', alignItems: 'flex-start', justifyContent: 'center' }}>
                                     <Text style={{ color: '#000', fontSize: 16, fontWeight: '500', marginBottom: 5, textTransform: 'capitalize' }}>{flowerRequest?.name}</Text>
@@ -168,7 +227,7 @@ const Index = (props) => {
                     </View>
                     <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center' }}>
                         <View style={{ width: '100%', marginVertical: 10, borderRadius: 10, overflow: 'hidden' }}>
-                            <Text style={{ fontSize: 18, color: '#000', fontWeight: 'bold' }}>FLOWER SUBSCRIPTION :-</Text>
+                            <Text style={{ fontSize: 18, color: '#000', fontWeight: 'bold' }}>FLOWER  SUBSCRIPTION :-</Text>
                         </View>
                         <View style={{ width: '100%', borderRadius: 10, overflow: 'hidden' }}>
                             <FlatList
@@ -207,7 +266,7 @@ const styles = StyleSheet.create({
         width: '100%',
         borderTopRightRadius: 10,
         borderTopLeftRadius: 10,
-        resizeMode: 'contain',
+        resizeMode: 'cover'
     },
     flowerRequest: {
         backgroundColor: '#fff',

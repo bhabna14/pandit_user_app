@@ -96,7 +96,7 @@ const Index = (props) => {
 
     const renderItem = ({ item }) => (
         <View style={styles.mostPPlrItem}>
-            <View style={{ width: '100%', height: 170, borderRadius: 10 }}>
+            <View style={{ width: '100%', height: 180, borderRadius: 10, padding: 4 }}>
                 <Image source={{ uri: item.product_image }} style={styles.mostPPImage} />
             </View>
             <View style={{ margin: 10, width: '90%', alignItems: 'flex-start', justifyContent: 'center' }}>
@@ -150,7 +150,7 @@ const Index = (props) => {
                     }
                     <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center' }}>
                         <View style={{ width: '100%', marginVertical: 10, borderRadius: 10, overflow: 'hidden' }}>
-                            <Text style={{ fontSize: 18, color: '#000', fontWeight: 'bold' }}>PRODUCT SUBSCRIPTION :-</Text>
+                            <Text style={{ fontSize: 18, color: '#000', fontWeight: 'bold' }}>PRODUCT  SUBSCRIPTION :-</Text>
                         </View>
                         <View style={{ width: '100%', borderRadius: 10, overflow: 'hidden' }}>
                             <FlatList
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
         width: '100%',
         borderTopRightRadius: 10,
         borderTopLeftRadius: 10,
-        resizeMode: 'contain',
+        resizeMode: 'cover',
     },
     flowerRequest: {
         backgroundColor: '#fff',

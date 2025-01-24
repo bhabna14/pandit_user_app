@@ -139,11 +139,11 @@ const Index = (props) => {
       </View>
 
       <View style={styles.card}>
-        {packageDetails?.flower_product?.product_image_url && (
-          <Image source={{ uri: packageDetails?.flower_product?.product_image_url }} style={styles.image} />
+        {packageDetails?.flower_products?.product_image_url && (
+          <Image source={{ uri: packageDetails?.flower_products?.product_image_url }} style={styles.image} />
         )}
-        <Text style={{ color: '#000', fontFamily: 'Montserrat-Bold', fontSize: 17 }}>Name: {packageDetails?.flower_product?.name}</Text>
-        <Text style={styles.text}>Description : {packageDetails?.flower_product?.description}</Text>
+        <Text style={{ color: '#000', fontFamily: 'Montserrat-Bold', fontSize: 17 }}>Name: {packageDetails?.flower_products?.name}</Text>
+        <Text style={styles.text}>Description : {packageDetails?.flower_products?.description}</Text>
       </View>
       <View style={styles.card}>
         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
@@ -159,7 +159,7 @@ const Index = (props) => {
             <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold' }}>Start Date:</Text>
           </View>
           <View style={{ width: '65%' }}>
-            <Text style={{ color: '#000', fontSize: 14 }}>{moment(packageDetails?.subscription?.start_date).format('DD-MM-YYYY')}</Text>
+            <Text style={{ color: '#000', fontSize: 14 }}>{moment(packageDetails?.start_date).format('DD-MM-YYYY')}</Text>
           </View>
         </View>
         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
@@ -167,16 +167,16 @@ const Index = (props) => {
             <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold' }}>End Date:</Text>
           </View>
           <View style={{ width: '65%' }}>
-            <Text style={{ color: '#000', fontFamily: packageDetails?.subscription?.new_date ? null : 'Montserrat-Bold', textDecorationLine: packageDetails?.subscription?.new_date ? 'line-through' : null }}>{moment(packageDetails?.subscription?.end_date).format('DD-MM-YYYY')}</Text>
+            <Text style={{ color: '#000', fontFamily: packageDetails?.new_date ? null : 'Montserrat-Bold', textDecorationLine: packageDetails?.new_date ? 'line-through' : null }}>{moment(packageDetails?.end_date).format('DD-MM-YYYY')}</Text>
           </View>
         </View>
-        {packageDetails?.subscription?.new_date &&
+        {packageDetails?.new_date &&
           <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
             <View style={{ width: '35%' }}>
               <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold' }}>New End Date:</Text>
             </View>
             <View style={{ width: '65%' }}>
-              <Text style={{ color: '#000', fontSize: 14 }}>{moment(packageDetails?.subscription?.new_date).format('DD-MM-YYYY')}</Text>
+              <Text style={{ color: '#000', fontSize: 14 }}>{moment(packageDetails?.new_date).format('DD-MM-YYYY')}</Text>
             </View>
           </View>
         }
@@ -185,7 +185,7 @@ const Index = (props) => {
             <Text style={{ color: '#000', fontSize: 14, fontWeight: 'bold' }}>Subscription Status:</Text>
           </View>
           <View style={{ width: '65%' }}>
-            <Text style={{ color: '#000', fontSize: 14 }}>{packageDetails?.subscription?.status}</Text>
+            <Text style={{ color: '#000', fontSize: 14 }}>{packageDetails?.status}</Text>
           </View>
         </View>
         <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'space-around', backgroundColor: '#fae6e6', marginVertical: 2, padding: 5, borderRadius: 5 }}>
@@ -193,23 +193,23 @@ const Index = (props) => {
             <Text style={styles.price}>Price:</Text>
           </View>
           <View style={{ width: '65%' }}>
-            <Text style={styles.price}>{packageDetails?.total_price}</Text>
+            <Text style={styles.price}>{packageDetails?.order?.total_price}</Text>
           </View>
         </View>
       </View>
-      {packageDetails?.address &&
+      {packageDetails?.order?.address &&
         <View style={styles.card}>
           <Text style={styles.subtitle}>Address</Text>
-          <Text style={styles.text}>{packageDetails?.address?.address_type}, {packageDetails?.address?.place_category}</Text>
-          <Text style={styles.text}>{packageDetails?.address?.apartment_flat_plot}, {packageDetails?.address?.landmark}</Text>
-          <Text style={styles.text}>{packageDetails?.address?.locality_details?.locality_name}, {packageDetails?.address?.city}</Text>
-          <Text style={styles.text}>{packageDetails?.address?.state}, {packageDetails?.address?.pincode}</Text>
-          <Text style={styles.text}>{packageDetails?.address?.country}</Text>
+          <Text style={styles.text}>{packageDetails?.order?.address?.address_type}, {packageDetails?.order?.address?.place_category}</Text>
+          <Text style={styles.text}>{packageDetails?.order?.address?.apartment_flat_plot}, {packageDetails?.order?.address?.landmark}</Text>
+          <Text style={styles.text}>{packageDetails?.order?.address?.locality_details?.locality_name}, {packageDetails?.order?.address?.city}</Text>
+          <Text style={styles.text}>{packageDetails?.order?.address?.state}, {packageDetails?.order?.address?.pincode}</Text>
+          <Text style={styles.text}>{packageDetails?.order?.address?.country}</Text>
         </View>
       }
-      {moment(packageDetails?.subscription?.start_date).format('YYYY-MM-DD') <= moment().format('YYYY-MM-DD') &&
+      {moment(packageDetails?.start_date).format('YYYY-MM-DD') <= moment().format('YYYY-MM-DD') &&
         <View style={styles.card}>
-          {packageDetails?.subscription?.status !== "paused" ?
+          {packageDetails?.status !== "paused" ?
             <View>
               <Text style={styles.label}>Pause Start Time</Text>
               <TouchableOpacity onPress={openStartDatePicker}>
@@ -235,7 +235,7 @@ const Index = (props) => {
             </View>
             :
             <View style={{ flex: 1 }}>
-              <Text style={{ color: '#c9170a', fontSize: 17, fontFamily: 'Montserrat-ExtraBold' }}>Your subscription is paused from {moment(packageDetails?.subscription?.pause_start_date).format('DD-MM-YYYY')} to {moment(packageDetails?.subscription?.pause_end_date).format('DD-MM-YYYY')}</Text>
+              <Text style={{ color: '#c9170a', fontSize: 17, fontFamily: 'Montserrat-ExtraBold' }}>Your subscription is paused from {moment(packageDetails?.pause_start_date).format('DD-MM-YYYY')} to {moment(packageDetails?.pause_end_date).format('DD-MM-YYYY')}</Text>
               <TouchableOpacity onPress={handleResumeButton}>
                 <LinearGradient colors={['#c9170a', '#f0837f']} style={styles.submitButton}>
                   <Text style={styles.submitText}>Resume</Text>
