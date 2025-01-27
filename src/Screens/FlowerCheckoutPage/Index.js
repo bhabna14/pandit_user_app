@@ -213,6 +213,20 @@ const Index = (props) => {
             };
             const data = await RazorpayCheckout.open(options);
 
+            // const Data = {
+            //     product_id: props.route.params.product_id,
+            //     order_id: props.route.params.orderId || "", // capture Razorpay order ID if available
+            //     address_id: selectedOption,
+            //     payment_id: data.razorpay_payment_id || "", // capture Razorpay payment ID if available
+            //     // payment_id: "pay_29QQoUBi66xm2f",
+            //     paid_amount: props.route.params.price,
+            //     duration: props.route.params.duration,
+            //     suggestion: suggestions,
+            //     start_date: moment(dob).format('YYYY-MM-DD')
+            // }
+            // console.log("Data", Data);
+            // return;
+
             // Proceed only if Razorpay payment succeeds
             const response = await fetch(base_url + 'api/purchase-subscription', {
                 method: 'POST',
@@ -223,6 +237,7 @@ const Index = (props) => {
                 },
                 body: JSON.stringify({
                     product_id: props.route.params.product_id,
+                    order_id: props.route.params.orderId || "", // capture Razorpay order ID if available
                     address_id: selectedOption,
                     payment_id: data.razorpay_payment_id || "", // capture Razorpay payment ID if available
                     // payment_id: "pay_29QQoUBi66xm2f",
@@ -668,7 +683,7 @@ const Index = (props) => {
                                                         });
                                                     }}
                                                     placeholder="Unit"
-                                                    // listMode="MODAL"
+                                                    listMode="MODAL"
                                                     style={{ borderColor: '#edeff1', borderRadius: 5, marginTop: 5 }}
                                                     dropDownContainerStyle={{ borderColor: '#edeff1' }}
                                                     zIndex={1000}
@@ -709,7 +724,7 @@ const Index = (props) => {
                                 <MaterialCommunityIcons name="calendar-month" color={'#555454'} size={26} style={{ position: 'absolute', right: 10, top: 10 }} />
                             </TouchableOpacity>
                         </View>
-                        {props.route.params.category === "Immediateproduct" &&
+                        {props?.route?.params?.category === "Immediateproduct" &&
                             <View style={{ width: '100%', marginBottom: 15 }}>
                                 <Text style={styles.label}>Delivery Flower Time</Text>
                                 <TouchableOpacity onPress={() => setOpenTimePicker(true)}>
@@ -730,7 +745,7 @@ const Index = (props) => {
                                         setOpenTimePicker(false);
                                     }}
                                     onCancel={() => setOpenTimePicker(false)}
-                                    minimumDate={dob.toDateString() === new Date().toDateString() ? new Date(new Date().getTime() + 2 * 60 * 60 * 1000) : undefined}
+                                    minimumDate={dob?.toDateString() === new Date().toDateString() ? new Date(new Date().getTime() + 2 * 60 * 60 * 1000) : undefined}
                                 />
                             </View>
                         }
@@ -770,24 +785,24 @@ const Index = (props) => {
                                 keyExtractor={(item) => item.id.toString()}
                                 renderItem={(address) => {
                                     return (
-                                        <TouchableOpacity onPress={() => handleAddressChange(address.item.id)} style={{ borderColor: '#edeff1', borderWidth: 1, padding: 10, flexDirection: 'row', alignItems: 'center', borderRadius: 8, marginVertical: 5 }}>
+                                        <TouchableOpacity onPress={() => handleAddressChange(address?.item?.id)} style={{ borderColor: '#edeff1', borderWidth: 1, padding: 10, flexDirection: 'row', alignItems: 'center', borderRadius: 8, marginVertical: 5 }}>
                                             <View style={{ width: '8%', alignSelf: 'flex-start', marginTop: 2 }}>
-                                                {address.item.address_type === "Home" && <Feather name="home" color={'#555454'} size={18} />}
-                                                {address.item.address_type === "Work" && <Feather name="briefcase" color={'#555454'} size={17} />}
-                                                {address.item.address_type === "Other" && <Feather name="globe" color={'#555454'} size={17} />}
+                                                {address?.item?.address_type === "Home" && <Feather name="home" color={'#555454'} size={18} />}
+                                                {address?.item?.address_type === "Work" && <Feather name="briefcase" color={'#555454'} size={17} />}
+                                                {address?.item?.address_type === "Other" && <Feather name="globe" color={'#555454'} size={17} />}
                                             </View>
                                             <View style={{ width: '82%' }}>
                                                 <View>
-                                                    {address.item.address_type === "Home" && <Text style={{ color: '#000', fontSize: 15, fontWeight: '600' }}>Home</Text>}
-                                                    {address.item.address_type === "Work" && <Text style={{ color: '#000', fontSize: 15, fontWeight: '600' }}>Work</Text>}
-                                                    {address.item.address_type === "Other" && <Text style={{ color: '#000', fontSize: 15, fontWeight: '600' }}>Other</Text>}
+                                                    {address?.item?.address_type === "Home" && <Text style={{ color: '#000', fontSize: 15, fontWeight: '600' }}>Home</Text>}
+                                                    {address?.item?.address_type === "Work" && <Text style={{ color: '#000', fontSize: 15, fontWeight: '600' }}>Work</Text>}
+                                                    {address?.item?.address_type === "Other" && <Text style={{ color: '#000', fontSize: 15, fontWeight: '600' }}>Other</Text>}
                                                 </View>
-                                                <Text style={{ color: '#555454', fontSize: 13 }}>{address.item.apartment_name},  {address.item.apartment_flat_plot},  {address.item.landmark}</Text>
-                                                <Text style={{ color: '#555454', fontSize: 13 }}>{address.item.locality_details.locality_name},  {address.item.city},  {address.item.state}</Text>
-                                                <Text style={{ color: '#555454', fontSize: 13 }}>{address.item.pincode},  {address.item.place_category}</Text>
+                                                <Text style={{ color: '#555454', fontSize: 13 }}>{address?.item?.apartment_name},  {address?.item?.apartment_flat_plot},  {address?.item?.landmark}</Text>
+                                                <Text style={{ color: '#555454', fontSize: 13 }}>{address?.item?.locality_details?.locality_name},  {address?.item?.city},  {address?.item?.state}</Text>
+                                                <Text style={{ color: '#555454', fontSize: 13 }}>{address?.item?.pincode},  {address?.item?.place_category}</Text>
                                             </View>
                                             <View style={{ width: '10%', alignItems: 'center', justifyContent: 'center' }}>
-                                                {selectedOption === address.item.id ?
+                                                {selectedOption === address?.item?.id ?
                                                     <MaterialCommunityIcons name="record-circle" color={'#ffcb44'} size={24} />
                                                     :
                                                     < Feather name="circle" color={'#555454'} size={20} />
@@ -840,7 +855,11 @@ const Index = (props) => {
                                     selectedColor: 'blue'
                                 }
                             }}
-                            minDate={props.route.params.category === "Immediateproduct" ? new Date() : moment().add(1, 'days').format('YYYY-MM-DD')}
+                            minDate={
+                                props?.route?.params?.category === "Immediateproduct"
+                                    ? moment().format('YYYY-MM-DD') // Format new Date to a string
+                                    : moment().add(1, 'days').format('YYYY-MM-DD') // Already a string
+                            }
                         />
                     </View>
                 </View>

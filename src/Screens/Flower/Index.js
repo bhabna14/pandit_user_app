@@ -104,7 +104,7 @@ const Index = (props) => {
     const goToCheckoutPage = async (flower) => {
         var access_token = await AsyncStorage.getItem('storeAccesstoken');
         if (access_token) {
-            console.log("flower Details", flower);
+            // console.log("flower Details", flower);
             navigation.navigate('FlowerCheckoutPage', flower);
         }
         else {
@@ -113,6 +113,28 @@ const Index = (props) => {
             setSelectedItem(flower);
         }
     }
+
+    const goToCheckoutPageFormRenew = async (flower, orderId) => {
+        try {
+            const access_token = await AsyncStorage.getItem('storeAccesstoken');
+            if (access_token) {
+                // Add orderId and renew to the flower object
+                const flowerWithExtras = { ...flower, orderId };
+                // console.log("flowerWithExtras", flowerWithExtras);
+                // return;
+
+                // Pass the updated flower object in navigation
+                navigation.navigate('FlowerCheckoutPage', flowerWithExtras);
+            } else {
+                // Show the login modal and save the selected flower
+                const flowerWithExtras = { ...flower, orderId };
+                setIsLoginModalVisible(true); // Ensure this state is defined in your component
+                setSelectedItem(flowerWithExtras); // Save the flower with extras in state
+            }
+        } catch (error) {
+            console.error("Error navigating to the checkout page:", error);
+        }
+    };
 
     useEffect(() => {
         if (isFocused) {
@@ -179,20 +201,21 @@ const Index = (props) => {
                     {currentOrder &&
                         <View style={{ width: '95%', alignSelf: 'center', alignItems: 'center' }}>
                             <View style={{ backgroundColor: '#fff', width: '100%', alignSelf: 'center', borderRadius: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 13, elevation: 4, marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between', padding: 6, marginTop: 10 }}>
-                                <TouchableOpacity onPress={() => navigation.navigate('PackageHistory')} style={{ width: '47%', height: '100%', borderRadius: 10, borderColor: '#000', borderWidth: 0.5 }}>
+                                {/* <TouchableOpacity onPress={() => navigation.navigate('PackageHistory')} style={{ width: '47%', height: '100%', borderRadius: 10, borderColor: '#000', borderWidth: 0.5 }}>
                                     <Image source={{ uri: currentOrder?.flower_product?.product_image }} style={{ flex: 1, borderRadius: 10, resizeMode: 'cover' }} />
-                                </TouchableOpacity>
-                                <View style={{ width: '51%' }}>
-                                    <View style={{ margin: 10, width: '90%', alignItems: 'flex-start', justifyContent: 'center' }}>
-                                        <Text style={{ color: '#000', fontSize: 16, fontWeight: '500', marginBottom: 5, textTransform: 'capitalize' }}>{currentOrder.flower_product.name}</Text>
-                                        <View style={{ flexDirection: 'row' }}>
+                                </TouchableOpacity> */}
+                                <View style={{ width: '100%', alignItems: 'center' }}>
+                                    <View style={{ margin: 10, width: '90%', alignItems: 'center', justifyContent: 'center' }}>
+                                        <Text style={{ color: '#000', fontSize: 16, fontWeight: '500', marginBottom: 5, textTransform: 'capitalize' }}>Your Current Subscription</Text>
+                                        <Text style={{ color: '#000', fontSize: 14, fontWeight: '400', marginBottom: 2 }}>{currentOrder.flower_product.name}</Text>
+                                        {/* <View style={{ flexDirection: 'row' }}>
                                             <Text style={{ color: '#c9170a', fontWeight: '500' }}>M.R.P -  </Text>
                                             <Text style={{ color: '#000', fontSize: 15, fontWeight: 'bold', textTransform: 'capitalize' }}>Rs.{currentOrder.flower_product.price}</Text>
-                                        </View>
+                                        </View> */}
                                         <Text style={{ color: '#4a4a49', fontWeight: 'bold', fontSize: 15 }}>From: <Text style={{ fontWeight: '400' }}>{currentOrder.subscription.start_date}</Text> To: <Text style={{ fontWeight: '400' }}>{currentOrder.subscription.new_date ? currentOrder.subscription.new_date : currentOrder.subscription.end_date}</Text></Text>
                                         {currentOrder.subscription.status === 'active' ?
                                             <View style={{ backgroundColor: '#c3272e', padding: 10, alignSelf: 'center', alignItems: 'center', width: '100%', borderRadius: 8, marginTop: 10 }}>
-                                                <Text style={{ color: '#fff' }}>Remaining - {currentOrder?.subscription?.remaining_time?.d} Day's</Text>
+                                                <Text style={{ color: '#fff' }}>Remaining - {currentOrder?.subscription?.remaining_time?.days}day's {currentOrder?.subscription?.remaining_time?.h}hr</Text>
                                             </View>
                                             :
                                             currentOrder.subscription.status === 'pending' ?
@@ -200,7 +223,7 @@ const Index = (props) => {
                                                     <Text style={{ color: '#fff' }}>Order Pending</Text>
                                                 </View>
                                                 :
-                                                <TouchableOpacity onPress={() => goToCheckoutPage(currentOrder)} style={{ backgroundColor: '#c3272e', padding: 10, alignSelf: 'center', alignItems: 'center', width: '100%', borderRadius: 8, marginTop: 10 }}>
+                                                <TouchableOpacity onPress={() => goToCheckoutPageFormRenew(currentOrder.flower_product, currentOrder.order_id)} style={{ backgroundColor: '#c3272e', padding: 10, alignSelf: 'center', alignItems: 'center', width: '100%', borderRadius: 8, marginTop: 10 }}>
                                                     <Text style={{ color: '#fff' }}>Renew Order</Text>
                                                 </TouchableOpacity>
                                         }

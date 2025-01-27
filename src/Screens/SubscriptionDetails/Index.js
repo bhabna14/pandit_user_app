@@ -43,8 +43,8 @@ const Index = (props) => {
   const [pause_end_date, setPause_end_date] = useState(null);
 
   const handleResumeButton = () => {
-    setPause_start_date(props.route.params.subscription.pause_start_date);
-    setPause_end_date(props.route.params.subscription.pause_end_date);
+    setPause_start_date(props.route.params.pause_start_date);
+    setPause_end_date(props.route.params.pause_end_date);
     openResumeModal();
   };
 
