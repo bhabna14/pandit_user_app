@@ -209,9 +209,9 @@ const Index = (props) => {
       }
       {moment(packageDetails?.start_date).format('YYYY-MM-DD') <= moment().format('YYYY-MM-DD') &&
         <View style={styles.card}>
-          {packageDetails?.status !== "paused" ?
+          {packageDetails?.status === "active" &&
             <View>
-              <Text style={styles.label}>Pause Start Time</Text>
+              <Text style={styles.label}>Pause Start Date</Text>
               <TouchableOpacity onPress={openStartDatePicker}>
                 <TextInput
                   style={styles.input}
@@ -220,7 +220,7 @@ const Index = (props) => {
                 />
               </TouchableOpacity>
 
-              <Text style={styles.label}>Pause End Time</Text>
+              <Text style={styles.label}>Pause End Date</Text>
               <TouchableOpacity onPress={openEndDatePicker}>
                 <TextInput
                   style={styles.input}
@@ -233,7 +233,8 @@ const Index = (props) => {
                 <Text style={styles.dateText}>Submit</Text>
               </TouchableOpacity>
             </View>
-            :
+          }
+          {packageDetails?.status === "paused" &&
             <View style={{ flex: 1 }}>
               <Text style={{ color: '#c9170a', fontSize: 17, fontFamily: 'Montserrat-ExtraBold' }}>Your subscription is paused from {moment(packageDetails?.pause_start_date).format('DD-MM-YYYY')} to {moment(packageDetails?.pause_end_date).format('DD-MM-YYYY')}</Text>
               <TouchableOpacity onPress={handleResumeButton}>

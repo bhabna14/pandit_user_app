@@ -88,7 +88,7 @@ const Index = (props) => {
                 },
             }).then(response => response.json()).then(response => {
                 if (response.success === true) {
-                    // console.log("Current Order: ", response.data[0]);
+                    console.log("Current Order: ", response.data[0]);
                     setCurrentOrder(response.data[0]);
                 } else {
                     console.error('Failed to fetch packages:', response.message);
@@ -213,7 +213,7 @@ const Index = (props) => {
                                             <Text style={{ color: '#000', fontSize: 15, fontWeight: 'bold', textTransform: 'capitalize' }}>Rs.{currentOrder.flower_product.price}</Text>
                                         </View> */}
                                         <Text style={{ color: '#4a4a49', fontWeight: 'bold', fontSize: 15 }}>From: <Text style={{ fontWeight: '400' }}>{currentOrder.subscription.start_date}</Text> To: <Text style={{ fontWeight: '400' }}>{currentOrder.subscription.new_date ? currentOrder.subscription.new_date : currentOrder.subscription.end_date}</Text></Text>
-                                        {currentOrder.subscription.status === 'active' ?
+                                        {currentOrder.subscription.status === 'active' || 'paused' ?
                                             <View style={{ backgroundColor: '#c3272e', padding: 10, alignSelf: 'center', alignItems: 'center', width: '100%', borderRadius: 8, marginTop: 10 }}>
                                                 <Text style={{ color: '#fff' }}>Remaining - {currentOrder?.subscription?.remaining_time?.days}day's {currentOrder?.subscription?.remaining_time?.h}hr</Text>
                                             </View>
